@@ -8,7 +8,7 @@ use kalanis\kw_auth\Interfaces\IAuthCert;
 
 
 /**
- * Class Hash
+ * Class UrlHash
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via hashed values
  * @codeCoverageIgnore because access external content
@@ -22,8 +22,14 @@ use kalanis\kw_auth\Interfaces\IAuthCert;
  *
  * - it removed digest value and added locally stored salt
  */
-class Hash extends AMethods
+class UrlHash extends AMethods
 {
+    const INPUT_NAME = 'name';
+    const INPUT_NAME2 = 'user';
+    const INPUT_STAMP = 'timestamp';
+    const INPUT_DIGEST = 'digest';
+    const INPUT_SALT = 'salt';
+
     /** @var IAuthCert */
     protected $authenticator;
     /** @var Handler */
@@ -48,16 +54,18 @@ class Hash extends AMethods
 
     public function process(\ArrayAccess $credentials): void
     {
-        $name = $credentials->offsetExists('user') ? $credentials->offsetGet('user') : '' ;
-        $stamp = $credentials->offsetExists('timestamp') ? $credentials->offsetGet('timestamp') : 0 ;
+        $name = $credentials->offsetExists(static::INPUT_NAME) ? $credentials->offsetGet(static::INPUT_NAME) : '' ;
+        $name = $credentials->offsetExists(static::INPUT_NAME2) ? $credentials->offsetGet(static::INPUT_NAME2) : $name ;
+        $stamp = $credentials->offsetExists(static::INPUT_STAMP) ? (int)$credentials->offsetGet(static::INPUT_STAMP) : 0 ;
+
         $wantedUser = $this->authenticator->getCertData((string)$name);
         if ($wantedUser && !empty($stamp)) { // @todo: check timestamp for range
             // now we have private salt from our storage, so it's time to check it
 
             // digest out, salt in
-            $digest = $this->uriHandler->getParams()->offsetGet('digest');
-            $this->uriHandler->getParams()->offsetUnset('digest');
-            $this->uriHandler->getParams()->offsetSet('salt', $wantedUser->getPubSalt());
+            $digest = $this->uriHandler->getParams()->offsetGet(static::INPUT_DIGEST);
+            $this->uriHandler->getParams()->offsetUnset(static::INPUT_DIGEST);
+            $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedUser->getPubSalt());
             $data = $this->uriHandler->getAddress();
 
             // verify

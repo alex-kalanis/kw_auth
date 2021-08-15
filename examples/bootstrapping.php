@@ -25,7 +25,8 @@ $authenticator = new \kalanis\kw_auth\Sources\Files(
     $paths->getDocumentRoot() . $paths->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'web',
     strval(\kalanis\kw_confs\Config::get('Admin', 'admin.salt'))
 );
-$session = new ArrayObject(); // this one represents session info
+$session = new \kalanis\kw_input\Simplified\SessionAdapter(); // this one represents session info
+$server = new \kalanis\kw_input\Simplified\ServerAdapter(); // this one represents server info
 
 class ExBanned extends \kalanis\kw_auth\Methods\Banned
 {
@@ -39,17 +40,19 @@ class ExBanned extends \kalanis\kw_auth\Methods\Banned
 /// Auth itself
 \kalanis\kw_auth\Auth::init(
     new ExBanned($authenticator,
-        new \kalanis\kw_auth\Methods\Certs($authenticator,
+        new \kalanis\kw_auth\Methods\UrlCerts($authenticator,
             new \kalanis\kw_auth\Methods\TimedSessions($authenticator,
                 new \kalanis\kw_auth\Methods\CountedSessions($authenticator,
                     null,
                     $session,
                     100
                 ),
-                $session
+                $session,
+                $server
             ),
             new \kalanis\kw_address_handler\Handler(new \kalanis\kw_address_handler\Sources\ServerRequest())
-        )
+        ),
+        $server
     )
 );
 /// this one is that dummy for testing
@@ -67,7 +70,7 @@ abstract class AAuthenticate
     /** @var \kalanis\kw_auth\AuthException|null */
     protected $error = null;
 
-    public function process(\kalanis\kw_input\IVariables $inputs): void
+    public function process(\kalanis\kw_input\Interfaces\IVariables $inputs): void
     {
         try {
             $sources = [\kalanis\kw_input\Interfaces\IEntry::SOURCE_EXTERNAL, \kalanis\kw_input\Interfaces\IEntry::SOURCE_CLI, \kalanis\kw_input\Interfaces\IEntry::SOURCE_POST, \kalanis\kw_input\Interfaces\IEntry::SOURCE_GET];

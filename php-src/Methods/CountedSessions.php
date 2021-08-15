@@ -12,10 +12,10 @@ use kalanis\kw_auth\Interfaces\IAuth;
  * Class CountedSessions
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via Session - count tries
- * @codeCoverageIgnore because access external content
  */
 class CountedSessions extends AMethods
 {
+    const INPUT_NAME = 'name';
     const INPUT_COUNTER = 'log_count';
 
     protected $maxTries = 100;
@@ -33,7 +33,7 @@ class CountedSessions extends AMethods
         if (PHP_SESSION_NONE == session_status()) {
             session_start();
         }
-        if (!empty($credentials->offsetExists('name'))) {
+        if (!empty($credentials->offsetExists(static::INPUT_NAME))) {
             if (!$this->session->offsetExists(static::INPUT_COUNTER)) {
                 $this->session->offsetSet(static::INPUT_COUNTER, 0);
             }

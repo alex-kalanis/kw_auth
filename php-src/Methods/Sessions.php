@@ -11,19 +11,27 @@ use kalanis\kw_auth\Interfaces\IAuth;
  * Class Sessions
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via Session
- * @codeCoverageIgnore because access external content
  */
 class Sessions extends AMethods
 {
-    const INPUT_IP = 'acc_ip';
-    const INPUT_NAME = 'acc_name';
+    const SESSION_IP = 'acc_ip';
+    const SESSION_NAME = 'acc_name';
+    const SERVER_REMOTE = 'REMOTE_ADDR';
+    const INPUT_NAME = 'name';
+    const INPUT_NAME2 = 'user';
+    const INPUT_PASS = 'pass';
+    const INPUT_PASS2 = 'password';
 
+    /** @var ArrayAccess */
     protected $session = null;
+    /** @var ArrayAccess */
+    protected $server = null;
 
-    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $session)
+    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $session, ArrayAccess $server)
     {
         parent::__construct($authenticator, $nextOne);
         $this->session = $session;
+        $this->server = $server;
     }
 
     public function process(ArrayAccess $credentials): void
@@ -34,9 +42,10 @@ class Sessions extends AMethods
         if ($this->tryLogged()) {
             $this->loggedUser = $this->authenticator->getDataOnly($this->nameFromSess());
         } else {
-            $name = $credentials->offsetExists('user') ? $credentials->offsetGet('user') : '' ;
-            $pass = $credentials->offsetExists('pass') ? $credentials->offsetGet('pass') : '' ;
-            $pass = $credentials->offsetExists('password') ? $credentials->offsetGet('password') : $pass ;
+            $name = $credentials->offsetExists(static::INPUT_NAME) ? $credentials->offsetGet(static::INPUT_NAME) : '' ;
+            $name = $credentials->offsetExists(static::INPUT_NAME2) ? $credentials->offsetGet(static::INPUT_NAME2) : $name ;
+            $pass = $credentials->offsetExists(static::INPUT_PASS) ? $credentials->offsetGet(static::INPUT_PASS) : '' ;
+            $pass = $credentials->offsetExists(static::INPUT_PASS2) ? $credentials->offsetGet(static::INPUT_PASS2) : $pass ;
             if (!empty($name) && !empty($pass)) {
                 $this->loggedUser = $this->authenticator->authenticate($name, ['password' => $pass]);
             }
@@ -57,28 +66,28 @@ class Sessions extends AMethods
     protected function tryLogged(): bool
     {
         return (
-            $this->session->offsetExists(static::INPUT_NAME)
-            && !empty($this->session->offsetGet(static::INPUT_NAME)) // user has name already set
-            && $this->session->offsetExists(static::INPUT_IP)
-            && !empty($this->session->offsetGet(static::INPUT_IP)) // user has already set known ip
-            && ($_SERVER["REMOTE_ADDR"] == $this->session->offsetGet(static::INPUT_IP)) // against proxy attack - changed ip through work
+            $this->session->offsetExists(static::SESSION_NAME)
+            && !empty($this->session->offsetGet(static::SESSION_NAME)) // user has name already set
+            && $this->session->offsetExists(static::SESSION_IP)
+            && !empty($this->session->offsetGet(static::SESSION_IP)) // user has already set known ip
+            && ($this->server->offsetGet(static::SERVER_REMOTE) == $this->session->offsetGet(static::SESSION_IP)) // against proxy attack - changed ip through work
         );
     }
 
     protected function nameFromSess(): string
     {
-        return strval($this->session->offsetGet(static::INPUT_NAME));
+        return strval($this->session->offsetGet(static::SESSION_NAME));
     }
 
     protected function fillSession(string $name): void
     {
-        $this->session->offsetSet(static::INPUT_NAME, $name);
-        $this->session->offsetSet(static::INPUT_IP, $_SERVER["REMOTE_ADDR"]);
+        $this->session->offsetSet(static::SESSION_NAME, $name);
+        $this->session->offsetSet(static::SESSION_IP, $this->server->offsetGet(static::SERVER_REMOTE));
     }
 
     protected function clearSession(): void
     {
-        $this->session->offsetSet(static::INPUT_NAME, '');
-        $this->session->offsetSet(static::INPUT_IP, '');
+        $this->session->offsetSet(static::SESSION_NAME, '');
+        $this->session->offsetSet(static::SESSION_IP, '');
     }
 }

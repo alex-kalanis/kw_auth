@@ -3,6 +3,7 @@
 namespace kalanis\kw_auth\Methods;
 
 
+use ArrayAccess;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces\IAuth;
 use kalanis\kw_bans\Bans;
@@ -19,6 +20,9 @@ use kalanis\kw_confs\Config;
  */
 class Banned extends AMethods
 {
+    const INPUT_NAME = 'name';
+    const SERVER_REMOTE = 'REMOTE_ADDR';
+
     const BAN_IP4 = 'ban_ip4.txt';
     const BAN_IP6 = 'ban_ip6.txt';
     const BAN_NAME = 'ban_name.txt';
@@ -27,11 +31,15 @@ class Banned extends AMethods
     const PREG_IP6 = '#^[0-9a-f:/]$#i';
     const PREG_NAME = '#^[\*\?\:;\\//]$#i';
 
+    /** @var Bans */
     protected $libBan = null;
+    /** @var ArrayAccess */
+    protected $server = null;
 
-    public function __construct(?IAuth $authenticator, ?AMethods $nextOne)
+    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $server)
     {
         parent::__construct($authenticator, $nextOne);
+        $this->server = $server;
         $banPath = $this->getBanPath();
         $this->libBan = new Bans(
             new File($banPath . DIRECTORY_SEPARATOR . self::BAN_IP4),
@@ -48,8 +56,8 @@ class Banned extends AMethods
 
     public function process(\ArrayAccess $credentials): void
     {
-        $name = $credentials->offsetExists('user') ? $credentials->offsetGet('user') : '' ;
-        $ip = $_SERVER["REMOTE_ADDR"];
+        $name = $credentials->offsetExists(static::INPUT_NAME) ? $credentials->offsetGet(static::INPUT_NAME) : '' ;
+        $ip = $this->server->offsetGet(static::SERVER_REMOTE);
         if ($this->libBan->has(
             preg_replace(static::PREG_IP4, '', $ip),
             preg_replace(static::PREG_IP6, '', $ip),

@@ -11,7 +11,6 @@ use kalanis\kw_auth\Interfaces\IAccessClasses;
  * Class Everytime
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate every time - for debugging purposes
- * @codeCoverageIgnore because access external content
  */
 class Everytime extends AMethods
 {
