@@ -14,6 +14,5 @@ interface IFile
     const PASS_FILE = '.passwd'; # password file
     const SHADE_FILE = '.shadow'; # shadow file
     const GROUP_FILE = '.groups'; # group file
-    const LOCK_FILE = '.lock'; # lock file
     const CRLF = "\r\n"; # line ending
 }

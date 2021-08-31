@@ -27,7 +27,12 @@ class Ldap implements IAuth
 
     public function authenticate(string $userName, array $params = []): ?IUser
     {
-        return ($this->record->getMapper()->authorize([
+        $mapper = $this->record->getMapper();
+        if (!method_exists($mapper, 'authorize')) {
+            return null;
+        }
+        /** @var Mapper\LdapMapper $mapper */
+        return ($mapper->authorize([
             'user' => $userName,
             'password' => $params['password'] ?: ''
         ]))

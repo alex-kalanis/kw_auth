@@ -19,6 +19,7 @@
         "alex-kalanis/kw_address_handler": ">=1.0",
         "alex-kalanis/kw_bans": ">=1.0",
         "alex-kalanis/kw_confs": ">=1.0",
+        "alex-kalanis/kw_locks": ">=1.0",
         "alex-kalanis/kw_mapper": ">=1.0",
         "alex-kalanis/kw_extras": ">=1.0",
         "phpunit/phpunit": ">=7.2"

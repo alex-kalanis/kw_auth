@@ -3,41 +3,27 @@
 namespace kalanis\kw_auth;
 
 
+use kalanis\kw_auth\Interfaces\IAuthTree;
+
+
 /**
  * Class Auth
  * @package kalanis\kw_auth
- * Authenticate the user with predefined methods
+ * Authenticate the user with predefined methods - pass auth tree into module
  */
 class Auth
 {
-    /** @var Methods\AMethods|null */
+    /** @var AuthTree|null */
     protected static $authTree = null;
-    /** @var Methods\AMethods|null */
-    protected static $usedMethod = null;
 
-    static public function init(Methods\AMethods $authTree): void
+    static public function fill(Methods\AMethods $authMethods): void
     {
-        static::$authTree = $authTree;
+        static::$authTree = new AuthTree();
+        static::$authTree->setTree($authMethods);
     }
 
-    /**
-     * @param \ArrayAccess $credentials
-     * @throws AuthException
-     */
-    static public function findMethod(\ArrayAccess $credentials): void
+    static public function getTree(): ?IAuthTree
     {
-        $currentMethod = static::$authTree;
-        do {
-            $currentMethod->process($credentials);
-            if ($currentMethod->isAuthorized()) {
-                static::$usedMethod = $currentMethod;
-                return;
-            }
-        } while ($currentMethod = $currentMethod->getNextMethod());
-    }
-
-    static public function getMethod(): ?Methods\AMethods
-    {
-        return static::$usedMethod;
+        return static::$authTree;
     }
 }

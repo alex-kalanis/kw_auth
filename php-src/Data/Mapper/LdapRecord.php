@@ -17,11 +17,11 @@ use kalanis\kw_mapper\Records\ASimpleRecord;
  */
 class LdapRecord extends ASimpleRecord implements IUser
 {
-    protected function setMap(): void
+    public function addEntries(): void
     {
         $this->addEntry('id', IEntryType::TYPE_INTEGER, 2048);
         $this->addEntry('name', IEntryType::TYPE_STRING, 128);
-        $this->setMapper('\kalanis\kw_auth\Sources\Mapper\LdapMapper');
+        $this->setMapper('\kalanis\kw_auth\Data\Mapper\LdapMapper');
     }
 
     public function setData(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir): void
