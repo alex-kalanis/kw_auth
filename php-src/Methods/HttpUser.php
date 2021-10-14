@@ -38,11 +38,17 @@ class HttpUser extends AMethods
         }
     }
 
+    /**
+     * @codeCoverageIgnore headers
+     */
     public function remove(): void
     {
         $this->authNotExists();
     }
 
+    /**
+     * @codeCoverageIgnore headers
+     */
     public function authNotExists(): void
     {
         header('HTTP/1.1 401 Unauthorized');

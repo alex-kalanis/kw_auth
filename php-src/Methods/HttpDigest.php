@@ -11,7 +11,6 @@ use kalanis\kw_auth\Interfaces\IAuthCert;
  * Class HttpDigest
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via digest http method
- * @codeCoverageIgnore because access external content
  * @link https://serverpilot.io/docs/how-to-perform-http-digest-authentication-with-php/
  * @link https://www.php.net/manual/en/features.http-auth.php
  */
@@ -40,6 +39,9 @@ class HttpDigest extends AMethods
         $data = $this->httpDigestParse($this->server->offsetGet(static::INPUT_DIGEST));
         if (!empty($data)) {
             $wantedUser = $this->authenticator->getCertData((string)$data['username']);
+            if (!$wantedUser) {
+                return;
+            }
 
             // verify
             $A1 = md5($data['username'] . ':' . $this->realm . ':' . $wantedUser->getPubKey()); // @todo: srsly, pubkey?! nothing better?
@@ -53,11 +55,17 @@ class HttpDigest extends AMethods
         }
     }
 
+    /**
+     * @codeCoverageIgnore headers
+     */
     public function remove(): void
     {
         $this->authNotExists();
     }
 
+    /**
+     * @codeCoverageIgnore headers
+     */
     public function authNotExists(): void
     {
         header('HTTP/1.1 401 Unauthorized');

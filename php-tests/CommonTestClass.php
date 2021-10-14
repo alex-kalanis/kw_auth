@@ -38,8 +38,8 @@ class MockAuth implements IAuth
         return (
             $this->expectedUser
             && ($this->expectedUser->getAuthName() == $userName)
-            && isset($params['pass'])
-            && ($params['pass'] == $this->expectedPass)
+            && isset($params['password'])
+            && ($params['password'] == $this->expectedPass)
         ) ? $this->expectedUser : null;
     }
 }

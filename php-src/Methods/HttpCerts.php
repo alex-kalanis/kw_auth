@@ -12,7 +12,6 @@ use kalanis\kw_auth\Interfaces\IAuthCert;
  * Class HttpCerts
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via http certificates
- * @codeCoverageIgnore because access openssl library
  * - public on server, private on client whom manage the site
  */
 class HttpCerts extends AMethods
@@ -45,10 +44,10 @@ class HttpCerts extends AMethods
 
             // salt in
             $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedUser->getPubSalt());
+            $data = $this->uriHandler->getAddress();
 
             // verify
-            $pkey = openssl_get_publickey(base64_decode($wantedUser->getPubKey()));
-            $result = @openssl_verify((string)$this->uriHandler->getAddress(), (string)$digest, $pkey);
+            $result = openssl_verify((string)$data, base64_decode(rawurldecode($digest)), $wantedUser->getPubKey(), OPENSSL_ALGO_SHA256);
             if (1 === $result) {
                 // OK
                 $this->loggedUser = $wantedUser;
@@ -56,11 +55,17 @@ class HttpCerts extends AMethods
         }
     }
 
+    /**
+     * @codeCoverageIgnore headers
+     */
     public function remove(): void
     {
         $this->authNotExists();
     }
 
+    /**
+     * @codeCoverageIgnore headers
+     */
     public function authNotExists(): void
     {
         header('HTTP/1.1 401 Unauthorized');

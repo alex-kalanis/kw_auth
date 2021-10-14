@@ -11,8 +11,6 @@ use kalanis\kw_auth\Interfaces\IAuthCert;
  * Class UrlCerts
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via certificates
- * @codeCoverageIgnore because access openssl library
- * - public on server, private on client whom manage the site
  *
  * query:
  * //dummy/u:whoami/?pass=asdf123ghjk456&timestamp=123456&digest=poiuztrewq
@@ -59,12 +57,8 @@ class UrlCerts extends AMethods
             $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedUser->getPubSalt());
             $data = $this->uriHandler->getAddress();
 
-//print_r([$digest, $data, ]);
             // verify
-            $pkey = openssl_get_publickey(base64_decode($wantedUser->getPubKey()));
-//            $result = @openssl_verify((string)$data, base64_decode($digest), $pkey, 'sha1WithRSAEncryption');
-            $result = @openssl_verify((string)$data, base64_decode($digest), base64_decode($wantedUser->getPubKey()), 'sha1WithRSAEncryption');
-//print_r([$pkey, $result, base64_decode($wantedUser->getPubKey()), openssl_error_string() ]);
+            $result = openssl_verify((string)$data, base64_decode(rawurldecode($digest)), $wantedUser->getPubKey(), OPENSSL_ALGO_SHA256);
             if (1 === $result) {
                 // OK
                 $this->loggedUser = $wantedUser;
