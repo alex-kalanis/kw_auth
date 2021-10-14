@@ -48,7 +48,7 @@ class File implements IAuth, IAccessAccounts
         $name = $this->stripChars($userName);
         $pass = $params['password'];
 
-        // load from passwd
+        // load from password
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }

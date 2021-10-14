@@ -53,12 +53,6 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
     protected $changeInterval = 31536000; // 60×60×24×365 - one year
     protected $changeNotice = 2592000; // 60×60×24×30 - one month
 
-    /**
-     * @param ILock $lock
-     * @param string $dir
-     * @param string $salt
-     * @throws AuthException
-     */
     public function __construct(ILock $lock, string $dir, string $salt)
     {
         $this->lock = $lock;
@@ -100,7 +94,7 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
     {
         $name = $this->stripChars($userName);
 
-        // load from passwd
+        // load from password
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }
@@ -140,7 +134,10 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
             if ($line[static::SH_NAME] == $name) {
                 $class = $this->getDataOnly($userName);
                 if ($class && ($class instanceof IUserCert)) {
-                    $class->addCertInfo((string)$line[static::SH_CERT_KEY], (string)$line[static::SH_CERT_SALT]);
+                    $class->addCertInfo(
+                        (string)base64_decode($line[static::SH_CERT_KEY]),
+                        (string)$line[static::SH_CERT_SALT]
+                    );
                     return $class;
                 }
             }
@@ -148,11 +145,6 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
         return null;
     }
 
-    /**
-     * @param string $userName
-     * @param string $passWord
-     * @throws AuthException
-     */
     public function updatePassword(string $userName, string $passWord): void
     {
         $name = $this->stripChars($userName);
@@ -190,7 +182,7 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
         foreach ($lines as &$line) {
             if ($line[static::SH_NAME] == $name) {
                 $changed = true;
-                $line[static::SH_CERT_KEY] = $certKey ?: $line[static::SH_CERT_KEY];
+                $line[static::SH_CERT_KEY] = $certKey ? base64_encode($certKey) : $line[static::SH_CERT_KEY];
                 $line[static::SH_CERT_SALT] = $certSalt ?: $line[static::SH_CERT_SALT];
             }
         }
@@ -251,7 +243,7 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
             static::SH_CHANGE_LAST => time(),
             static::SH_CHANGE_NEXT => time() + $this->changeInterval,
             static::SH_CERT_SALT => $certSalt,
-            static::SH_CERT_KEY => $certKey,
+            static::SH_CERT_KEY => base64_encode($certKey),
         ];
         ksort($newUserShade);
         $shadeLines[] = $newUserShade;
@@ -388,10 +380,6 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
         $this->lock->delete();
     }
 
-    /**
-     * @return IGroup[]
-     * @throws AuthException
-     */
     public function readGroup(): array
     {
         if ($this->lock->has()) {

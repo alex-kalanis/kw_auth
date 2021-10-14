@@ -42,10 +42,10 @@ class Sessions extends AMethods
         if ($this->tryLogged()) {
             $this->loggedUser = $this->authenticator->getDataOnly($this->nameFromSess());
         } else {
-            $name = $credentials->offsetExists(static::INPUT_NAME) ? $credentials->offsetGet(static::INPUT_NAME) : '' ;
-            $name = $credentials->offsetExists(static::INPUT_NAME2) ? $credentials->offsetGet(static::INPUT_NAME2) : $name ;
-            $pass = $credentials->offsetExists(static::INPUT_PASS) ? $credentials->offsetGet(static::INPUT_PASS) : '' ;
-            $pass = $credentials->offsetExists(static::INPUT_PASS2) ? $credentials->offsetGet(static::INPUT_PASS2) : $pass ;
+            $name = $credentials->offsetExists(static::INPUT_NAME) ? strval($credentials->offsetGet(static::INPUT_NAME)) : '' ;
+            $name = $credentials->offsetExists(static::INPUT_NAME2) ? strval($credentials->offsetGet(static::INPUT_NAME2)) : $name ;
+            $pass = $credentials->offsetExists(static::INPUT_PASS) ? strval($credentials->offsetGet(static::INPUT_PASS)) : '' ;
+            $pass = $credentials->offsetExists(static::INPUT_PASS2) ? strval($credentials->offsetGet(static::INPUT_PASS2)) : $pass ;
             if (!empty($name) && !empty($pass)) {
                 $this->loggedUser = $this->authenticator->authenticate($name, ['password' => $pass]);
             }

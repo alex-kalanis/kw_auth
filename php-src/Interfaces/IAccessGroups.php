@@ -4,6 +4,7 @@ namespace kalanis\kw_auth\Interfaces;
 
 
 use kalanis\kw_auth\AuthException;
+use kalanis\kw_locks\LockException;
 
 
 /**
@@ -17,24 +18,28 @@ interface IAccessGroups
     /**
      * @param IGroup $group
      * @throws AuthException
+     * @throws LockException
      */
     public function createGroup(IGroup $group): void;
 
     /**
      * @return IGroup[]
      * @throws AuthException
+     * @throws LockException
      */
     public function readGroup(): array;
 
     /**
      * @param IGroup $group
      * @throws AuthException
+     * @throws LockException
      */
     public function updateGroup(IGroup $group): void;
 
     /**
      * @param int $groupId
      * @throws AuthException
+     * @throws LockException
      */
     public function deleteGroup(int $groupId): void;
 }

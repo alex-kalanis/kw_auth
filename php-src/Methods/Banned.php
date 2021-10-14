@@ -40,8 +40,13 @@ class Banned extends AMethods
     {
         parent::__construct($authenticator, $nextOne);
         $this->server = $server;
+        $this->libBan = $this->getBans();
+    }
+
+    protected function getBans(): Bans
+    {
         $banPath = $this->getBanPath();
-        $this->libBan = new Bans(
+        return new Bans(
             new File($banPath . DIRECTORY_SEPARATOR . self::BAN_IP4),
             new File($banPath . DIRECTORY_SEPARATOR . self::BAN_IP6),
             new File($banPath . DIRECTORY_SEPARATOR . self::BAN_NAME)
@@ -56,7 +61,7 @@ class Banned extends AMethods
 
     public function process(\ArrayAccess $credentials): void
     {
-        $name = $credentials->offsetExists(static::INPUT_NAME) ? $credentials->offsetGet(static::INPUT_NAME) : '' ;
+        $name = $credentials->offsetExists(static::INPUT_NAME) ? strval($credentials->offsetGet(static::INPUT_NAME)) : '' ;
         $ip = $this->server->offsetGet(static::SERVER_REMOTE);
         if ($this->libBan->has(
             preg_replace(static::PREG_IP4, '', $ip),

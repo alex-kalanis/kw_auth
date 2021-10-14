@@ -30,8 +30,8 @@ class HttpUser extends AMethods
 
     public function process(ArrayAccess $credentials): void
     {
-        $name = $this->server->offsetExists(static::INPUT_NAME) ? $this->server->offsetGet(static::INPUT_NAME) : '' ;
-        $pass = $this->server->offsetExists(static::INPUT_PASS) ? $this->server->offsetGet(static::INPUT_PASS) : '' ;
+        $name = $this->server->offsetExists(static::INPUT_NAME) ? strval($this->server->offsetGet(static::INPUT_NAME)) : '' ;
+        $pass = $this->server->offsetExists(static::INPUT_PASS) ? strval($this->server->offsetGet(static::INPUT_PASS)) : '' ;
 
         if (!empty($name) && !empty($pass)) {
             $this->loggedUser = $this->authenticator->authenticate($name, ['password' => $pass]);

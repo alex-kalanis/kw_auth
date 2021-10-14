@@ -24,6 +24,8 @@ use kalanis\kw_auth\Interfaces\IAuthCert;
  */
 class UrlCerts extends AMethods
 {
+    use TStamp;
+
     const INPUT_NAME = 'name';
     const INPUT_NAME2 = 'user';
     const INPUT_STAMP = 'timestamp';
@@ -43,12 +45,12 @@ class UrlCerts extends AMethods
 
     public function process(\ArrayAccess $credentials): void
     {
-        $name = $credentials->offsetExists(static::INPUT_NAME) ? $credentials->offsetGet(static::INPUT_NAME) : '' ;
-        $name = $credentials->offsetExists(static::INPUT_NAME2) ? $credentials->offsetGet(static::INPUT_NAME2) : $name ;
-        $stamp = $credentials->offsetExists(static::INPUT_STAMP) ? (int)$credentials->offsetGet(static::INPUT_STAMP) : 0 ;
+        $name = $credentials->offsetExists(static::INPUT_NAME) ? strval($credentials->offsetGet(static::INPUT_NAME)) : '' ;
+        $name = $credentials->offsetExists(static::INPUT_NAME2) ? strval($credentials->offsetGet(static::INPUT_NAME2)) : $name ;
+        $stamp = $credentials->offsetExists(static::INPUT_STAMP) ? intval(strval($credentials->offsetGet(static::INPUT_STAMP))) : 0 ;
 
         $wantedUser = $this->authenticator->getCertData((string)$name);
-        if ($wantedUser && !empty($stamp)) { // @todo: check timestamp for range
+        if ($wantedUser && !empty($stamp) && $this->checkStamp($stamp)) {
             // now we have public key and salt from our storage, so it's time to check it
 
             // digest out, salt in
@@ -57,8 +59,12 @@ class UrlCerts extends AMethods
             $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedUser->getPubSalt());
             $data = $this->uriHandler->getAddress();
 
+//print_r([$digest, $data, ]);
             // verify
-            $result = @openssl_verify((string)$data, (string)$digest, $wantedUser->getPubKey());
+            $pkey = openssl_get_publickey(base64_decode($wantedUser->getPubKey()));
+//            $result = @openssl_verify((string)$data, base64_decode($digest), $pkey, 'sha1WithRSAEncryption');
+            $result = @openssl_verify((string)$data, base64_decode($digest), base64_decode($wantedUser->getPubKey()), 'sha1WithRSAEncryption');
+//print_r([$pkey, $result, base64_decode($wantedUser->getPubKey()), openssl_error_string() ]);
             if (1 === $result) {
                 // OK
                 $this->loggedUser = $wantedUser;

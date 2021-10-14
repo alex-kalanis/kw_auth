@@ -14,6 +14,7 @@ use kalanis\kw_mapper\Records\ASimpleRecord;
  * @package kalanis\kw_auth\Sources\Mapper
  * @property int id
  * @property string name
+ * @codeCoverageIgnore remote source
  */
 class LdapRecord extends ASimpleRecord implements IUser
 {

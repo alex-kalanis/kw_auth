@@ -37,8 +37,8 @@ class HttpCerts extends AMethods
 
     public function process(\ArrayAccess $credentials): void
     {
-        $name = $this->server->offsetExists(static::INPUT_NAME) ? $this->server->offsetGet(static::INPUT_NAME) : '' ;
-        $digest = $this->server->offsetExists(static::INPUT_PASS) ? $this->server->offsetGet(static::INPUT_PASS) : '' ;
+        $name = $this->server->offsetExists(static::INPUT_NAME) ? strval($this->server->offsetGet(static::INPUT_NAME)) : '' ;
+        $digest = $this->server->offsetExists(static::INPUT_PASS) ? strval($this->server->offsetGet(static::INPUT_PASS)) : '' ;
         $wantedUser = $this->authenticator->getCertData((string)$name);
         if ($wantedUser && $digest) {
             // now we have public key and salt from our storage, so it's time to check it
@@ -47,7 +47,8 @@ class HttpCerts extends AMethods
             $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedUser->getPubSalt());
 
             // verify
-            $result = @openssl_verify((string)$this->uriHandler->getAddress(), (string)$digest, $wantedUser->getPubKey());
+            $pkey = openssl_get_publickey(base64_decode($wantedUser->getPubKey()));
+            $result = @openssl_verify((string)$this->uriHandler->getAddress(), (string)$digest, $pkey);
             if (1 === $result) {
                 // OK
                 $this->loggedUser = $wantedUser;

@@ -11,8 +11,6 @@ use kalanis\kw_auth\Interfaces\IAuthCert;
  * Class UrlHash
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via hashed values
- * @codeCoverageIgnore because access external content
- * - public on server, private on client whom manage the site
  *
  * query:
  * //dummy/u:whoami/?pass=asdf123ghjk456&timestamp=123456&digest=poiuztrewq
@@ -24,6 +22,8 @@ use kalanis\kw_auth\Interfaces\IAuthCert;
  */
 class UrlHash extends AMethods
 {
+    use TStamp;
+
     const INPUT_NAME = 'name';
     const INPUT_NAME2 = 'user';
     const INPUT_STAMP = 'timestamp';
@@ -38,7 +38,6 @@ class UrlHash extends AMethods
     protected $algorithm = '';
 
     /**
-     * Hash constructor.
      * @param IAuthCert $authenticator
      * @param AMethods|null $nextOne
      * @param Handler $uriHandler
@@ -54,12 +53,12 @@ class UrlHash extends AMethods
 
     public function process(\ArrayAccess $credentials): void
     {
-        $name = $credentials->offsetExists(static::INPUT_NAME) ? $credentials->offsetGet(static::INPUT_NAME) : '' ;
-        $name = $credentials->offsetExists(static::INPUT_NAME2) ? $credentials->offsetGet(static::INPUT_NAME2) : $name ;
-        $stamp = $credentials->offsetExists(static::INPUT_STAMP) ? (int)$credentials->offsetGet(static::INPUT_STAMP) : 0 ;
+        $name = $credentials->offsetExists(static::INPUT_NAME) ? strval($credentials->offsetGet(static::INPUT_NAME)) : '' ;
+        $name = $credentials->offsetExists(static::INPUT_NAME2) ? strval($credentials->offsetGet(static::INPUT_NAME2) ): $name ;
+        $stamp = $credentials->offsetExists(static::INPUT_STAMP) ? intval(strval($credentials->offsetGet(static::INPUT_STAMP))) : 0 ;
 
         $wantedUser = $this->authenticator->getCertData((string)$name);
-        if ($wantedUser && !empty($stamp)) { // @todo: check timestamp for range
+        if ($wantedUser && !empty($stamp) && $this->checkStamp($stamp)) {
             // now we have private salt from our storage, so it's time to check it
 
             // digest out, salt in

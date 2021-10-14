@@ -22,13 +22,16 @@ $paths->setData($params->getParams());
 
 // authorization tree
 $authenticator = new \kalanis\kw_auth\Sources\Files(
+    new \kalanis\kw_locks\Methods\FileLock(
+        $paths->getDocumentRoot() . $paths->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . \kalanis\kw_locks\Interfaces\ILock::LOCK_FILE
+    ),
     $paths->getDocumentRoot() . $paths->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'web',
     strval(\kalanis\kw_confs\Config::get('Admin', 'admin.salt'))
 );
 $session = new \kalanis\kw_input\Simplified\SessionAdapter(); // this one represents session info
 $server = new \kalanis\kw_input\Simplified\ServerAdapter(); // this one represents server info
 
-class ExBanned extends \kalanis\kw_auth\Methods\Banned
+class ExtBanned extends \kalanis\kw_auth\Methods\Banned
 {
     protected function getBanPath(): string
     {
@@ -38,8 +41,8 @@ class ExBanned extends \kalanis\kw_auth\Methods\Banned
 }
 
 /// Auth itself
-\kalanis\kw_auth\Auth::init(
-    new ExBanned($authenticator,
+\kalanis\kw_auth\Auth::fill(
+    new ExtBanned($authenticator,
         new \kalanis\kw_auth\Methods\UrlCerts($authenticator,
             new \kalanis\kw_auth\Methods\TimedSessions($authenticator,
                 new \kalanis\kw_auth\Methods\CountedSessions($authenticator,
@@ -56,7 +59,7 @@ class ExBanned extends \kalanis\kw_auth\Methods\Banned
     )
 );
 /// this one is that dummy for testing
-//\kalanis\kw_auth\Auth::init(
+//\kalanis\kw_auth\Auth::fill(
 //    new \kalanis\kw_auth\Methods\Everytime(null, null)
 //);
 
@@ -74,16 +77,17 @@ abstract class AAuthenticate
     {
         try {
             $sources = [\kalanis\kw_input\Interfaces\IEntry::SOURCE_EXTERNAL, \kalanis\kw_input\Interfaces\IEntry::SOURCE_CLI, \kalanis\kw_input\Interfaces\IEntry::SOURCE_POST, \kalanis\kw_input\Interfaces\IEntry::SOURCE_GET];
-            \kalanis\kw_auth\Auth::findMethod($inputs->getInObject(null, $sources));
-            if (\kalanis\kw_auth\Auth::getMethod() && \kalanis\kw_auth\Auth::getMethod()->isAuthorized()) {
-                $this->user = \kalanis\kw_auth\Auth::getMethod()->getLoggedUser();
+            $authTree = \kalanis\kw_auth\Auth::getTree();
+            $authTree->findMethod($inputs->getInObject(null, $sources));
+            if ($authTree->getMethod() && $authTree->getMethod()->isAuthorized()) {
+                $this->user = $authTree->getMethod()->getLoggedUser();
                 if (in_array($this->user->getClass(), $this->allowedAccessClasses())) {
                     $this->run();
                 } else {
                     throw new \kalanis\kw_auth\AuthException('Restricted access', 405);
                 }
             }
-        } catch (\kalanis\kw_auth\AuthException $ex) {
+        } catch (\kalanis\kw_auth\AuthException | \kalanis\kw_locks\LockException $ex) {
             $this->error = $ex;
         }
     }

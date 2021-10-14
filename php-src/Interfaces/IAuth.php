@@ -4,6 +4,7 @@ namespace kalanis\kw_auth\Interfaces;
 
 
 use kalanis\kw_auth\AuthException;
+use kalanis\kw_locks\LockException;
 
 
 /**
@@ -18,6 +19,7 @@ interface IAuth
      * @param string $userName
      * @return IUser|null
      * @throws AuthException
+     * @throws LockException
      */
     public function getDataOnly(string $userName): ?IUser;
 
@@ -27,6 +29,7 @@ interface IAuth
      * @param string[] $params
      * @return IUser|null
      * @throws AuthException
+     * @throws LockException
      */
     public function authenticate(string $userName, array $params = []): ?IUser;
 }
