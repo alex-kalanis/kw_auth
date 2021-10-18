@@ -44,7 +44,7 @@ class HttpDigest extends AMethods
             }
 
             // verify
-            $A1 = md5($data['username'] . ':' . $this->realm . ':' . $wantedUser->getPubKey()); // @todo: srsly, pubkey?! nothing better?
+            $A1 = md5($data['username'] . ':' . $this->realm . ':' . $wantedUser->getPubKey()); // @todo: srsly, pubkey?! have nothing better?
             $A2 = md5($this->server->offsetGet(static::INPUT_METHOD) . ':' . $data['uri']);
             $valid_response = md5($A1 . ':' . $data['nonce'] . ':' . $data['nc'] . ':' . $data['cnonce'] . ':' . $data['qop'] . ':' . $A2);
 
@@ -84,10 +84,10 @@ class HttpDigest extends AMethods
         $data = [];
         $keys = implode('|', array_keys($needed_parts));
 
-        preg_match_all('@(' . $keys . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', $txt, $matches, PREG_SET_ORDER);
+        preg_match_all('@(' . $keys . ')=(?:([\'"])([^\2]*?)\2|([^\s,]+))@', $txt, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $m) {
-            $data[$m[1]] = $m[3] ? $m[3] : $m[4];
+            $data[$m[1]] = $m[3] ?: ( $m[4] ?? '' );
             unset($needed_parts[$m[1]]);
         }
 

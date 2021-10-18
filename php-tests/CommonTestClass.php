@@ -83,7 +83,7 @@ class MockAuthCert extends MockAuth implements IAuthCert
 
     public function getCertData(string $userName): ?IUserCert
     {
-        return $this->expectedUser;
+        return empty($userName) ? null : $this->expectedUser;
     }
 }
 

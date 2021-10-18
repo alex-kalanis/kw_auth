@@ -72,7 +72,7 @@ class HashTest extends CommonTestClass
                 true,
                 $mockUser,
                 'lkjhgfdsa',
-                ['pass' => 'lkjhgfdsa', Methods\UrlHash::INPUT_STAMP => time(), ],
+                ['pass' => 'lkjhgfdsa', Methods\UrlHash::INPUT_NAME => 'someone', Methods\UrlHash::INPUT_STAMP => time(), ],
             ],
         ];
     }
