@@ -12,6 +12,7 @@ use kalanis\kw_auth\Interfaces\IAuth;
  * Class CountedSessions
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via Session - count tries
+ * @codeCoverageIgnore external resource, Cannot start session when headers already sent
  */
 class CountedSessions extends AMethods
 {

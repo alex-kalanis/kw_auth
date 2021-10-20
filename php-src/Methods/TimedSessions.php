@@ -11,6 +11,7 @@ use kalanis\kw_auth\Interfaces\IAuth;
  * Class TimedSessions
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via Session - timer for valid authentication
+ * @codeCoverageIgnore external resource, Cannot start session when headers already sent
  */
 class TimedSessions extends Sessions
 {

@@ -11,6 +11,7 @@ use kalanis\kw_auth\Interfaces\IAuth;
  * Class Sessions
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via Session
+ * @codeCoverageIgnore external resource, Cannot start session when headers already sent
  */
 class Sessions extends AMethods
 {
