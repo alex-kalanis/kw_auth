@@ -5,9 +5,11 @@ namespace MethodsTests;
 
 use CommonTestClass;
 use kalanis\kw_address_handler\Sources;
+use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\FileCertUser;
 use kalanis\kw_auth\Interfaces\IUserCert;
 use kalanis\kw_auth\Methods;
+use kalanis\kw_locks\LockException;
 
 
 class DigestTest extends CommonTestClass
@@ -21,8 +23,8 @@ class DigestTest extends CommonTestClass
      * @param IUserCert|null $expectedUser    chce cert data, kde je pub key a v nem sdileny klic
      * @param string $expectedPass
      * @param array $incomingCredentials    vlastne _SERVER, kam se nacpou data z klienta, ktera se pak rozdeluji a kontroluji
-     * @throws \kalanis\kw_auth\AuthException
-     * @throws \kalanis\kw_locks\LockException
+     * @throws AuthException
+     * @throws LockException
      * @dataProvider httpDigestProvider
      */
     public function testHttpDigest(string $address, bool $isAuth, ?IUserCert $expectedUser, string $expectedPass, array $incomingCredentials): void

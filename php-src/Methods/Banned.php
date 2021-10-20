@@ -7,6 +7,7 @@ use ArrayAccess;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces\IAuth;
 use kalanis\kw_bans\Bans;
+use kalanis\kw_bans\BanException;
 use kalanis\kw_bans\Sources\File;
 use kalanis\kw_confs\Config;
 
@@ -36,6 +37,12 @@ class Banned extends AMethods
     /** @var ArrayAccess */
     protected $server = null;
 
+    /**
+     * @param IAuth|null $authenticator
+     * @param AMethods|null $nextOne
+     * @param ArrayAccess $server
+     * @throws BanException
+     */
     public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $server)
     {
         parent::__construct($authenticator, $nextOne);
@@ -43,6 +50,10 @@ class Banned extends AMethods
         $this->libBan = $this->getBans();
     }
 
+    /**
+     * @return Bans
+     * @throws BanException
+     */
     protected function getBans(): Bans
     {
         $banPath = $this->getBanPath();

@@ -202,7 +202,7 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
 
         if ($user instanceof IUserCert) {
             $certSalt = $this->stripChars($user->getPubSalt());
-            $certKey = $this->stripChars($user->getPubKey());
+            $certKey = $user->getPubKey();
         }
 
         # no everything need is set
@@ -243,7 +243,7 @@ class Files implements IAuthCert, IAccessGroups, IAccessClasses
             static::SH_CHANGE_LAST => time(),
             static::SH_CHANGE_NEXT => time() + $this->changeInterval,
             static::SH_CERT_SALT => $certSalt,
-            static::SH_CERT_KEY => base64_encode($certKey),
+            static::SH_CERT_KEY => $certKey ? base64_encode($certKey) : '',
         ];
         ksort($newUserShade);
         $shadeLines[] = $newUserShade;

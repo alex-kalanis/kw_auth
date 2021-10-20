@@ -6,8 +6,10 @@ namespace MethodsTests;
 use CommonTestClass;
 use kalanis\kw_address_handler\Handler;
 use kalanis\kw_address_handler\Sources;
+use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\FileCertUser;
 use kalanis\kw_auth\Methods;
+use kalanis\kw_locks\LockException;
 
 
 class CertsTest extends CommonTestClass
@@ -41,8 +43,8 @@ class CertsTest extends CommonTestClass
     }
 
     /**
-     * @throws \kalanis\kw_auth\AuthException
-     * @throws \kalanis\kw_locks\LockException
+     * @throws AuthException
+     * @throws LockException
      * Cannot use provider for this stuff
      */
     public function testUrlCert(): void
@@ -77,8 +79,8 @@ class CertsTest extends CommonTestClass
     }
 
     /**
-     * @throws \kalanis\kw_auth\AuthException
-     * @throws \kalanis\kw_locks\LockException
+     * @throws AuthException
+     * @throws LockException
      * Cannot use provider for this stuff
      */
     public function testHttpCert(): void

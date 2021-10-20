@@ -4,14 +4,16 @@ namespace MethodsTests;
 
 
 use CommonTestClass;
+use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Methods;
+use kalanis\kw_locks\LockException;
 
 
 class EverytimeTest extends CommonTestClass
 {
     /**
-     * @throws \kalanis\kw_auth\AuthException
-     * @throws \kalanis\kw_locks\LockException
+     * @throws AuthException
+     * @throws LockException
      */
     public function testMethod(): void
     {
