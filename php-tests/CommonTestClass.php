@@ -5,6 +5,9 @@ use kalanis\kw_auth\Interfaces\IAuth;
 use kalanis\kw_auth\Interfaces\IAuthCert;
 use kalanis\kw_auth\Interfaces\IUser;
 use kalanis\kw_auth\Interfaces\IUserCert;
+use kalanis\kw_locks\LockException;
+use kalanis\kw_locks\Methods as LockMethod;
+use kalanis\kw_locks\Interfaces as LockInt;
 use PHPUnit\Framework\TestCase;
 
 
@@ -14,6 +17,16 @@ use PHPUnit\Framework\TestCase;
  */
 class CommonTestClass extends TestCase
 {
+    /**
+     * @return LockMethod\FileLock
+     * @throws LockException
+     */
+    protected function getLockPath(): LockMethod\FileLock
+    {
+        return new LockMethod\FileLock(
+            __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . LockInt\ILock::LOCK_FILE
+        );
+    }
 }
 
 

@@ -5,6 +5,7 @@ namespace SourcesTests;
 
 use CommonTestClass;
 use kalanis\kw_auth\AuthException;
+use kalanis\kw_auth\Sources\Classes;
 use kalanis\kw_auth\Sources\TFiles;
 use kalanis\kw_auth\Sources\TLines;
 
@@ -73,7 +74,7 @@ class BasicTest extends CommonTestClass
     {
         $lib = new MockFiles();
         $content = $lib->open($this->sourcePath);
-        $this->assertnotEmpty($content);
+        $this->assertNotEmpty($content);
         $lib->save($this->testingPath, $content);
         $this->expectException(AuthException::class);
         $lib->save($this->testingPath, $content);
@@ -87,6 +88,14 @@ class BasicTest extends CommonTestClass
         $lib = new MockFiles();
         $this->expectException(AuthException::class);
         $lib->open($this->testingPath);
+    }
+
+    public function testClasses(): void
+    {
+        $lib = new Classes();
+        $data = $lib->readClasses();
+        $this->assertEquals('Maintainer', $data[1]);
+        $this->assertEquals('User', $data[3]);
     }
 }
 

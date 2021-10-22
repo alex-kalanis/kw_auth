@@ -10,19 +10,16 @@ use kalanis\kw_auth\Interfaces\IAccessClasses;
 use kalanis\kw_auth\Interfaces\IAuth;
 use kalanis\kw_auth\Interfaces\IUser;
 use kalanis\kw_locks\Interfaces\ILock;
+use kalanis\kw_locks\LockException;
 
 
 /**
  * Class File
  * @package kalanis\kw_auth\AuthMethods
  * Authenticate via file
- * @codeCoverageIgnore because access external content
  */
-class File implements IAuth, IAccessAccounts
+class File extends AFile implements IAuth, IAccessAccounts
 {
-    use TFiles;
-    use TLines;
-
     const PW_ID = 0;
     const PW_NAME = 1;
     const PW_PASS = 2;
@@ -30,10 +27,14 @@ class File implements IAuth, IAccessAccounts
     const PW_CLASS = 4;
     const PW_DISPLAY = 5;
     const PW_DIR = 6;
+    const PW_FEED = 7;
 
     protected $lock = null;
-    protected $path = '';
 
+    /**
+     * @param ILock $lock
+     * @param string $path use full path with file name
+     */
     public function __construct(ILock $lock, string $path)
     {
         $this->path = $path;
@@ -49,9 +50,11 @@ class File implements IAuth, IAccessAccounts
         $pass = $params['password'];
 
         // load from password
+        // @codeCoverageIgnoreStart
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }
+        // @codeCoverageIgnoreEnd
         $passLines = $this->openFile($this->path);
         foreach ($passLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
@@ -68,9 +71,11 @@ class File implements IAuth, IAccessAccounts
         $name = $this->stripChars($userName);
 
         // load from password
+        // @codeCoverageIgnoreStart
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }
+        // @codeCoverageIgnoreEnd
         $passwordLines = $this->openFile($this->path);
         foreach ($passwordLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
@@ -104,9 +109,11 @@ class File implements IAuth, IAccessAccounts
         if (empty($userName) || empty($directory) || empty($password)) {
             throw new AuthException('MISSING_NECESSARY_PARAMS');
         }
+        // @codeCoverageIgnoreStart
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }
+        // @codeCoverageIgnoreEnd
 
         $uid = IUser::LOWEST_USER_ID;
         $this->lock->create();
@@ -126,6 +133,7 @@ class File implements IAuth, IAccessAccounts
             static::PW_CLASS => empty($user->getClass()) ? IAccessClasses::CLASS_USER : $user->getClass() ,
             static::PW_DISPLAY => empty($displayName) ? $userName : $displayName,
             static::PW_DIR => $directory,
+            static::PW_FEED => '',
         ];
         ksort($newUserPass);
         $passLines[] = $newUserPass;
@@ -136,11 +144,18 @@ class File implements IAuth, IAccessAccounts
         $this->lock->delete();
     }
 
+    /**
+     * @return IUser[]
+     * @throws AuthException
+     * @throws LockException
+     */
     public function readAccounts(): array
     {
+        // @codeCoverageIgnoreStart
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }
+        // @codeCoverageIgnoreEnd
 
         $passLines = $this->openFile($this->path);
         $result = [];
@@ -157,9 +172,11 @@ class File implements IAuth, IAccessAccounts
         $directory = $this->stripChars($user->getDir());
         $displayName = $this->stripChars($user->getDisplayName());
 
+        // @codeCoverageIgnoreStart
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }
+        // @codeCoverageIgnoreEnd
 
         $this->lock->create();
         $passwordLines = $this->openFile($this->path);
@@ -181,9 +198,11 @@ class File implements IAuth, IAccessAccounts
     {
         $name = $this->stripChars($userName);
         // load from shadow
+        // @codeCoverageIgnoreStart
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }
+        // @codeCoverageIgnoreEnd
 
         $changed = false;
         $this->lock->create();
@@ -204,9 +223,11 @@ class File implements IAuth, IAccessAccounts
     public function deleteAccount(string $userName): void
     {
         $name = $this->stripChars($userName);
+        // @codeCoverageIgnoreStart
         if ($this->lock->has()) {
             throw new AuthException('Someone works with authentication. Please try again a bit later.');
         }
+        // @codeCoverageIgnoreEnd
 
         $changed = false;
         $this->lock->create();

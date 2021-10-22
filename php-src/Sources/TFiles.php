@@ -25,7 +25,7 @@ trait TFiles
         if (false === $content) {
             throw new AuthException('File with passwords not found in preselect path');
         }
-        return array_map([$this, 'explosion'], $content);
+        return array_map([$this, 'explosion'], array_map('trim', $content));
     }
 
     abstract public function explosion(string $input): array;

@@ -25,6 +25,6 @@ trait TLines
 
     public function stripChars(string $input): string
     {
-        return preg_replace('#[^a-zA-Z0-9\,\*\/\.\-\+\?\_\§\"\!\/\(\)\|\€\'\\\&\@\{\}\<\>\#]#', '', $input);
+        return preg_replace('#[^a-zA-Z0-9\,\*\/\.\-\+\?\_\§\"\!\/\(\)\|\€\'\\\&\@\{\}\<\>\#\ ]#', '', $input);
     }
 }

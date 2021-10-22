@@ -12,8 +12,6 @@ use kalanis\kw_auth\AuthTree;
 use kalanis\kw_auth\Methods;
 use kalanis\kw_auth\Sources;
 use kalanis\kw_locks\LockException;
-use kalanis\kw_locks\Methods as LockMethod;
-use kalanis\kw_locks\Interfaces as LockInt;
 
 
 class AuthTest extends CommonTestClass
@@ -74,9 +72,7 @@ class AuthTest extends CommonTestClass
     protected function fileSources(): Sources\Files
     {
         return new Sources\Files(
-            new LockMethod\FileLock(
-                __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . LockInt\ILock::LOCK_FILE
-            ),
+            $this->getLockPath(),
             __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data',
             'yxcvbnmasdfghjklqwertzuiop0123456789'
         );

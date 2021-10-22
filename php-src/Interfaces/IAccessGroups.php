@@ -23,6 +23,14 @@ interface IAccessGroups
     public function createGroup(IGroup $group): void;
 
     /**
+     * @param int $groupId
+     * @return IGroup|null
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function getGroupDataOnly(int $groupId): ?IGroup;
+
+    /**
      * @return IGroup[]
      * @throws AuthException
      * @throws LockException
