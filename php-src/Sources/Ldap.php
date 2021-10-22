@@ -10,7 +10,7 @@ use kalanis\kw_auth\Interfaces\IUser;
 
 /**
  * Class Ldap
- * @package kalanis\kw_auth\AuthMethods
+ * @package kalanis\kw_auth\Sources
  * Authenticate via ldap
  * need kw_mapper!
  * @codeCoverageIgnore because access external content

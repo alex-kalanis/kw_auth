@@ -5,9 +5,10 @@ namespace SourcesTests;
 
 use CommonTestClass;
 use kalanis\kw_auth\AuthException;
-use kalanis\kw_auth\Sources\Classes;
-use kalanis\kw_auth\Sources\TFiles;
-use kalanis\kw_auth\Sources\TLines;
+use kalanis\kw_auth\Data\TExpire;
+use kalanis\kw_auth\Interfaces\IExpire;
+use kalanis\kw_auth\Sources;
+use kalanis\kw_locks\Interfaces\ILock;
 
 
 class BasicTest extends CommonTestClass
@@ -92,24 +93,63 @@ class BasicTest extends CommonTestClass
 
     public function testClasses(): void
     {
-        $lib = new Classes();
+        $lib = new Sources\Classes();
         $data = $lib->readClasses();
         $this->assertEquals('Maintainer', $data[1]);
         $this->assertEquals('User', $data[3]);
+    }
+
+    public function testLockEmpty(): void
+    {
+        $lib = new MockAuthLock(null);
+        $this->expectException(AuthException::class);
+        $lib->check();
+    }
+
+    public function testLockSimple(): void
+    {
+        $lib = new MockAuthLock($this->getLockPath());
+        $lib->check();
+        $this->assertTrue(true); // it runs, no errors
+    }
+
+    public function testLockMix(): void
+    {
+        $lock = $this->getLockPath();
+        $lib = new MockAuthLock($lock);
+        $lock->create();
+        $this->expectException(AuthException::class);
+        $lib->check();
+    }
+
+    public function testExpire(): void
+    {
+        $target = new Expire();
+        $lib = new MockExpiration(700, 100);
+        $this->assertFalse($target->willExpire());
+
+        $lib->setExpirationNotice($target, 650);
+        $this->assertTrue($target->willExpire());
+
+        $lib->setExpirationNotice($target, 750);
+        $this->assertFalse($target->willExpire());
+
+        $lib->updateExpirationTime($target);
+        $this->assertEquals(1350, $target->getExpireTime());
     }
 }
 
 
 class MockLines
 {
-    use TLines;
+    use Sources\TLines;
 }
 
 
 class MockFiles
 {
-    use TFiles;
-    use TLines;
+    use Sources\TFiles;
+    use Sources\TLines;
 
     /**
      * @param string $path
@@ -130,4 +170,42 @@ class MockFiles
     {
         $this->saveFile($path, $content);
     }
+}
+
+
+class MockAuthLock
+{
+    use Sources\TAuthLock;
+
+    public function __construct(?ILock $lock)
+    {
+        $this->initAuthLock($lock);
+    }
+
+    public function check(): void
+    {
+        $this->checkLock();
+    }
+}
+
+
+class MockExpiration
+{
+    use Sources\TExpiration;
+
+    public function __construct(int $changeInterval, int $changeNoticeBefore)
+    {
+        $this->initExpiry($changeInterval, $changeNoticeBefore);
+    }
+
+    protected function getTime(): int
+    {
+        return 650;
+    }
+}
+
+
+class Expire implements IExpire
+{
+    use TExpire;
 }

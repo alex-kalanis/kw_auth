@@ -15,11 +15,13 @@ use kalanis\kw_locks\LockException;
 
 /**
  * Class File
- * @package kalanis\kw_auth\AuthMethods
+ * @package kalanis\kw_auth\Sources
  * Authenticate via file
  */
 class File extends AFile implements IAuth, IAccessAccounts
 {
+    use TAuthLock;
+
     const PW_ID = 0;
     const PW_NAME = 1;
     const PW_PASS = 2;
@@ -29,8 +31,6 @@ class File extends AFile implements IAuth, IAccessAccounts
     const PW_DIR = 6;
     const PW_FEED = 7;
 
-    protected $lock = null;
-
     /**
      * @param ILock $lock
      * @param string $path use full path with file name
@@ -38,7 +38,7 @@ class File extends AFile implements IAuth, IAccessAccounts
     public function __construct(ILock $lock, string $path)
     {
         $this->path = $path;
-        $this->lock = $lock;
+        $this->initAuthLock($lock);
     }
 
     public function authenticate(string $userName, array $params = []): ?IUser
@@ -49,12 +49,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         $name = $this->stripChars($userName);
         $pass = $params['password'];
 
-        // load from password
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
         $passLines = $this->openFile($this->path);
         foreach ($passLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
@@ -71,11 +66,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         $name = $this->stripChars($userName);
 
         // load from password
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
         $passwordLines = $this->openFile($this->path);
         foreach ($passwordLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
@@ -109,11 +100,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         if (empty($userName) || empty($directory) || empty($password)) {
             throw new AuthException('MISSING_NECESSARY_PARAMS');
         }
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $uid = IUser::LOWEST_USER_ID;
         $this->lock->create();
@@ -151,11 +138,7 @@ class File extends AFile implements IAuth, IAccessAccounts
      */
     public function readAccounts(): array
     {
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $passLines = $this->openFile($this->path);
         $result = [];
@@ -172,11 +155,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         $directory = $this->stripChars($user->getDir());
         $displayName = $this->stripChars($user->getDisplayName());
 
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $this->lock->create();
         $passwordLines = $this->openFile($this->path);
@@ -198,11 +177,7 @@ class File extends AFile implements IAuth, IAccessAccounts
     {
         $name = $this->stripChars($userName);
         // load from shadow
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $changed = false;
         $this->lock->create();
@@ -223,11 +198,7 @@ class File extends AFile implements IAuth, IAccessAccounts
     public function deleteAccount(string $userName): void
     {
         $name = $this->stripChars($userName);
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $changed = false;
         $this->lock->create();

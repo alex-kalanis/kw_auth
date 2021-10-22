@@ -13,18 +13,18 @@ use kalanis\kw_locks\LockException;
 
 /**
  * Class Groups
- * @package kalanis\kw_auth\AuthMethods
+ * @package kalanis\kw_auth\Sources
  * Authenticate via files - manage groups
  */
 class Groups extends AFile implements IAccessGroups
 {
+    use TAuthLock;
+
     const GRP_ID = 0;
     const GRP_NAME = 1;
     const GRP_AUTHOR = 2;
     const GRP_DESC = 3;
     const GRP_FEED = 4;
-
-    protected $lock = null;
 
     /**
      * @param ILock $lock
@@ -32,7 +32,7 @@ class Groups extends AFile implements IAccessGroups
      */
     public function __construct(ILock $lock, string $path)
     {
-        $this->lock = $lock;
+        $this->initAuthLock($lock);
         $this->path = $path;
     }
 
@@ -46,11 +46,7 @@ class Groups extends AFile implements IAccessGroups
         if (empty($userId) || empty($groupName)) {
             throw new AuthException('MISSING_NECESSARY_PARAMS');
         }
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $gid = 0;
         $this->lock->create();
@@ -80,11 +76,7 @@ class Groups extends AFile implements IAccessGroups
 
     public function getGroupDataOnly(int $groupId): ?IGroup
     {
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
         $groupLines = $this->openFile($this->path);
         foreach ($groupLines as &$line) {
             if ($line[static::GRP_ID] == $groupId) {
@@ -101,11 +93,7 @@ class Groups extends AFile implements IAccessGroups
      */
     public function readGroup(): array
     {
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $groupLines = $this->openFile($this->path);
         $result = [];
@@ -133,11 +121,7 @@ class Groups extends AFile implements IAccessGroups
         $groupName = $this->stripChars($group->getGroupName());
         $groupDesc = $this->stripChars($group->getGroupDesc());
 
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $this->lock->create();
         $groupLines = $this->openFile($this->path);
@@ -155,11 +139,7 @@ class Groups extends AFile implements IAccessGroups
 
     public function deleteGroup(int $groupId): void
     {
-        // @codeCoverageIgnoreStart
-        if ($this->lock->has()) {
-            throw new AuthException('Someone works with authentication. Please try again a bit later.');
-        }
-        // @codeCoverageIgnoreEnd
+        $this->checkLock();
 
         $changed = false;
         $this->lock->create();
