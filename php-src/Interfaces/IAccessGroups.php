@@ -15,6 +15,13 @@ use kalanis\kw_locks\LockException;
  */
 interface IAccessGroups
 {
+    // default positions
+    const GRP_ID = 0;
+    const GRP_NAME = 1;
+    const GRP_AUTHOR = 2;
+    const GRP_DESC = 3;
+    const GRP_FEED = 4;
+
     /**
      * @param IGroup $group
      * @throws AuthException

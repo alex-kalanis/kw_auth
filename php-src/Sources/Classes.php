@@ -13,15 +13,5 @@ use kalanis\kw_auth\Interfaces\IAccessClasses;
  */
 class Classes implements IAccessClasses
 {
-    /**
-     * @return string[]
-     */
-    public function readClasses(): array
-    {
-        return [
-            IAccessClasses::CLASS_MAINTAINER => 'Maintainer',
-            IAccessClasses::CLASS_ADMIN => 'Admin',
-            IAccessClasses::CLASS_USER => 'User',
-        ];
-    }
+    use TClasses;
 }

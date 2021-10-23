@@ -233,16 +233,4 @@ class FilesTest extends CommonTestClass
         $user->setData(3, $name, 1001, 'Testing group');
         return $user;
     }
-
-    /**
-     * @throws LockException
-     */
-    public function testClasses(): void
-    {
-        $lib = $this->fileSources();
-        $data = $lib->readClasses();
-        $this->assertEquals('Maintainer', $data[1]);
-        $this->assertEquals('User', $data[3]);
-    }
-
 }
