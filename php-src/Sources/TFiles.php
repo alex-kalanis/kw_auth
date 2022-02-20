@@ -5,6 +5,7 @@ namespace kalanis\kw_auth\Sources;
 
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces\IFile;
+use kalanis\kw_auth\TTranslate;
 
 
 /**
@@ -14,6 +15,8 @@ use kalanis\kw_auth\Interfaces\IFile;
  */
 trait TFiles
 {
+    use TTranslate;
+
     /**
      * @param string $path
      * @return string[][]
@@ -23,7 +26,7 @@ trait TFiles
     {
         $content = @file($path);
         if (false === $content) {
-            throw new AuthException('File with passwords not found in preselect path');
+            throw new AuthException($this->getLang()->kauPassFileNotFound($path));
         }
         return array_map([$this, 'explosion'], array_map('trim', $content));
     }
@@ -40,7 +43,7 @@ trait TFiles
         $content = implode(IFile::CRLF, array_map([$this, 'implosion'], $lines)) . IFile::CRLF;
         $result = @file_put_contents($path, $content);
         if (false === $result) {
-            throw new AuthException('File with passwords cannot be saved in preselect path');
+            throw new AuthException($this->getLang()->kauPassFileNotSave($path));
         }
     }
 

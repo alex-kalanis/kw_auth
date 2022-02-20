@@ -6,6 +6,8 @@ namespace kalanis\kw_auth\Methods;
 use ArrayAccess;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces\IAuth;
+use kalanis\kw_auth\Interfaces\IKATranslations;
+use kalanis\kw_auth\TTranslate;
 
 
 /**
@@ -16,15 +18,18 @@ use kalanis\kw_auth\Interfaces\IAuth;
  */
 class CountedSessions extends AMethods
 {
+    use TTranslate;
+
     const INPUT_NAME = 'name';
     const INPUT_COUNTER = 'log_count';
 
     protected $maxTries = 100;
     protected $session = null;
 
-    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $session, int $maxTries = 100)
+    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $session, int $maxTries = 100, ?IKATranslations $lang = null)
     {
         parent::__construct($authenticator, $nextOne);
+        $this->setLang($lang);
         $this->session = $session;
         $this->maxTries = $maxTries;
     }
@@ -41,7 +46,7 @@ class CountedSessions extends AMethods
             if ($this->session->offsetGet(static::INPUT_COUNTER) < $this->maxTries) {
                 $this->session->offsetSet(static::INPUT_COUNTER, $this->session->offsetGet(static::INPUT_COUNTER) + 1);
             } else {
-                throw new AuthException('Too many tries!', 429);
+                throw new AuthException($this->getLang()->kauTooManyTries(), 429);
             }
         }
     }

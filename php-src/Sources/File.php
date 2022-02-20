@@ -8,6 +8,7 @@ use kalanis\kw_auth\Data\FileUser;
 use kalanis\kw_auth\Interfaces\IAccessAccounts;
 use kalanis\kw_auth\Interfaces\IAccessClasses;
 use kalanis\kw_auth\Interfaces\IAuth;
+use kalanis\kw_auth\Interfaces\IKATranslations;
 use kalanis\kw_auth\Interfaces\IUser;
 use kalanis\kw_locks\Interfaces\ILock;
 use kalanis\kw_locks\LockException;
@@ -34,9 +35,11 @@ class File extends AFile implements IAuth, IAccessAccounts
     /**
      * @param ILock $lock
      * @param string $path use full path with file name
+     * @param IKATranslations|null $lang
      */
-    public function __construct(ILock $lock, string $path)
+    public function __construct(ILock $lock, string $path, ?IKATranslations $lang = null)
     {
+        $this->setLang($lang);
         $this->path = $path;
         $this->initAuthLock($lock);
     }
@@ -44,7 +47,7 @@ class File extends AFile implements IAuth, IAccessAccounts
     public function authenticate(string $userName, array $params = []): ?IUser
     {
         if (empty($params['password'])) {
-            throw new AuthException('You must set the password to check!');
+            throw new AuthException($this->getLang()->kauPassMustBeSet());
         }
         $name = $this->stripChars($userName);
         $pass = $params['password'];
@@ -98,7 +101,7 @@ class File extends AFile implements IAuth, IAccessAccounts
 
         # no everything need is set
         if (empty($userName) || empty($directory) || empty($password)) {
-            throw new AuthException('MISSING_NECESSARY_PARAMS');
+            throw new AuthException($this->getLang()->kauPassMissParam());
         }
         $this->checkLock();
 

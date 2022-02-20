@@ -23,6 +23,10 @@ class AuthTest extends CommonTestClass
             new Methods\Everytime(null, null)
         );
         $this->assertNotEmpty(Auth::getTree());
+
+        $this->assertEmpty(Auth::getAuthenticator());
+        Auth::setAuthenticator('pass auth class like IAuth to module space');
+        $this->assertNotEmpty(Auth::getAuthenticator());
     }
 
     /**

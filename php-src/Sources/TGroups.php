@@ -33,7 +33,7 @@ trait TGroups
 
         # no everything need is set
         if (empty($userId) || empty($groupName)) {
-            throw new AuthException('MISSING_NECESSARY_PARAMS');
+            throw new AuthException($this->getLang()->kauGroupMissParam());
         }
         $this->checkLock();
 

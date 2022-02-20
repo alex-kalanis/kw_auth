@@ -8,6 +8,7 @@ use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\TExpire;
 use kalanis\kw_auth\Interfaces\IExpire;
 use kalanis\kw_auth\Sources;
+use kalanis\kw_auth\Translations;
 use kalanis\kw_locks\Interfaces\ILock;
 
 
@@ -74,6 +75,7 @@ class BasicTest extends CommonTestClass
     public function testFiles(): void
     {
         $lib = new MockFiles();
+        $lib->setLang(new Translations());
         $content = $lib->open($this->sourcePath);
         $this->assertNotEmpty($content);
         $lib->save($this->testingPath, $content);
@@ -87,6 +89,7 @@ class BasicTest extends CommonTestClass
     public function testFilesOpenCrash(): void
     {
         $lib = new MockFiles();
+        $lib->setLang(new Translations());
         $this->expectException(AuthException::class);
         $lib->open($this->testingPath);
     }
@@ -102,6 +105,7 @@ class BasicTest extends CommonTestClass
     public function testLockEmpty(): void
     {
         $lib = new MockAuthLock(null);
+        $lib->setLang(new Translations());
         $this->expectException(AuthException::class);
         $lib->check();
     }
@@ -109,6 +113,7 @@ class BasicTest extends CommonTestClass
     public function testLockSimple(): void
     {
         $lib = new MockAuthLock($this->getLockPath());
+        $lib->setLang(new Translations());
         $lib->check();
         $this->assertTrue(true); // it runs, no errors
     }
@@ -117,6 +122,7 @@ class BasicTest extends CommonTestClass
     {
         $lock = $this->getLockPath();
         $lib = new MockAuthLock($lock);
+        $lib->setLang(new Translations());
         $lock->create();
         $this->expectException(AuthException::class);
         $lib->check();

@@ -9,6 +9,7 @@ use kalanis\kw_auth\Interfaces\IAccessClasses;
 use kalanis\kw_auth\Interfaces\IAccessGroups;
 use kalanis\kw_auth\Interfaces\IAuthCert;
 use kalanis\kw_auth\Interfaces\IFile;
+use kalanis\kw_auth\Interfaces\IKATranslations;
 use kalanis\kw_auth\Interfaces\IUser;
 use kalanis\kw_auth\Interfaces\IUserCert;
 use kalanis\kw_locks\Interfaces\ILock;
@@ -44,8 +45,9 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
 
     protected $salt = '';
 
-    public function __construct(ILock $lock, string $dir, string $salt)
+    public function __construct(ILock $lock, string $dir, string $salt, ?IKATranslations $lang = null)
     {
+        $this->setLang($lang);
         $this->initAuthLock($lock);
         $this->path = $dir;
         $this->salt = $salt;
@@ -54,7 +56,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     public function authenticate(string $userName, array $params = []): ?IUser
     {
         if (empty($params['password'])) {
-            throw new AuthException('You must set the password to check!');
+            throw new AuthException($this->getLang()->kauPassMustBeSet());
         }
         $time = time();
         $name = $this->stripChars($userName);
@@ -188,7 +190,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
 
         # no everything need is set
         if (empty($userName) || empty($directory) || empty($password)) {
-            throw new AuthException('MISSING_NECESSARY_PARAMS');
+            throw new AuthException($this->getLang()->kauPassMissParam());
         }
         $this->checkLock();
 
@@ -272,10 +274,19 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         $this->checkLock();
 
         $this->lock->create();
+        $oldName = null;
         $passwordLines = $this->openPassword();
         foreach ($passwordLines as &$line) {
-            if ($line[static::PW_NAME] == $userName) {
+            if (($line[static::PW_NAME] == $userName) && ($line[static::PW_ID] != $user->getAuthId())) {
+                $this->lock->delete();
+                throw new AuthException($this->getLang()->kauPassLoginExists());
+            }
+            if ($line[static::PW_ID] == $user->getAuthId()) {
                 // REFILL
+                if (!empty($userName) && $userName != $line[static::PW_NAME]) {
+                    $oldName = $line[static::PW_NAME];
+                    $line[static::PW_NAME] = $userName;
+                }
                 $line[static::PW_GROUP] = !empty($user->getGroup()) ? $user->getGroup() : $line[static::PW_GROUP] ;
                 $line[static::PW_CLASS] = !empty($user->getClass()) ? $user->getClass() : $line[static::PW_CLASS] ;
                 $line[static::PW_DISPLAY] = !empty($displayName) ? $displayName : $line[static::PW_DISPLAY] ;
@@ -284,6 +295,16 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         }
 
         $this->savePassword($passwordLines);
+
+        if (!is_null($oldName)) {
+            $lines = $this->openShadow();
+            foreach ($lines as &$line) {
+                if ($line[static::SH_NAME] == $oldName) {
+                    $line[static::SH_NAME] = $userName;
+                }
+            }
+            $this->saveShadow($lines);
+        }
         $this->lock->delete();
     }
 
@@ -326,7 +347,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         $passLines = $this->openPassword();
         foreach ($passLines as &$line) {
             if ($line[static::PW_GROUP] == $groupId) {
-                throw new AuthException('Group to removal still has members. Remove them first.');
+                throw new AuthException($this->getLang()->kauGroupHasMembers());
             }
         }
     }
@@ -424,7 +445,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         if (function_exists('hash')) {
             return hash('sha256', $word);
         }
-        throw new AuthException('Cannot find function for making hashes!');
+        throw new AuthException($this->getLang()->kauHashFunctionNotFound());
         // @codeCoverageIgnoreEnd
     }
 }

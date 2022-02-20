@@ -90,6 +90,17 @@ class FilesTest extends CommonTestClass
         $lib->updateAccount($user);
         $lib->updateCertKeys($user->getAuthName(), $user->getPubKey(), $user->getPubSalt());
 
+        // update name
+        $user->setData(
+            $user->getAuthId(),
+            'changed name',
+            $user->getGroup(),
+            $user->getClass(),
+            $user->getDisplayName(),
+            $user->getDir()
+        );
+        $lib->updateAccount($user);
+
         // check data - again with new values
         $saved = $lib->getCertData($user->getAuthName());
         $this->assertEquals('When you do not know', $saved->getDisplayName());
@@ -108,6 +119,21 @@ class FilesTest extends CommonTestClass
         $lib->deleteAccount($user->getAuthName());
         // check for existence
         $this->assertEmpty($lib->getDataOnly($user->getAuthName()));
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     * AuthId is not correct but auth name is
+     */
+    public function testAccountUpdateFail(): void
+    {
+        $lib = $this->fileSources();
+        $user = new FileCertUser();
+        $user->setData(600, 'worker', 0, 0, 'Die on set', 'so_here');
+
+        $this->expectException(AuthException::class);
+        $lib->updateAccount($user);
     }
 
     /**
@@ -151,7 +177,7 @@ class FilesTest extends CommonTestClass
     protected function wantedUser(): FileCertUser
     {
         $user = new FileCertUser();
-        $user->setData(600, 'another', 0, 0, 'Testing another', 'why_here');
+        $user->setData(1003, 'another', 0, 0, 'Testing another', 'why_here');
         return $user;
     }
 

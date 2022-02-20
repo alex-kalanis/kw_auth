@@ -6,6 +6,8 @@ namespace kalanis\kw_auth\Methods;
 use ArrayAccess;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces\IAuth;
+use kalanis\kw_auth\Interfaces\IKATranslations;
+use kalanis\kw_auth\TTranslate;
 use kalanis\kw_bans\Bans;
 use kalanis\kw_bans\BanException;
 use kalanis\kw_bans\Sources\File;
@@ -21,6 +23,8 @@ use kalanis\kw_confs\Config;
  */
 class Banned extends AMethods
 {
+    use TTranslate;
+
     const INPUT_NAME = 'name';
     const SERVER_REMOTE = 'REMOTE_ADDR';
 
@@ -41,11 +45,13 @@ class Banned extends AMethods
      * @param IAuth|null $authenticator
      * @param AMethods|null $nextOne
      * @param ArrayAccess $server
+     * @param IKATranslations|null $lang
      * @throws BanException
      */
-    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $server)
+    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $server, ?IKATranslations $lang = null)
     {
         parent::__construct($authenticator, $nextOne);
+        $this->setLang($lang);
         $this->server = $server;
         $this->libBan = $this->getBans();
     }
@@ -79,7 +85,7 @@ class Banned extends AMethods
             preg_replace(static::PREG_IP6, '', $ip),
             preg_replace(static::PREG_NAME, '', $name)
         )) {
-            throw new AuthException('Accessing user is banned!', 401);
+            throw new AuthException($this->getLang()->kauBanWantedUser(), 401);
         }
     }
 

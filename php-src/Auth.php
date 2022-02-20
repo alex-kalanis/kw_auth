@@ -14,6 +14,9 @@ use kalanis\kw_auth\Interfaces\IAuthTree;
 class Auth
 {
     /** @var AuthTree|null */
+    protected static $authenticator = null;
+
+    /** @var AuthTree|null */
     protected static $authTree = null;
 
     static public function fill(Methods\AMethods $authMethods): void
@@ -25,5 +28,15 @@ class Auth
     static public function getTree(): ?IAuthTree
     {
         return static::$authTree;
+    }
+
+    static public function setAuthenticator($authenticator): void
+    {
+        static::$authenticator = $authenticator;
+    }
+
+    static public function getAuthenticator()
+    {
+        return static::$authenticator;
     }
 }
