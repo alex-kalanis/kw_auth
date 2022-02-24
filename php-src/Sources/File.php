@@ -9,6 +9,7 @@ use kalanis\kw_auth\Interfaces\IAccessAccounts;
 use kalanis\kw_auth\Interfaces\IAccessClasses;
 use kalanis\kw_auth\Interfaces\IAuth;
 use kalanis\kw_auth\Interfaces\IKATranslations;
+use kalanis\kw_auth\Interfaces\IMode;
 use kalanis\kw_auth\Interfaces\IUser;
 use kalanis\kw_locks\Interfaces\ILock;
 use kalanis\kw_locks\LockException;
@@ -32,14 +33,18 @@ class File extends AFile implements IAuth, IAccessAccounts
     const PW_DIR = 6;
     const PW_FEED = 7;
 
+    protected $mode = null;
+
     /**
-     * @param ILock $lock
+     * @param IMode $mode hashing mode
+     * @param ILock $lock file lock
      * @param string $path use full path with file name
      * @param IKATranslations|null $lang
      */
-    public function __construct(ILock $lock, string $path, ?IKATranslations $lang = null)
+    public function __construct(IMode $mode, ILock $lock, string $path, ?IKATranslations $lang = null)
     {
         $this->setLang($lang);
+        $this->mode = $mode;
         $this->path = $path;
         $this->initAuthLock($lock);
     }
@@ -56,7 +61,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         $passLines = $this->openFile($this->path);
         foreach ($passLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
-                if (password_verify($pass, $line[static::PW_PASS])) {
+                if ($this->mode->check((string)$pass, (string)$line[static::PW_PASS])) {
                     return $this->getUserClass($line);
                 }
             }
@@ -118,7 +123,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         $newUserPass = [
             static::PW_ID => $uid,
             static::PW_NAME => $userName,
-            static::PW_PASS => password_hash($password, PASSWORD_DEFAULT),
+            static::PW_PASS => $this->mode->hash($password),
             static::PW_GROUP => empty($user->getGroup()) ? $uid : $user->getClass() ,
             static::PW_CLASS => empty($user->getClass()) ? IAccessClasses::CLASS_USER : $user->getClass() ,
             static::PW_DISPLAY => empty($displayName) ? $userName : $displayName,
@@ -189,7 +194,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         foreach ($lines as &$line) {
             if ($line[static::PW_NAME] == $name) {
                 $changed = true;
-                $line[static::PW_PASS] = password_hash($passWord, PASSWORD_DEFAULT);
+                $line[static::PW_PASS] = $this->mode->hash($passWord);
             }
         }
         if ($changed) {

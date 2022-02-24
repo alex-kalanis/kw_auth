@@ -10,6 +10,7 @@ use kalanis\kw_auth\Interfaces\IAccessGroups;
 use kalanis\kw_auth\Interfaces\IAuthCert;
 use kalanis\kw_auth\Interfaces\IFile;
 use kalanis\kw_auth\Interfaces\IKATranslations;
+use kalanis\kw_auth\Interfaces\IMode;
 use kalanis\kw_auth\Interfaces\IUser;
 use kalanis\kw_auth\Interfaces\IUserCert;
 use kalanis\kw_locks\Interfaces\ILock;
@@ -43,14 +44,14 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     const SH_CERT_KEY = 5;
     const SH_FEED = 6;
 
-    protected $salt = '';
+    protected $mode = null;
 
-    public function __construct(ILock $lock, string $dir, string $salt, ?IKATranslations $lang = null)
+    public function __construct(IMode $mode, ILock $lock, string $dir, ?IKATranslations $lang = null)
     {
         $this->setLang($lang);
         $this->initAuthLock($lock);
         $this->path = $dir;
-        $this->salt = $salt;
+        $this->mode = $mode;
     }
 
     public function authenticate(string $userName, array $params = []): ?IUser
@@ -60,15 +61,17 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         }
         $time = time();
         $name = $this->stripChars($userName);
-        $pass = $this->hashPassword($params['password']);
-var_dump(['travis testing - pass', $params, $pass]);
 
         // load from shadow
         $this->checkLock();
 
         $shadowLines = $this->openShadow();
         foreach ($shadowLines as &$line) {
-            if (($line[static::SH_NAME] == $name) && ($line[static::SH_PASS] == $pass) && ($time < $line[static::SH_CHANGE_NEXT])) {
+            if (
+                ($line[static::SH_NAME] == $name)
+                && $this->mode->check((string)$params['password'], (string)$line[static::SH_PASS])
+                && ($time < $line[static::SH_CHANGE_NEXT])
+            ) {
                 $class = $this->getDataOnly($userName);
                 if ($class) {
                     $this->setExpirationNotice($class, intval($line[static::SH_CHANGE_NEXT]));
@@ -144,7 +147,7 @@ var_dump(['travis testing - pass', $params, $pass]);
         foreach ($lines as &$line) {
             if ($line[static::SH_NAME] == $name) {
                 $changed = true;
-                $line[static::SH_PASS] = $this->hashPassword($passWord);
+                $line[static::SH_PASS] = $this->mode->hash($passWord);
                 $line[static::SH_CHANGE_NEXT] = $this->whenItExpire();
             }
         }
@@ -222,7 +225,7 @@ var_dump(['travis testing - pass', $params, $pass]);
 
         $newUserShade = [
             static::SH_NAME => $userName,
-            static::SH_PASS => $this->hashPassword($password),
+            static::SH_PASS => $this->mode->hash($password),
             static::SH_CHANGE_LAST => time(),
             static::SH_CHANGE_NEXT => $this->whenItExpire(),
             static::SH_CERT_SALT => $certSalt,
@@ -405,48 +408,5 @@ var_dump(['travis testing - pass', $params, $pass]);
     protected function saveGroups(array $lines): void
     {
         $this->saveFile($this->path . DIRECTORY_SEPARATOR . IFile::GROUP_FILE, $lines);
-    }
-
-    /**
-     * @param string $input
-     * @return string
-     * @throws AuthException
-     */
-    protected function hashPassword(string $input): string
-    {
-        // older kwcms style
-        return base64_encode(bin2hex($this->makeHash($this->passSalt($input))));
-    }
-
-    private function passSalt(string $input): string
-    {
-        $ln = strlen($input);
-        # pass is too long and salt too short
-        $salt = (strlen($this->salt) < ($ln*5))
-            ? str_repeat($this->salt, 5)
-            : $this->salt ;
-        return substr($salt, $ln, $ln)
-            . substr($input,0, (int)($ln/2))
-            . substr($salt,$ln*2, $ln)
-            . substr($input, (int)($ln/2))
-            . substr($salt,$ln*3, $ln);
-    }
-
-    /**
-     * @param string $word
-     * @return string
-     * @throws AuthException
-     */
-    private function makeHash(string $word): string
-    {
-        if (function_exists('mhash')) {
-            return mhash(MHASH_SHA256, $word);
-        }
-        // @codeCoverageIgnoreStart
-        if (function_exists('hash')) {
-            return hash('sha256', $word);
-        }
-        throw new AuthException($this->getLang()->kauHashFunctionNotFound());
-        // @codeCoverageIgnoreEnd
     }
 }

@@ -7,13 +7,7 @@ Authentication to your site
 ```
 {
     "require": {
-        "alex-kalanis/kw_auth": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "http",
-            "url":  "https://github.com/alex-kalanis/kw_auth.git"
-        }
+        "alex-kalanis/kw_auth": "1.0"
     }
 }
 ```

@@ -41,7 +41,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $this->assertEmpty($lib->authenticate('manager', ['password' => 'thisisnotreal']));
-        $user = $lib->authenticate('manager', ['password' => 'thisisreal']);
+        $user = $lib->authenticate('manager', ['password' => 'valid']);
         $this->assertNotEmpty($user);
         $this->assertEquals('Manage', $user->getDisplayName());
     }
@@ -168,9 +168,9 @@ class FilesTest extends CommonTestClass
     protected function fileSources(): Files
     {
         return new Files(
+            new \MockModes(),
             $this->getLockPath(),
-            $this->sourcePath,
-            'yxcvbnmasdfghjklqwertzuiop0123456789'
+            $this->sourcePath
         );
     }
 

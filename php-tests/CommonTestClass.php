@@ -3,6 +3,7 @@
 use kalanis\kw_auth\Data\FileUser;
 use kalanis\kw_auth\Interfaces\IAuth;
 use kalanis\kw_auth\Interfaces\IAuthCert;
+use kalanis\kw_auth\Interfaces\IMode;
 use kalanis\kw_auth\Interfaces\IUser;
 use kalanis\kw_auth\Interfaces\IUserCert;
 use kalanis\kw_locks\LockException;
@@ -149,5 +150,22 @@ class MockUserToFill extends FileUser
     public function __construct(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir)
     {
         $this->setData($authId, $authName, $authGroup, $authClass, $displayName, $dir);
+    }
+}
+
+
+class MockModes implements IMode
+{
+    protected $knownPass = '';
+
+    public function check(string $pass, string $hash): bool
+    {
+        return ($this->knownPass == $pass) || ('valid' == $pass);
+    }
+
+    public function hash(string $pass, ?string $method = null): string
+    {
+        $this->knownPass = $pass;
+        return 'validPass-' . $pass;
     }
 }
