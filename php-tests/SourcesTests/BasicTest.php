@@ -79,6 +79,7 @@ class BasicTest extends CommonTestClass
         $content = $lib->open($this->sourcePath);
         $this->assertNotEmpty($content);
         $lib->save($this->testingPath, $content);
+        chmod($this->testingPath, 0444);
         $this->expectException(AuthException::class);
         $lib->save($this->testingPath, $content);
     }
