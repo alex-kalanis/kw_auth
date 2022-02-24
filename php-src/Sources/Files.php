@@ -61,6 +61,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         $time = time();
         $name = $this->stripChars($userName);
         $pass = $this->hashPassword($params['password']);
+var_dump(['travis testing - pass', $params, $pass]);
 
         // load from shadow
         $this->checkLock();
