@@ -12,6 +12,7 @@
     "license": "BSD-3-Clause",
     "type": "library",
     "require": {
+        "alex-kalanis/kw_locks": ">=1.0",
         "php": ">=7.2.0"
     },
     "require-dev": {
@@ -19,7 +20,6 @@
         "alex-kalanis/kw_address_handler": ">=1.0",
         "alex-kalanis/kw_bans": ">=1.0",
         "alex-kalanis/kw_confs": ">=1.0",
-        "alex-kalanis/kw_locks": ">=1.0",
         "phpunit/phpunit": ">=7.2"
     },
     "suggest": {
