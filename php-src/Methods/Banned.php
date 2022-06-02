@@ -11,7 +11,7 @@ use kalanis\kw_auth\TTranslate;
 use kalanis\kw_bans\Bans;
 use kalanis\kw_bans\BanException;
 use kalanis\kw_bans\Sources\File;
-use kalanis\kw_confs\Config;
+use kalanis\kw_paths\Path;
 
 
 /**
@@ -36,6 +36,8 @@ class Banned extends AMethods
     const PREG_IP6 = '#^[0-9a-f:/]$#i';
     const PREG_NAME = '#^[\*\?\:;\\//]$#i';
 
+    /** @var Path */
+    protected $libPath = null;
     /** @var Bans */
     protected $libBan = null;
     /** @var ArrayAccess */
@@ -44,14 +46,16 @@ class Banned extends AMethods
     /**
      * @param IAuth|null $authenticator
      * @param AMethods|null $nextOne
+     * @param Path $path
      * @param ArrayAccess $server
      * @param IKATranslations|null $lang
      * @throws BanException
      */
-    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $server, ?IKATranslations $lang = null)
+    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, Path $path, ArrayAccess $server, ?IKATranslations $lang = null)
     {
         parent::__construct($authenticator, $nextOne);
         $this->setLang($lang);
+        $this->libPath = $path;
         $this->server = $server;
         $this->libBan = $this->getBans();
     }
@@ -72,8 +76,7 @@ class Banned extends AMethods
 
     protected function getBanPath(): string
     {
-        $path = Config::getPath();
-        return $path->getDocumentRoot() . DIRECTORY_SEPARATOR . 'conf';
+        return $this->libPath->getDocumentRoot() . DIRECTORY_SEPARATOR . 'conf';
     }
 
     public function process(\ArrayAccess $credentials): void

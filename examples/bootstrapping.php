@@ -55,6 +55,7 @@ class ExtBanned extends \kalanis\kw_auth\Methods\Banned
             ),
             new \kalanis\kw_address_handler\Handler(new \kalanis\kw_address_handler\Sources\ServerRequest())
         ),
+        $paths,
         $server
     )
 );

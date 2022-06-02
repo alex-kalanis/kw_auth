@@ -29,4 +29,3 @@ familiar with composer)
 ## Caveats
 
 It's build for standalone usage - nothing more need than basics.
-
