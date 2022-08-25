@@ -30,7 +30,7 @@ class Groups extends AFile implements IAccessGroups
         $this->path = $path;
     }
 
-    protected function checkRest(int $groupId): void
+    protected function checkRest(/** @scrutinizer ignore-unused */ int $groupId): void
     {
         // nothing here
     }

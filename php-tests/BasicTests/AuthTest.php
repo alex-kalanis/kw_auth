@@ -31,7 +31,7 @@ class AuthTest extends CommonTestClass
         $this->assertEmpty(Auth::getAccounts());
         $this->assertEmpty(Auth::getClasses());
         $this->assertEmpty(Auth::getGroups());
-        Auth::setAuthenticator('pass auth class like IAuth to module space');
+        Auth::setAuthenticator(new XAUser());
         Auth::setAuth(new XAAuth());
         Auth::setAccounts(new XAAccounts());
         Auth::setClasses(new XAClasses());
@@ -94,6 +94,45 @@ class AuthTest extends CommonTestClass
             $this->getLockPath(),
             __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data'
         );
+    }
+}
+
+
+class XAUser implements Interfaces\IUser
+{
+
+    public function setData(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir): void
+    {
+    }
+
+    public function getAuthId(): int
+    {
+        return 0;
+    }
+
+    public function getAuthName(): string
+    {
+        return '';
+    }
+
+    public function getGroup(): int
+    {
+        return 0;
+    }
+
+    public function getClass(): int
+    {
+        return 0;
+    }
+
+    public function getDisplayName(): string
+    {
+        return '';
+    }
+
+    public function getDir(): string
+    {
+        return '';
     }
 }
 

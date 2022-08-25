@@ -92,7 +92,7 @@ class MockAuthCert extends MockAuth implements IAuthCert
 
     public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): void
     {
-        $this->expectedUser->addCertInfo(strval($certKey), strval($certSalt));
+        $this->expectedUser->/** @scrutinizer ignore-call */addCertInfo(strval($certKey), strval($certSalt));
     }
 
     public function getCertData(string $userName): ?IUserCert

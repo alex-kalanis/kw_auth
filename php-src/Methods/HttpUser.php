@@ -40,6 +40,7 @@ class HttpUser extends AMethods
         $pass = $this->server->offsetExists(static::INPUT_PASS) ? strval($this->server->offsetGet(static::INPUT_PASS)) : '' ;
 
         if (!empty($name) && !empty($pass)) {
+            /** @scrutinizer ignore-call */
             $this->loggedUser = $this->authenticator->authenticate($name, ['password' => $pass]);
         }
     }

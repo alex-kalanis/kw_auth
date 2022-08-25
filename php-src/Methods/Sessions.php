@@ -55,6 +55,7 @@ class Sessions extends AMethods
             session_start();
         }
         if ($this->tryLogged()) {
+            /** @scrutinizer ignore-call */
             $this->loggedUser = $this->authenticator->getDataOnly($this->nameFromSess());
         } else {
             $name = $credentials->offsetExists(static::INPUT_NAME) ? strval($credentials->offsetGet(static::INPUT_NAME)) : '' ;
@@ -62,6 +63,7 @@ class Sessions extends AMethods
             $pass = $credentials->offsetExists(static::INPUT_PASS) ? strval($credentials->offsetGet(static::INPUT_PASS)) : '' ;
             $pass = $credentials->offsetExists(static::INPUT_PASS2) ? strval($credentials->offsetGet(static::INPUT_PASS2)) : $pass ;
             if (!empty($name) && !empty($pass)) {
+                /** @scrutinizer ignore-call */
                 $this->loggedUser = $this->authenticator->authenticate($name, ['password' => $pass]);
             }
         }
