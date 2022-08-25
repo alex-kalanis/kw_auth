@@ -184,8 +184,8 @@ trait TGroups
     abstract protected function openGroups(): array;
 
     /**
-     * @throws AuthException
      * @param array<int, array<int, string|int>> $lines
+     * @throws AuthException
      */
     abstract protected function saveGroups(array $lines): void;
 }

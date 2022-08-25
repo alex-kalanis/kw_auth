@@ -162,8 +162,8 @@ class FilesTest extends CommonTestClass
 
     /**
      * Contains a full comedy/tragedy of work with locks
-     * @return Files
      * @throws LockException
+     * @return Files
      */
     protected function fileSources(): Files
     {
