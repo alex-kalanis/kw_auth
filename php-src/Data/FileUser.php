@@ -12,11 +12,17 @@ use kalanis\kw_auth\Interfaces\IUser;
  */
 class FileUser implements IUser
 {
+    /** @var int */
     protected $authId = 0;
+    /** @var string */
     protected $authName = '';
+    /** @var int */
     protected $authGroup = 0;
+    /** @var int */
     protected $authClass = 0;
+    /** @var string */
     protected $displayName = '';
+    /** @var string */
     protected $dir = '';
 
     public function setData(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir): void

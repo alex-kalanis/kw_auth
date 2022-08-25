@@ -20,6 +20,6 @@ class CoreLib implements IMode
 
     public function hash(string $pass, ?string $method = null): string
     {
-        return password_hash($pass, PASSWORD_DEFAULT);
+        return (string)password_hash($pass, PASSWORD_DEFAULT);
     }
 }

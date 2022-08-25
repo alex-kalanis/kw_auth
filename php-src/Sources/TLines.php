@@ -13,11 +13,19 @@ use kalanis\kw_auth\Interfaces\IFile;
  */
 trait TLines
 {
+    /**
+     * @param string $input
+     * @return array<int, string>
+     */
     public function explosion(string $input): array
     {
         return explode(IFile::SEPARATOR, $input);
     }
 
+    /**
+     * @param array<int, string|int|float> $input
+     * @return string
+     */
     public function implosion(array $input): string
     {
         return implode(IFile::SEPARATOR, $input + ['']);
@@ -25,6 +33,6 @@ trait TLines
 
     public function stripChars(string $input): string
     {
-        return preg_replace('#[^a-zA-Z0-9\,\*\/\.\-\+\?\_\§\"\!\/\(\)\|\€\'\\\&\@\{\}\<\>\#\ ]#', '', $input);
+        return strval(preg_replace('#[^a-zA-Z0-9\,\*\/\.\-\+\?\_\§\"\!\/\(\)\|\€\'\\\&\@\{\}\<\>\#\ ]#', '', $input));
     }
 }

@@ -19,7 +19,7 @@ trait TFiles
 
     /**
      * @param string $path
-     * @return string[][]
+     * @return array<int, array<int, string>>
      * @throws AuthException
      */
     protected function openFile(string $path): array
@@ -35,7 +35,7 @@ trait TFiles
 
     /**
      * @param string $path
-     * @param string[][] $lines
+     * @param array<int, array<int, string|int>> $lines
      * @throws AuthException
      */
     protected function saveFile(string $path, array $lines): void

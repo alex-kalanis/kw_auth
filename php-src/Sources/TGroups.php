@@ -38,7 +38,7 @@ trait TGroups
         $this->checkLock();
 
         $gid = 0;
-        $this->lock->create();
+        $this->getLock()->create();
 
         # read groups
         $groupLines = $this->openGroups();
@@ -60,7 +60,7 @@ trait TGroups
         # now save it
         $this->saveGroups($groupLines);
 
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     /**
@@ -100,7 +100,7 @@ trait TGroups
     }
 
     /**
-     * @param array $line
+     * @param array<int, string> $line
      * @return IGroup
      */
     protected function getGroupClass(array &$line): IGroup
@@ -127,7 +127,7 @@ trait TGroups
 
         $this->checkLock();
 
-        $this->lock->create();
+        $this->getLock()->create();
         $groupLines = $this->openGroups();
         foreach ($groupLines as &$line) {
             if ($line[IAccessGroups::GRP_ID] == $group->getGroupId()) {
@@ -138,7 +138,7 @@ trait TGroups
         }
 
         $this->saveGroups($groupLines);
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     /**
@@ -152,7 +152,7 @@ trait TGroups
         $this->checkRest($groupId);
 
         $changed = false;
-        $this->lock->create();
+        $this->getLock()->create();
 
         # update groups
         $openGroups = $this->openGroups();
@@ -167,7 +167,7 @@ trait TGroups
         if ($changed) {
             $this->saveGroups($openGroups);
         }
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     /**

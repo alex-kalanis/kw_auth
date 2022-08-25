@@ -14,17 +14,19 @@ use kalanis\kw_auth\Interfaces\IExpire;
  */
 trait TExpiration
 {
+    /** @var int */
     protected $changeInterval = 31536000; // 60×60×24×365 - one year
+    /** @var int */
     protected $changeNotice = 2592000; // 60×60×24×30 - one month
 
-    protected function initExpiry(int $changeInterval, int $changeNoticeBefore)
+    protected function initExpiry(int $changeInterval, int $changeNoticeBefore): void
     {
         $this->changeInterval = $changeInterval;
         $this->changeNotice = $changeNoticeBefore;
     }
 
     /**
-     * @param $class
+     * @param object|int|string $class
      * @param int $nextChange
      * @throws AuthException
      */
@@ -41,7 +43,7 @@ trait TExpiration
     }
 
     /**
-     * @param $class
+     * @param object|int|string $class
      * @throws AuthException
      */
     public function updateExpirationTime($class): void

@@ -18,7 +18,7 @@ interface IAuthTree
 {
     /**
      * lookup for method which can authenticate send data
-     * @param ArrayAccess $credentials
+     * @param ArrayAccess<string, string|int|float> $credentials
      * @return void
      * @throws AuthException
      * @throws LockException

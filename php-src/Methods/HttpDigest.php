@@ -19,12 +19,18 @@ class HttpDigest extends AMethods
     const INPUT_METHOD = 'REQUEST_METHOD';
     const INPUT_DIGEST = 'PHP_AUTH_DIGEST';
 
+    /** @var string */
     protected $realm = 'KWCMS_Http_Digest';
     /** @var IAuthCert */
     protected $authenticator;
-    /** @var ArrayAccess */
+    /** @var ArrayAccess<string, string|int> */
     protected $server = null;
 
+    /**
+     * @param IAuthCert $authenticator
+     * @param AMethods|null $nextOne
+     * @param ArrayAccess<string, string|int> $server
+     */
     public function __construct(IAuthCert $authenticator, ?AMethods $nextOne, ArrayAccess $server)
     {
         parent::__construct($authenticator, $nextOne);
@@ -36,7 +42,7 @@ class HttpDigest extends AMethods
         if (!$this->server->offsetExists(static::INPUT_DIGEST) || empty($this->server->offsetGet(static::INPUT_DIGEST))) {
             return;
         }
-        $data = $this->httpDigestParse($this->server->offsetGet(static::INPUT_DIGEST));
+        $data = $this->httpDigestParse(strval($this->server->offsetGet(static::INPUT_DIGEST)));
         if (!empty($data)) {
             $wantedUser = $this->authenticator->getCertData((string)$data['username']);
             if (!$wantedUser) {
@@ -75,7 +81,7 @@ class HttpDigest extends AMethods
     /**
      * Parse the http auth header
      * @param string $txt
-     * @return array
+     * @return array<string, string>
      */
     protected function httpDigestParse(string $txt): array
     {
@@ -87,7 +93,7 @@ class HttpDigest extends AMethods
         preg_match_all('@(' . $keys . ')=(?:([\'"])([^\2]*?)\2|([^\s,]+))@', $txt, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $m) {
-            $data[$m[1]] = $m[3] ?: ( $m[4] ?? '' );
+            $data[strval($m[1])] = strval($m[3] ?: ( $m[4] ?? '' ));
             unset($needed_parts[$m[1]]);
         }
 

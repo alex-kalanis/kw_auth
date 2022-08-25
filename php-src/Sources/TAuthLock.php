@@ -26,16 +26,25 @@ trait TAuthLock
     }
 
     /**
+     * @throws AuthException
+     * @return ILock
+     */
+    protected function getLock(): ILock
+    {
+        if (!$this->lock) {
+            throw new AuthException($this->getLang()->kauLockSystemNotSet());
+        }
+        return $this->lock;
+    }
+
+    /**
      * @param string $note
      * @throws AuthException
      * @throws LockException
      */
     protected function checkLock(string $note = ''): void
     {
-        if (!$this->lock) {
-            throw new AuthException($this->getLang()->kauLockSystemNotSet());
-        }
-        if ($this->lock->has()) {
+        if ($this->getLock()->has()) {
             throw new AuthException(empty($note) ? $this->getLang()->kauAuthAlreadyOpen() : $note);
         }
     }

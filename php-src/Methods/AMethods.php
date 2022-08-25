@@ -30,7 +30,7 @@ abstract class AMethods
     }
 
     /**
-     * @param \ArrayAccess $credentials
+     * @param \ArrayAccess<string, string|int|float> $credentials
      * @throws AuthException
      * @throws LockException
      */

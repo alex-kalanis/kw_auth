@@ -33,6 +33,7 @@ class File extends AFile implements IAuth, IAccessAccounts
     const PW_DIR = 6;
     const PW_FEED = 7;
 
+    /** @var IMode */
     protected $mode = null;
 
     /**
@@ -84,6 +85,10 @@ class File extends AFile implements IAuth, IAccessAccounts
         return null;
     }
 
+    /**
+     * @param array<int, string|int|float> $line
+     * @return IUser
+     */
     protected function getUserClass(array &$line): IUser
     {
         $user = new FileUser();
@@ -111,12 +116,12 @@ class File extends AFile implements IAuth, IAccessAccounts
         $this->checkLock();
 
         $uid = IUser::LOWEST_USER_ID;
-        $this->lock->create();
+        $this->getLock()->create();
 
         # read password
         $passLines = $this->openFile($this->path);
         foreach ($passLines as &$line) {
-            $uid = max($uid, $line[static::PW_ID]);
+            $uid = max($uid, intval($line[static::PW_ID]));
         }
         $uid++;
 
@@ -136,7 +141,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         # now save it
         $this->saveFile($this->path, $passLines);
 
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     /**
@@ -165,7 +170,7 @@ class File extends AFile implements IAuth, IAccessAccounts
 
         $this->checkLock();
 
-        $this->lock->create();
+        $this->getLock()->create();
         $passwordLines = $this->openFile($this->path);
         foreach ($passwordLines as &$line) {
             if ($line[static::PW_NAME] == $userName) {
@@ -178,7 +183,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         }
 
         $this->saveFile($this->path, $passwordLines);
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     public function updatePassword(string $userName, string $passWord): void
@@ -188,7 +193,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         $this->checkLock();
 
         $changed = false;
-        $this->lock->create();
+        $this->getLock()->create();
 
         $lines = $this->openFile($this->path);
         foreach ($lines as &$line) {
@@ -200,7 +205,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         if ($changed) {
             $this->saveFile($this->path, $lines);
         }
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     public function deleteAccount(string $userName): void
@@ -209,7 +214,7 @@ class File extends AFile implements IAuth, IAccessAccounts
         $this->checkLock();
 
         $changed = false;
-        $this->lock->create();
+        $this->getLock()->create();
 
         # update password
         $passLines = $this->openFile($this->path);
@@ -224,6 +229,6 @@ class File extends AFile implements IAuth, IAccessAccounts
         if ($changed) {
             $this->saveFile($this->path, $passLines);
         }
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 }

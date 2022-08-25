@@ -4,6 +4,7 @@ namespace kalanis\kw_auth;
 
 
 use kalanis\kw_auth\Interfaces\IAuthTree;
+use kalanis\kw_locks\LockException;
 
 
 /**
@@ -13,7 +14,7 @@ use kalanis\kw_auth\Interfaces\IAuthTree;
  */
 class AuthTree implements IAuthTree
 {
-    /** @var Methods\AMethods|null */
+    /** @var Methods\AMethods */
     protected $authTree = null;
     /** @var Methods\AMethods|null */
     protected $usedMethod = null;
@@ -24,6 +25,11 @@ class AuthTree implements IAuthTree
         $this->authTree = $authTree;
     }
 
+    /**
+     * @param \ArrayAccess<string, string|int|float> $credentials
+     * @throws AuthException
+     * @throws LockException
+     */
     public function findMethod(\ArrayAccess $credentials): void
     {
         $currentMethod = $this->authTree;

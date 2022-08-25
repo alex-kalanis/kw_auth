@@ -13,5 +13,6 @@ abstract class AFile
     use TFiles;
     use TLines;
 
+    /** @var string */
     protected $path = '';
 }

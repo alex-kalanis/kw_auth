@@ -10,6 +10,7 @@ namespace kalanis\kw_auth\Methods;
  */
 trait TStamp
 {
+    /** @var int */
     protected $timeDifference = 100;
 
     protected function initStamp(int $maxDiff): void

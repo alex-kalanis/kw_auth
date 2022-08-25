@@ -10,7 +10,9 @@ namespace kalanis\kw_auth\Data;
  */
 trait TExpire
 {
+    /** @var bool */
     protected $showNotice = false;
+    /** @var int */
     protected $expireTime = 0;
 
     public function setExpireNotice(bool $expiry): void

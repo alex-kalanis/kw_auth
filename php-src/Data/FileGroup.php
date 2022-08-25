@@ -12,9 +12,13 @@ use kalanis\kw_auth\Interfaces\IGroup;
  */
 class FileGroup implements IGroup
 {
+    /** @var int */
     protected $id = 0;
+    /** @var string */
     protected $name = '';
+    /** @var int */
     protected $author = 0;
+    /** @var string */
     protected $displayName = '';
 
     public function setData(int $id, string $name, int $author, string $display): void

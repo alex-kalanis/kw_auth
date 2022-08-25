@@ -44,6 +44,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     const SH_CERT_KEY = 5;
     const SH_FEED = 6;
 
+    /** @var IMode */
     protected $mode = null;
 
     public function __construct(IMode $mode, ILock $lock, string $dir, ?IKATranslations $lang = null)
@@ -142,7 +143,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         $this->checkLock();
 
         $changed = false;
-        $this->lock->create();
+        $this->getLock()->create();
         $lines = $this->openShadow();
         foreach ($lines as &$line) {
             if ($line[static::SH_NAME] == $name) {
@@ -154,7 +155,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         if ($changed) {
             $this->saveShadow($lines);
         }
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): void
@@ -164,7 +165,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         $this->checkLock();
 
         $changed = false;
-        $this->lock->create();
+        $this->getLock()->create();
         $lines = $this->openShadow();
         foreach ($lines as &$line) {
             if ($line[static::SH_NAME] == $name) {
@@ -176,7 +177,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         if ($changed) {
             $this->saveShadow($lines);
         }
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     public function createAccount(IUser $user, string $password): void
@@ -199,7 +200,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         $this->checkLock();
 
         $uid = IUser::LOWEST_USER_ID;
-        $this->lock->create();
+        $this->getLock()->create();
 
         # read password
         $passLines = $this->openPassword();
@@ -239,7 +240,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         $this->savePassword($passLines);
         $this->saveShadow($shadeLines);
 
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     /**
@@ -277,12 +278,12 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
 
         $this->checkLock();
 
-        $this->lock->create();
+        $this->getLock()->create();
         $oldName = null;
         $passwordLines = $this->openPassword();
         foreach ($passwordLines as &$line) {
             if (($line[static::PW_NAME] == $userName) && ($line[static::PW_ID] != $user->getAuthId())) {
-                $this->lock->delete();
+                $this->getLock()->delete();
                 throw new AuthException($this->getLang()->kauPassLoginExists());
             }
             if ($line[static::PW_ID] == $user->getAuthId()) {
@@ -309,7 +310,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
             }
             $this->saveShadow($lines);
         }
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     public function deleteAccount(string $userName): void
@@ -318,7 +319,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         $this->checkLock();
 
         $changed = false;
-        $this->lock->create();
+        $this->getLock()->create();
 
         # update password
         $passLines = $this->openPassword();
@@ -343,7 +344,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
             $this->savePassword($passLines);
             $this->saveShadow($shadeLines);
         }
-        $this->lock->delete();
+        $this->getLock()->delete();
     }
 
     protected function checkRest(int $groupId): void
@@ -366,7 +367,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     }
 
     /**
-     * @param string[][] $lines
+     * @param array<int, array<int, string|int>> $lines
      * @throws AuthException
      */
     protected function savePassword(array $lines): void
@@ -384,7 +385,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     }
 
     /**
-     * @param string[][] $lines
+     * @param array<int, array<int, string|int>> $lines
      * @throws AuthException
      */
     protected function saveShadow(array $lines): void

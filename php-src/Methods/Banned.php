@@ -40,14 +40,14 @@ class Banned extends AMethods
     protected $libPath = null;
     /** @var Bans */
     protected $libBan = null;
-    /** @var ArrayAccess */
+    /** @var ArrayAccess<string, string|int|float> */
     protected $server = null;
 
     /**
      * @param IAuth|null $authenticator
      * @param AMethods|null $nextOne
      * @param Path $path
-     * @param ArrayAccess $server
+     * @param ArrayAccess<string, string|int|float> $server
      * @param IKATranslations|null $lang
      * @throws BanException
      */
@@ -82,11 +82,11 @@ class Banned extends AMethods
     public function process(\ArrayAccess $credentials): void
     {
         $name = $credentials->offsetExists(static::INPUT_NAME) ? strval($credentials->offsetGet(static::INPUT_NAME)) : '' ;
-        $ip = $this->server->offsetGet(static::SERVER_REMOTE);
+        $ip = strval($this->server->offsetGet(static::SERVER_REMOTE));
         if ($this->libBan->has(
-            preg_replace(static::PREG_IP4, '', $ip),
-            preg_replace(static::PREG_IP6, '', $ip),
-            preg_replace(static::PREG_NAME, '', $name)
+            strval(preg_replace(static::PREG_IP4, '', $ip)),
+            strval(preg_replace(static::PREG_IP6, '', $ip)),
+            strval(preg_replace(static::PREG_NAME, '', $name))
         )) {
             throw new AuthException($this->getLang()->kauBanWantedUser(), 401);
         }

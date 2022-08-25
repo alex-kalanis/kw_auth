@@ -10,7 +10,9 @@ namespace kalanis\kw_auth\Data;
  */
 trait TCerts
 {
+    /** @var string */
     protected $key = '';
+    /** @var string */
     protected $salt = '';
 
     public function addCertInfo(string $key, string $salt): void

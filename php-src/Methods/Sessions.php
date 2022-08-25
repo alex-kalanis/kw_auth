@@ -5,6 +5,7 @@ namespace kalanis\kw_auth\Methods;
 
 use ArrayAccess;
 use kalanis\kw_auth\Interfaces\IAuth;
+use SessionHandlerInterface;
 
 
 /**
@@ -23,21 +24,34 @@ class Sessions extends AMethods
     const INPUT_PASS = 'pass';
     const INPUT_PASS2 = 'password';
 
-    /** @var ArrayAccess */
+    /** @var ArrayAccess<string, string|int> */
     protected $session = null;
-    /** @var ArrayAccess */
+    /** @var ArrayAccess<string, string|int> */
     protected $server = null;
+    /** @var SessionHandlerInterface|null */
+    protected $externalHandler = null;
 
-    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $session, ArrayAccess $server)
+    /**
+     * @param IAuth|null $authenticator
+     * @param AMethods|null $nextOne
+     * @param ArrayAccess<string, string|int> $session
+     * @param ArrayAccess<string, string|int> $server
+     * @param SessionHandlerInterface|null $externalHandler
+     */
+    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $session, ArrayAccess $server, ?SessionHandlerInterface $externalHandler = null)
     {
         parent::__construct($authenticator, $nextOne);
         $this->session = $session;
         $this->server = $server;
+        $this->externalHandler = $externalHandler;
     }
 
     public function process(ArrayAccess $credentials): void
     {
         if (PHP_SESSION_NONE == session_status()) {
+            if ($this->externalHandler) {
+                session_set_save_handler($this->externalHandler, true);
+            }
             session_start();
         }
         if ($this->tryLogged()) {
@@ -83,7 +97,7 @@ class Sessions extends AMethods
     protected function fillSession(string $name): void
     {
         $this->session->offsetSet(static::SESSION_NAME, $name);
-        $this->session->offsetSet(static::SESSION_IP, $this->server->offsetGet(static::SERVER_REMOTE));
+        $this->session->offsetSet(static::SESSION_IP, strval($this->server->offsetGet(static::SERVER_REMOTE)));
     }
 
     protected function clearSession(): void

@@ -52,7 +52,7 @@ class UrlCerts extends AMethods
             // now we have public key and salt from our storage, so it's time to check it
 
             // digest out, salt in
-            $digest = $this->uriHandler->getParams()->offsetGet(static::INPUT_DIGEST);
+            $digest = strval($this->uriHandler->getParams()->offsetGet(static::INPUT_DIGEST));
             $this->uriHandler->getParams()->offsetUnset(static::INPUT_DIGEST);
             $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedUser->getPubSalt());
             $data = $this->uriHandler->getAddress();

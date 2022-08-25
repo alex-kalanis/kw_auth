@@ -18,6 +18,7 @@ class KwOrig implements IMode
 {
     use TTranslate;
 
+    /** @var string */
     protected $salt = '';
 
     public function __construct(string $salt, ?IKATranslations $lang = null)
@@ -68,11 +69,11 @@ class KwOrig implements IMode
     private function makeHash(string $word): string
     {
         if (function_exists('mhash')) {
-            return mhash(MHASH_SHA256, $word);
+            return (string)mhash(MHASH_SHA256, $word);
         }
         // @codeCoverageIgnoreStart
         if (function_exists('hash')) {
-            return hash('sha256', $word);
+            return (string)hash('sha256', $word);
         }
         throw new AuthException($this->getLang()->kauHashFunctionNotFound());
         // @codeCoverageIgnoreEnd

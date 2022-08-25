@@ -12,7 +12,7 @@ use kalanis\kw_auth\Interfaces\IKATranslations;
  */
 trait TTranslate
 {
-    /** @var IKATranslations|null */
+    /** @var IKATranslations */
     protected $lang = null;
 
     public function setLang(?IKATranslations $lang): void

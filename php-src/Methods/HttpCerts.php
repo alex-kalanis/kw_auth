@@ -24,9 +24,15 @@ class HttpCerts extends AMethods
     protected $authenticator;
     /** @var Handler */
     protected $uriHandler = null;
-    /** @var ArrayAccess */
+    /** @var ArrayAccess<string, string|int> */
     protected $server = null;
 
+    /**
+     * @param IAuthCert $authenticator
+     * @param AMethods|null $nextOne
+     * @param Handler $uriHandler
+     * @param ArrayAccess<string, string|int> $server
+     */
     public function __construct(IAuthCert $authenticator, ?AMethods $nextOne, Handler $uriHandler, ArrayAccess $server)
     {
         parent::__construct($authenticator, $nextOne);

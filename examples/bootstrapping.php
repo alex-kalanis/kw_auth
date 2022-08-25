@@ -28,6 +28,18 @@ $authenticator = new \kalanis\kw_auth\Sources\Files(
     ),
     $paths->getDocumentRoot() . $paths->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'web'
 );
+\kalanis\kw_auth\Auth::setAuth($authenticator);
+\kalanis\kw_auth\Auth::setGroups($authenticator);
+\kalanis\kw_auth\Auth::setClasses($authenticator);
+\kalanis\kw_auth\Auth::setAccounts($authenticator);
+
+// session start here - when you have custom handler it must be loaded here!
+//$storage = \kalanis\kw_storage\Helper::initCache();
+//$storage->init(new Redis());
+//$handler = new StorageSession($storage);
+//session_set_save_handler($handler, true);
+//session_start();
+
 $session = new \kalanis\kw_input\Simplified\SessionAdapter(); // this one represents session info
 $server = new \kalanis\kw_input\Simplified\ServerAdapter(); // this one represents server info
 
