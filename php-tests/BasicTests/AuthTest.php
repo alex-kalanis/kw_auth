@@ -84,8 +84,8 @@ class AuthTest extends CommonTestClass
 
     /**
      * Contains a full comedy/tragedy of work with locks
-     * @return Sources\Files
      * @throws LockException
+     * @return Sources\Files
      */
     protected function fileSources(): Sources\Files
     {

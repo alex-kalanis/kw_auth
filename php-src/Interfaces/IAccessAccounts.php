@@ -23,9 +23,9 @@ interface IAccessAccounts
     public function createAccount(IUser $user, string $password): void;
 
     /**
-     * @return IUser[]
      * @throws AuthException
      * @throws LockException
+     * @return IUser[]
      */
     public function readAccounts(): array;
 

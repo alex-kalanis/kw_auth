@@ -57,18 +57,18 @@ class UrlHash extends AMethods
         $name = $credentials->offsetExists(static::INPUT_NAME2) ? strval($credentials->offsetGet(static::INPUT_NAME2) ): $name ;
         $stamp = $credentials->offsetExists(static::INPUT_STAMP) ? intval(strval($credentials->offsetGet(static::INPUT_STAMP))) : 0 ;
 
-        $wantedUser = $this->authenticator->getCertData((string)$name);
+        $wantedUser = $this->authenticator->getCertData(strval($name));
         if ($wantedUser && !empty($stamp) && $this->checkStamp($stamp)) {
             // now we have private salt from our storage, so it's time to check it
 
             // digest out, salt in
-            $digest = $this->uriHandler->getParams()->offsetGet(static::INPUT_DIGEST);
+            $digest = strval($this->uriHandler->getParams()->offsetGet(static::INPUT_DIGEST));
             $this->uriHandler->getParams()->offsetUnset(static::INPUT_DIGEST);
             $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedUser->getPubSalt());
-            $data = $this->uriHandler->getAddress();
+            $data = strval($this->uriHandler->getAddress());
 
             // verify
-            if (hash($this->algorithm, $wantedUser->getPubKey() . (string)$data) == (string)$digest) {
+            if (hash($this->algorithm, $wantedUser->getPubKey() . $data) == $digest) {
                 // OK
                 $this->loggedUser = $wantedUser;
             }

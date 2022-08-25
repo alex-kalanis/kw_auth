@@ -36,8 +36,8 @@ class Groups extends AFile implements IAccessGroups
     }
 
     /**
-     * @return string[][]
      * @throws AuthException
+     * @return array<int, array<int, string>>
      */
     protected function openGroups(): array
     {
@@ -45,7 +45,7 @@ class Groups extends AFile implements IAccessGroups
     }
 
     /**
-     * @param string[][] $lines
+     * @param array<int, array<int, string|int>> $lines
      * @throws AuthException
      */
     protected function saveGroups(array $lines): void

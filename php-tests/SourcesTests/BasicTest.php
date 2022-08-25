@@ -160,8 +160,8 @@ class MockFiles
 
     /**
      * @param string $path
-     * @return string[][]
      * @throws AuthException
+     * @return string[][]
      */
     public function open(string $path): array
     {

@@ -82,8 +82,8 @@ class GroupsTest extends CommonTestClass
 
     /**
      * Contains a full comedy/tragedy of work with locks
-     * @return Groups
      * @throws LockException
+     * @return Groups
      */
     protected function groupSources(): Groups
     {

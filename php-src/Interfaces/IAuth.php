@@ -17,9 +17,9 @@ interface IAuth
     /**
      * Get data bout chosen user
      * @param string $userName
-     * @return IUser|null
      * @throws AuthException
      * @throws LockException
+     * @return IUser|null
      */
     public function getDataOnly(string $userName): ?IUser;
 
@@ -27,9 +27,9 @@ interface IAuth
      * Check if credentials are okay
      * @param string $userName
      * @param string[] $params
-     * @return IUser|null
      * @throws AuthException
      * @throws LockException
+     * @return IUser|null
      */
     public function authenticate(string $userName, array $params = []): ?IUser;
 }

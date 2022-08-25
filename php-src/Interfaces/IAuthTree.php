@@ -19,7 +19,6 @@ interface IAuthTree
     /**
      * lookup for method which can authenticate send data
      * @param ArrayAccess<string, string|int|float> $credentials
-     * @return void
      * @throws AuthException
      * @throws LockException
      */
@@ -27,8 +26,8 @@ interface IAuthTree
 
     /**
      * Get the method which authenticated user; null for no match
-     * @return AMethods|null
      * @throws AuthException
+     * @return AMethods|null
      */
     public function getMethod(): ?AMethods;
 }

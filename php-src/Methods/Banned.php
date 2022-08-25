@@ -61,8 +61,8 @@ class Banned extends AMethods
     }
 
     /**
-     * @return Bans
      * @throws BanException
+     * @return Bans
      */
     protected function getBans(): Bans
     {

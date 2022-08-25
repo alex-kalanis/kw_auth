@@ -32,12 +32,12 @@ class LdapRecord extends ASimpleRecord implements IUser
 
     public function getAuthId(): int
     {
-        return (int)$this->id;
+        return (int) $this->id;
     }
 
     public function getAuthName(): string
     {
-        return (string)$this->name;
+        return (string) $this->name;
     }
 
     public function getGroup(): int
@@ -52,7 +52,7 @@ class LdapRecord extends ASimpleRecord implements IUser
 
     public function getDisplayName(): string
     {
-        return (string)$this->name;
+        return (string) $this->name;
     }
 
     public function getDir(): string

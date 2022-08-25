@@ -27,9 +27,9 @@ interface IAuthCert extends IAuth, IAccessAccounts
     /**
      * Cet cert data from storage
      * @param string $userName
-     * @return IUserCert|null
      * @throws AuthException
      * @throws LockException
+     * @return IUserCert|null
      */
     public function getCertData(string $userName): ?IUserCert;
 }

@@ -56,13 +56,13 @@ class File extends AFile implements IAuth, IAccessAccounts
             throw new AuthException($this->getLang()->kauPassMustBeSet());
         }
         $name = $this->stripChars($userName);
-        $pass = $params['password'];
+        $pass = strval($params['password']);
 
         $this->checkLock();
         $passLines = $this->openFile($this->path);
         foreach ($passLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
-                if ($this->mode->check((string)$pass, (string)$line[static::PW_PASS])) {
+                if ($this->mode->check($pass, strval($line[static::PW_PASS]))) {
                     return $this->getUserClass($line);
                 }
             }
@@ -145,9 +145,9 @@ class File extends AFile implements IAuth, IAccessAccounts
     }
 
     /**
-     * @return IUser[]
      * @throws AuthException
      * @throws LockException
+     * @return IUser[]
      */
     public function readAccounts(): array
     {

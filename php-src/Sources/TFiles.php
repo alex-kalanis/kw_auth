@@ -19,8 +19,8 @@ trait TFiles
 
     /**
      * @param string $path
-     * @return array<int, array<int, string>>
      * @throws AuthException
+     * @return array<int, array<int, string>>
      */
     protected function openFile(string $path): array
     {

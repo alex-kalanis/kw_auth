@@ -16,6 +16,14 @@ parameters:
 			path: 'php-src/Sources/File.php'
 			# quality WTF - that structure passed okay
 		-
+			message: '#Parameter \#1 \$lines of method kalanis\\kw_auth\\Sources\\Files\:\:savePassword\(\) expects#'
+			path: 'php-src/Sources/Files.php'
+			# quality WTF - that structure passed okay
+		-
+			message: '#Parameter \#1 \$lines of method kalanis\\kw_auth\\Sources\\Files\:\:saveShadow\(\) expects#'
+			path: 'php-src/Sources/Files.php'
+			# quality WTF - that structure passed okay
+		-
 			message: '#Cannot call method authenticate\(\) on kalanis\\kw_auth\\Interfaces\\IAuth\|null\.#'
 			path: 'php-src/Methods/HttpUser.php'
 			# quality WTF - this null is for empty setting

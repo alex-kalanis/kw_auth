@@ -31,16 +31,16 @@ interface IAccessGroups
 
     /**
      * @param int $groupId
-     * @return IGroup|null
      * @throws AuthException
      * @throws LockException
+     * @return IGroup|null
      */
     public function getGroupDataOnly(int $groupId): ?IGroup;
 
     /**
-     * @return IGroup[]
      * @throws AuthException
      * @throws LockException
+     * @return IGroup[]
      */
     public function readGroup(): array;
 

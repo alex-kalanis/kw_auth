@@ -44,7 +44,7 @@ class HttpDigest extends AMethods
         }
         $data = $this->httpDigestParse(strval($this->server->offsetGet(static::INPUT_DIGEST)));
         if (!empty($data)) {
-            $wantedUser = $this->authenticator->getCertData((string)$data['username']);
+            $wantedUser = $this->authenticator->getCertData(strval($data['username']));
             if (!$wantedUser) {
                 return;
             }

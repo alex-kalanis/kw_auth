@@ -65,9 +65,9 @@ trait TGroups
 
     /**
      * @param int $groupId
-     * @return IGroup|null
      * @throws AuthException
      * @throws LockException
+     * @return IGroup|null
      */
     public function getGroupDataOnly(int $groupId): ?IGroup
     {
@@ -82,9 +82,9 @@ trait TGroups
     }
 
     /**
-     * @return IGroup[]
      * @throws AuthException
      * @throws LockException
+     * @return IGroup[]
      */
     public function readGroup(): array
     {
@@ -178,14 +178,14 @@ trait TGroups
     abstract protected function checkRest(int $groupId): void;
 
     /**
-     * @return string[][]
      * @throws AuthException
+     * @return array<int, array<int, string|int>>
      */
     abstract protected function openGroups(): array;
 
     /**
-     * @param string[][] $lines
      * @throws AuthException
+     * @param array<int, array<int, string|int>> $lines
      */
     abstract protected function saveGroups(array $lines): void;
 }

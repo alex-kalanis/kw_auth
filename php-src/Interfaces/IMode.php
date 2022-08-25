@@ -17,8 +17,8 @@ interface IMode
      * Check itself
      * @param string $pass
      * @param string $hash
-     * @return bool
      * @throws AuthException
+     * @return bool
      */
     public function check(string $pass, string $hash): bool;
 
@@ -26,8 +26,8 @@ interface IMode
      * Create new one
      * @param string $pass
      * @param string|null $method
-     * @return string
      * @throws AuthException
+     * @return string
      */
     public function hash(string $pass, ?string $method = null): string;
 }

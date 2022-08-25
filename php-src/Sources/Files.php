@@ -70,7 +70,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
         foreach ($shadowLines as &$line) {
             if (
                 ($line[static::SH_NAME] == $name)
-                && $this->mode->check((string)$params['password'], (string)$line[static::SH_PASS])
+                && $this->mode->check(strval($params['password']), strval($line[static::SH_PASS]))
                 && ($time < $line[static::SH_CHANGE_NEXT])
             ) {
                 $class = $this->getDataOnly($userName);
@@ -126,8 +126,8 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
                 $class = $this->getDataOnly($userName);
                 if ($class && ($class instanceof IUserCert)) {
                     $class->addCertInfo(
-                        (string)base64_decode($line[static::SH_CERT_KEY]),
-                        (string)$line[static::SH_CERT_SALT]
+                        strval(base64_decode(strval($line[static::SH_CERT_KEY]))),
+                        strval($line[static::SH_CERT_SALT])
                     );
                     return $class;
                 }
@@ -244,9 +244,9 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     }
 
     /**
-     * @return IUser[]
      * @throws AuthException
      * @throws LockException
+     * @return IUser[]
      */
     public function readAccounts(): array
     {
@@ -358,8 +358,8 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     }
 
     /**
-     * @return string[][]
      * @throws AuthException
+     * @return array<int, array<int, string|int>>
      */
     protected function openPassword(): array
     {
@@ -376,8 +376,8 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     }
 
     /**
-     * @return string[][]
      * @throws AuthException
+     * @return array<int, array<int, string|int>>
      */
     protected function openShadow(): array
     {
@@ -394,8 +394,8 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     }
 
     /**
-     * @return string[][]
      * @throws AuthException
+     * @return array<int, array<int, string|int>>
      */
     protected function openGroups(): array
     {
@@ -403,7 +403,7 @@ class Files extends AFile implements IAuthCert, IAccessGroups, IAccessClasses
     }
 
     /**
-     * @param string[][] $lines
+     * @param array<int, array<int, string|int>> $lines
      * @throws AuthException
      */
     protected function saveGroups(array $lines): void

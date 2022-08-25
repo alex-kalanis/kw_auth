@@ -19,8 +19,8 @@ use PHPUnit\Framework\TestCase;
 class CommonTestClass extends TestCase
 {
     /**
-     * @return LockMethod\FileLock
      * @throws LockException
+     * @return LockMethod\FileLock
      */
     protected function getLockPath(): LockMethod\FileLock
     {
