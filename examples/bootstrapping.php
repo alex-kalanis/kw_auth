@@ -21,7 +21,7 @@ $paths->setData($params->getParams());
 /// ...
 
 // authorization tree
-$authenticator = new \kalanis\kw_auth\Sources\Files(
+$authenticator = new \kalanis\kw_auth\Sources\Files\Volume\Files(
     new \kalanis\kw_auth\Mode\KwOrig(strval(\kalanis\kw_confs\Config::get('Admin', 'admin.salt'))),
     new \kalanis\kw_locks\Methods\FileLock(
         $paths->getDocumentRoot() . $paths->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . \kalanis\kw_locks\Interfaces\ILock::LOCK_FILE

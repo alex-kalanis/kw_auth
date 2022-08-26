@@ -85,11 +85,11 @@ class AuthTest extends CommonTestClass
     /**
      * Contains a full comedy/tragedy of work with locks
      * @throws LockException
-     * @return Sources\Files
+     * @return Sources\Files\Volume\Files
      */
-    protected function fileSources(): Sources\Files
+    protected function fileSources(): Sources\Files\Volume\Files
     {
-        return new Sources\Files(
+        return new Sources\Files\Volume\Files(
             new KwOrig('yxcvbnmasdfghjklqwertzuiop0123456789'),
             $this->getLockPath(),
             __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data'

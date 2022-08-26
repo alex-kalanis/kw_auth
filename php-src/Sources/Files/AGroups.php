@@ -1,6 +1,6 @@
 <?php
 
-namespace kalanis\kw_auth\Sources;
+namespace kalanis\kw_auth\Sources\Files;
 
 
 use kalanis\kw_auth\AuthException;
@@ -10,13 +10,18 @@ use kalanis\kw_locks\Interfaces\ILock;
 
 
 /**
- * Class Groups
- * @package kalanis\kw_auth\Sources
+ * Class AGroups
+ * @package kalanis\kw_auth\Sources\Files
  * Authenticate via files - manage groups
  */
-class Groups extends AFile implements IAccessGroups
+abstract class AGroups implements IAccessGroups
 {
     use TGroups;
+    use TLines;
+    use TStore;
+
+    /** @var string */
+    protected $path = '';
 
     /**
      * @param ILock $lock

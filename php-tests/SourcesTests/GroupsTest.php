@@ -6,7 +6,7 @@ namespace SourcesTests;
 use CommonTestClass;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\FileGroup;
-use kalanis\kw_auth\Sources\Groups;
+use kalanis\kw_auth\Sources\Files\Volume\Groups;
 use kalanis\kw_locks\LockException;
 
 

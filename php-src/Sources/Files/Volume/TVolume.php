@@ -1,6 +1,6 @@
 <?php
 
-namespace kalanis\kw_auth\Sources;
+namespace kalanis\kw_auth\Sources\Files\Volume;
 
 
 use kalanis\kw_auth\AuthException;
@@ -10,10 +10,10 @@ use kalanis\kw_auth\TTranslate;
 
 /**
  * Trait TFiles
- * @package kalanis\kw_auth\Sources
+ * @package kalanis\kw_auth\Sources\Files\Volume
  * Processing files with accounts
  */
-trait TFiles
+trait TVolume
 {
     use TTranslate;
 

@@ -10,6 +10,7 @@ use kalanis\kw_auth\Interfaces\IExpire;
 use kalanis\kw_auth\Sources;
 use kalanis\kw_auth\Translations;
 use kalanis\kw_locks\Interfaces\ILock;
+use kalanis\kw_locks\LockException;
 
 
 class BasicTest extends CommonTestClass
@@ -111,6 +112,9 @@ class BasicTest extends CommonTestClass
         $lib->check();
     }
 
+    /**
+     * @throws LockException
+     */
     public function testLockSimple(): void
     {
         $lib = new MockAuthLock($this->getLockPath());
@@ -119,6 +123,9 @@ class BasicTest extends CommonTestClass
         $this->assertTrue(true); // it runs, no errors
     }
 
+    /**
+     * @throws LockException
+     */
     public function testLockMix(): void
     {
         $lock = $this->getLockPath();
@@ -129,6 +136,9 @@ class BasicTest extends CommonTestClass
         $lib->check();
     }
 
+    /**
+     * @throws AuthException
+     */
     public function testExpire(): void
     {
         $target = new Expire();
@@ -149,14 +159,14 @@ class BasicTest extends CommonTestClass
 
 class MockLines
 {
-    use Sources\TLines;
+    use Sources\Files\TLines;
 }
 
 
 class MockFiles
 {
-    use Sources\TFiles;
-    use Sources\TLines;
+    use Sources\Files\Volume\TVolume;
+    use Sources\Files\TLines;
 
     /**
      * @param string $path

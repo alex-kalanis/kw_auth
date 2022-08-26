@@ -21,6 +21,7 @@
         "alex-kalanis/kw_bans": ">=1.0",
         "alex-kalanis/kw_confs": ">=1.0",
         "alex-kalanis/kw_mapper": ">=0.10",
+        "alex-kalanis/kw_storage": ">=1.0",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",

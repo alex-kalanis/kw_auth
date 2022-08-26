@@ -12,16 +12,16 @@ parameters:
 		- 'php-tests/_bootstrap.php'
 	ignoreErrors:
 		-
-			message: '#Parameter \#2 \$lines of method kalanis\\kw_auth\\Sources\\AFile\:\:saveFile\(\) expects#'
-			path: 'php-src/Sources/File.php'
+			message: '#Parameter \#2 \$lines of method kalanis\\kw_auth\\Sources\\Files\\AFile\:\:saveFile\(\) expects#'
+			path: 'php-src/Sources/Files/AFile.php'
 			# quality WTF - that structure passed okay
 		-
-			message: '#Parameter \#1 \$lines of method kalanis\\kw_auth\\Sources\\Files\:\:savePassword\(\) expects#'
-			path: 'php-src/Sources/Files.php'
+			message: '#Parameter \#1 \$lines of method kalanis\\kw_auth\\Sources\\Files\\AFiles\:\:savePassword\(\) expects#'
+			path: 'php-src/Sources/Files/AFiles.php'
 			# quality WTF - that structure passed okay
 		-
-			message: '#Parameter \#1 \$lines of method kalanis\\kw_auth\\Sources\\Files\:\:saveShadow\(\) expects#'
-			path: 'php-src/Sources/Files.php'
+			message: '#Parameter \#1 \$lines of method kalanis\\kw_auth\\Sources\\Files\\AFiles\:\:saveShadow\(\) expects#'
+			path: 'php-src/Sources/Files/AFiles.php'
 			# quality WTF - that structure passed okay
 		-
 			message: '#Cannot call method authenticate\(\) on kalanis\\kw_auth\\Interfaces\\IAuth\|null\.#'
@@ -35,3 +35,11 @@ parameters:
 			message: '#Cannot call method getDataOnly\(\) on kalanis\\kw_auth\\Interfaces\\IAuth\|null\.#'
 			path: 'php-src/Methods/Sessions.php'
 			# quality WTF - this null is for empty setting
+		-
+			message: '#Method kalanis\\kw_auth\\Sources\\Mapper\\Database\:\:readAccounts\(\) should return#'
+			path: 'php-src/Sources/Mapper/Database.php'
+			# that record also contains necessary interface
+		-
+			message: '#Method kalanis\\kw_auth\\Sources\\Mapper\\Database\:\:readGroup\(\) should return#'
+			path: 'php-src/Sources/Mapper/Database.php'
+			# that record also contains necessary interface

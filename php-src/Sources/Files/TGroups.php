@@ -1,24 +1,24 @@
 <?php
 
-namespace kalanis\kw_auth\Sources;
+namespace kalanis\kw_auth\Sources\Files;
 
 
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\FileGroup;
 use kalanis\kw_auth\Interfaces\IAccessGroups;
 use kalanis\kw_auth\Interfaces\IGroup;
+use kalanis\kw_auth\Sources\TAuthLock;
 use kalanis\kw_locks\LockException;
 
 
 /**
  * Trait TGroups
- * @package kalanis\kw_auth\Sources
+ * @package kalanis\kw_auth\Sources\Files
  * Work with groups
  */
 trait TGroups
 {
     use TAuthLock;
-    use TLines;
 
     /**
      * @param IGroup $group

@@ -1,28 +1,27 @@
 <?php
 
-namespace kalanis\kw_auth\Sources;
+namespace kalanis\kw_auth\Sources\Mapper;
 
 
-use kalanis\kw_auth\Data\Mapper;
 use kalanis\kw_auth\Interfaces\IAuth;
 use kalanis\kw_auth\Interfaces\IUser;
 
 
 /**
  * Class Ldap
- * @package kalanis\kw_auth\Sources
+ * @package kalanis\kw_auth\Sources\Mapper
  * Authenticate via ldap
  * need kw_mapper!
  * @codeCoverageIgnore because access external content
  */
 class Ldap implements IAuth
 {
-    /** @var Mapper\LdapRecord */
+    /** @var Ldap\LdapRecord */
     protected $record = null;
 
     public function __construct()
     {
-        $this->record = new Mapper\LdapRecord();
+        $this->record = new Ldap\LdapRecord();
     }
 
     public function authenticate(string $userName, array $params = []): ?IUser
@@ -31,7 +30,7 @@ class Ldap implements IAuth
         if (!method_exists($mapper, 'authorize')) {
             return null;
         }
-        /** @var Mapper\LdapMapper $mapper */
+        /** @var Ldap\LdapMapper $mapper */
         return ($mapper->authorize([
             'user' => $userName,
             'password' => $params['password'] ?: ''
@@ -42,7 +41,7 @@ class Ldap implements IAuth
 
     public function getDataOnly(string $userName): ?IUser
     {
-        $record = new Mapper\LdapRecord();
+        $record = new Ldap\LdapRecord();
         $record->name = $userName;
         $record->load();
         return (empty($record->getAuthId())) ? null : $record ;

@@ -1,6 +1,6 @@
 <?php
 
-namespace kalanis\kw_auth\Data\Mapper;
+namespace kalanis\kw_auth\Sources\Mapper\Ldap;
 
 
 use kalanis\kw_mapper\Mappers\Database\ALdap;
@@ -8,7 +8,7 @@ use kalanis\kw_mapper\Mappers\Database\ALdap;
 
 /**
  * Class LdapMapper
- * @package kalanis\kw_auth\Data\Mapper
+ * @package kalanis\kw_auth\Data\Mapper\Ldap
  * @codeCoverageIgnore remote source
  */
 class LdapMapper extends ALdap

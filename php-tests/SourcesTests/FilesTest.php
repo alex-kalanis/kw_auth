@@ -7,7 +7,7 @@ use CommonTestClass;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\FileCertUser;
 use kalanis\kw_auth\Data\FileGroup;
-use kalanis\kw_auth\Sources\Files;
+use kalanis\kw_auth\Sources\Files\Volume\Files;
 use kalanis\kw_locks\LockException;
 
 

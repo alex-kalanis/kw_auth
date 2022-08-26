@@ -1,6 +1,6 @@
 <?php
 
-namespace kalanis\kw_auth\Sources;
+namespace kalanis\kw_auth\Sources\Files;
 
 
 use kalanis\kw_auth\Interfaces\IFile;
@@ -8,7 +8,7 @@ use kalanis\kw_auth\Interfaces\IFile;
 
 /**
  * Trait TLines
- * @package kalanis\kw_auth\Sources
+ * @package kalanis\kw_auth\Sources\Files
  * Processing lines of accounts in files
  */
 trait TLines
