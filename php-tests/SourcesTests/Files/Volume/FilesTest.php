@@ -1,6 +1,6 @@
 <?php
 
-namespace SourcesTests;
+namespace SourcesTests\Files\Volume;
 
 
 use CommonTestClass;
@@ -17,7 +17,7 @@ class FilesTest extends CommonTestClass
 
     protected function setUp(): void
     {
-        $this->sourcePath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data';
+        $this->sourcePath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data';
     }
 
     /**
