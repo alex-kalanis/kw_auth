@@ -31,6 +31,15 @@ trait TLines
         return implode(IFile::SEPARATOR, $input + ['']);
     }
 
+    /**
+     * @param string $input
+     * @return bool
+     */
+    public function filterEmptyLines(string $input): bool
+    {
+        return !empty($input) && ('#' !== $input[0]);
+    }
+
     public function stripChars(string $input): string
     {
         return strval(preg_replace('#[^a-zA-Z0-9\,\*\/\.\-\+\?\_\§\"\!\/\(\)\|\€\'\\\&\@\{\}\<\>\#\ ]#', '', $input));

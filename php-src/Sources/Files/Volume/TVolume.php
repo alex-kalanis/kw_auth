@@ -28,10 +28,12 @@ trait TVolume
         if (false === $content) {
             throw new AuthException($this->getLang()->kauPassFileNotFound($path));
         }
-        return array_map([$this, 'explosion'], array_map('trim', $content));
+        return array_map([$this, 'explosion'], array_filter(array_map('trim', $content), [$this, 'filterEmptyLines']));
     }
 
     abstract public function explosion(string $input): array;
+
+    abstract public function filterEmptyLines(string $input): bool;
 
     /**
      * @param string $path

@@ -31,7 +31,7 @@ trait TGroups
         $groupName = $this->stripChars($group->getGroupName());
         $groupDesc = $this->stripChars($group->getGroupDesc());
 
-        # no everything need is set
+        // not everything necessary is set
         if (empty($userId) || empty($groupName)) {
             throw new AuthException($this->getLang()->kauGroupMissParam());
         }
@@ -40,8 +40,13 @@ trait TGroups
         $gid = 0;
         $this->getLock()->create();
 
-        # read groups
-        $groupLines = $this->openGroups();
+        // read groups
+        try {
+            $groupLines = $this->openGroups();
+        } catch (AuthException $ex) {
+            // silence the problems on storage
+            $groupLines = [];
+        }
         foreach ($groupLines as &$line) {
             $gid = max($gid, $line[IAccessGroups::GRP_ID]);
         }
@@ -57,7 +62,7 @@ trait TGroups
         ksort($newGroup);
         $groupLines[] = $newGroup;
 
-        # now save it
+        // now save it
         $this->saveGroups($groupLines);
 
         $this->getLock()->delete();
@@ -72,7 +77,12 @@ trait TGroups
     public function getGroupDataOnly(int $groupId): ?IGroup
     {
         $this->checkLock();
-        $groupLines = $this->openGroups();
+        try {
+            $groupLines = $this->openGroups();
+        } catch (AuthException $ex) {
+            // silence the problems on storage
+            return null;
+        }
         foreach ($groupLines as &$line) {
             if ($line[IAccessGroups::GRP_ID] == $groupId) {
                 return $this->getGroupClass($line);
@@ -128,7 +138,12 @@ trait TGroups
         $this->checkLock();
 
         $this->getLock()->create();
-        $groupLines = $this->openGroups();
+        try {
+            $groupLines = $this->openGroups();
+        } catch (AuthException $ex) {
+            $this->getLock()->delete();
+            throw $ex;
+        }
         foreach ($groupLines as &$line) {
             if ($line[IAccessGroups::GRP_ID] == $group->getGroupId()) {
                 // REFILL
@@ -154,8 +169,14 @@ trait TGroups
         $changed = false;
         $this->getLock()->create();
 
-        # update groups
-        $openGroups = $this->openGroups();
+        // update groups
+        try {
+            $openGroups = $this->openGroups();
+        } catch (AuthException $ex) {
+            // silence the problems on storage
+            $this->getLock()->delete();
+            return;
+        }
         foreach ($openGroups as $index => &$line) {
             if ($line[IAccessGroups::GRP_ID] == $groupId) {
                 unset($openGroups[$index]);
@@ -163,7 +184,7 @@ trait TGroups
             }
         }
 
-        # now save it
+        // now save it
         if ($changed) {
             $this->saveGroups($openGroups);
         }

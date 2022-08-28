@@ -59,7 +59,12 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         $pass = strval($params['password']);
 
         $this->checkLock();
-        $passLines = $this->openFile($this->path);
+        try {
+            $passLines = $this->openFile($this->path);
+        } catch (AuthException $ex) {
+            // silence the problems on storage
+            return null;
+        }
         foreach ($passLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
                 if ($this->mode->check($pass, strval($line[static::PW_PASS]))) {
@@ -76,7 +81,12 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
 
         // load from password
         $this->checkLock();
-        $passwordLines = $this->openFile($this->path);
+        try {
+            $passwordLines = $this->openFile($this->path);
+        } catch (AuthException $ex) {
+            // silence the problems on storage
+            return null;
+        }
         foreach ($passwordLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
                 return $this->getUserClass($line);
@@ -109,7 +119,7 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         $directory = $this->stripChars($user->getDir());
         $displayName = $this->stripChars($user->getDisplayName());
 
-        # no everything need is set
+        // not everything necessary is set
         if (empty($userName) || empty($directory) || empty($password)) {
             throw new AuthException($this->getLang()->kauPassMissParam());
         }
@@ -118,8 +128,13 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         $uid = Interfaces\IUser::LOWEST_USER_ID;
         $this->getLock()->create();
 
-        # read password
-        $passLines = $this->openFile($this->path);
+        // read password
+        try {
+            $passLines = $this->openFile($this->path);
+        } catch (AuthException $ex) {
+            // silence the problems on storage
+            $passLines = [];
+        }
         foreach ($passLines as &$line) {
             $uid = max($uid, intval($line[static::PW_ID]));
         }
@@ -138,10 +153,12 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         ksort($newUserPass);
         $passLines[] = $newUserPass;
 
-        # now save it
-        $this->saveFile($this->path, $passLines);
-
-        $this->getLock()->delete();
+        // now save it
+        try {
+            $this->saveFile($this->path, $passLines);
+        } finally {
+            $this->getLock()->delete();
+        }
     }
 
     /**
@@ -171,7 +188,12 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         $this->checkLock();
 
         $this->getLock()->create();
-        $passwordLines = $this->openFile($this->path);
+        try {
+            $passwordLines = $this->openFile($this->path);
+        } catch (AuthException $ex) {
+            $this->getLock()->delete();
+            throw $ex;
+        }
         foreach ($passwordLines as &$line) {
             if ($line[static::PW_NAME] == $userName) {
                 // REFILL
@@ -182,8 +204,11 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
             }
         }
 
-        $this->saveFile($this->path, $passwordLines);
-        $this->getLock()->delete();
+        try {
+            $this->saveFile($this->path, $passwordLines);
+        } finally {
+            $this->getLock()->delete();
+        }
     }
 
     public function updatePassword(string $userName, string $passWord): void
@@ -195,17 +220,25 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         $changed = false;
         $this->getLock()->create();
 
-        $lines = $this->openFile($this->path);
+        try {
+            $lines = $this->openFile($this->path);
+        } catch (AuthException $ex) {
+            $this->getLock()->delete();
+            throw $ex;
+        }
         foreach ($lines as &$line) {
             if ($line[static::PW_NAME] == $name) {
                 $changed = true;
                 $line[static::PW_PASS] = $this->mode->hash($passWord);
             }
         }
-        if ($changed) {
-            $this->saveFile($this->path, $lines);
+        try {
+            if ($changed) {
+                $this->saveFile($this->path, $lines);
+            }
+        } finally {
+            $this->getLock()->delete();
         }
-        $this->getLock()->delete();
     }
 
     public function deleteAccount(string $userName): void
@@ -216,8 +249,15 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         $changed = false;
         $this->getLock()->create();
 
-        # update password
-        $passLines = $this->openFile($this->path);
+        // update password
+        try {
+            $passLines = $this->openFile($this->path);
+        } catch (AuthException $ex) {
+            // removal on non-existent file is not possible and not necessary
+            $this->getLock()->delete();
+            return;
+        }
+
         foreach ($passLines as $index => &$line) {
             if ($line[static::PW_NAME] == $name) {
                 unset($passLines[$index]);
@@ -225,10 +265,13 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
             }
         }
 
-        # now save it
-        if ($changed) {
-            $this->saveFile($this->path, $passLines);
+        // now save it all
+        try {
+            if ($changed) {
+                $this->saveFile($this->path, $passLines);
+            }
+        } finally {
+            $this->getLock()->delete();
         }
-        $this->getLock()->delete();
     }
 }

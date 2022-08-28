@@ -32,13 +32,15 @@ trait TStorage
         try {
             $content = $this->storage->read($path);
             $lines = explode(IFile::CRLF, strval($content));
-            return array_map([$this, 'explosion'], array_map('trim', $lines));
+            return array_map([$this, 'explosion'], array_filter(array_map('trim', $lines), [$this, 'filterEmptyLines']));
         } catch (StorageException $ex) {
             throw new AuthException($ex->getMessage(), $ex->getCode(), $ex);
         }
     }
 
     abstract public function explosion(string $input): array;
+
+    abstract public function filterEmptyLines(string $input): bool;
 
     /**
      * @param string $path
