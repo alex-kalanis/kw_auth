@@ -6,7 +6,7 @@ namespace kalanis\kw_auth\Sources\Files\Storage;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces\IFile;
 use kalanis\kw_auth\TTranslate;
-use kalanis\kw_storage\Storage\Storage;
+use kalanis\kw_storage\Interfaces\IStorage;
 use kalanis\kw_storage\StorageException;
 
 
@@ -19,7 +19,7 @@ trait TStorage
 {
     use TTranslate;
 
-    /** @var Storage */
+    /** @var IStorage */
     protected $storage = null;
 
     /**

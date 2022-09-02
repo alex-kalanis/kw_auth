@@ -6,7 +6,7 @@ namespace SourcesTests\Files\Storage;
 use CommonTestClass;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Sources;
-use kalanis\kw_storage\Interfaces\IStorage;
+use kalanis\kw_storage\Interfaces\ITarget;
 use kalanis\kw_storage\Storage\Key\DefaultKey;
 use kalanis\kw_storage\Storage\Storage;
 use kalanis\kw_storage\Storage\Target\Volume;
@@ -39,7 +39,7 @@ class MockFiles
     use Sources\Files\Storage\TStorage;
     use Sources\Files\TLines;
 
-    public function __construct(?IStorage $storage = null)
+    public function __construct(?ITarget $storage = null)
     {
         $this->storage = new Storage(new DefaultKey(), $storage ?: new Volume());
     }
@@ -66,7 +66,7 @@ class MockFiles
 }
 
 
-class XCrashStorage implements IStorage
+class XCrashStorage implements ITarget
 {
     public function check(string $key): bool
     {

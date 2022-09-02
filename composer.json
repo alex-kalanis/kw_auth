@@ -12,16 +12,16 @@
     "license": "BSD-3-Clause",
     "type": "library",
     "require": {
-        "alex-kalanis/kw_locks": ">=1.0",
+        "alex-kalanis/kw_locks": ">=2.0",
         "php": ">=7.2.0"
     },
     "require-dev": {
         "ext-openssl": "*",
-        "alex-kalanis/kw_address_handler": ">=1.0",
+        "alex-kalanis/kw_address_handler": ">=2.0",
         "alex-kalanis/kw_bans": ">=1.0",
         "alex-kalanis/kw_confs": ">=1.0",
-        "alex-kalanis/kw_mapper": ">=0.10",
-        "alex-kalanis/kw_storage": ">=1.0",
+        "alex-kalanis/kw_mapper": ">=0.15",
+        "alex-kalanis/kw_storage": ">=3.0",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",
