@@ -161,9 +161,8 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         $this->getLock()->create();
         try {
             $lines = $this->openShadow();
-        } catch (AuthException $ex) {
+        } finally {
             $this->getLock()->delete();
-            throw $ex;
         }
         foreach ($lines as &$line) {
             if ($line[static::SH_NAME] == $name) {
@@ -172,10 +171,13 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
                 $line[static::SH_CHANGE_NEXT] = $this->whenItExpire();
             }
         }
-        if ($changed) {
-            $this->saveShadow($lines);
+        try {
+            if ($changed) {
+                $this->saveShadow($lines);
+            }
+        } finally {
+            $this->getLock()->delete();
         }
-        $this->getLock()->delete();
     }
 
     public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): void
@@ -188,9 +190,8 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         $this->getLock()->create();
         try {
             $lines = $this->openShadow();
-        } catch (AuthException $ex) {
+        } finally {
             $this->getLock()->delete();
-            throw $ex;
         }
         foreach ($lines as &$line) {
             if ($line[static::SH_NAME] == $name) {
@@ -199,10 +200,14 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
                 $line[static::SH_CERT_SALT] = $certSalt ?: $line[static::SH_CERT_SALT];
             }
         }
-        if ($changed) {
-            $this->saveShadow($lines);
+
+        try {
+            if ($changed) {
+                $this->saveShadow($lines);
+            }
+        } finally {
+            $this->getLock()->delete();
         }
-        $this->getLock()->delete();
     }
 
     public function createAccount(Interfaces\IUser $user, string $password): void
@@ -317,9 +322,8 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         $oldName = null;
         try {
             $passwordLines = $this->openPassword();
-        } catch (AuthException $ex) {
+        } finally {
             $this->getLock()->delete();
-            throw $ex;
         }
         foreach ($passwordLines as &$line) {
             if (($line[static::PW_NAME] == $userName) && ($line[static::PW_ID] != $user->getAuthId())) {
@@ -367,9 +371,8 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         // update password
         try {
             $passLines = $this->openPassword();
-        } catch (AuthException $ex) {
+        } finally {
             $this->getLock()->delete();
-            throw $ex;
         }
         foreach ($passLines as $index => &$line) {
             if ($line[static::PW_NAME] == $name) {
@@ -381,9 +384,8 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         // now update shadow
         try {
             $shadeLines = $this->openShadow();
-        } catch (AuthException $ex) {
+        } finally {
             $this->getLock()->delete();
-            throw $ex;
         }
         foreach ($shadeLines as $index => &$line) {
             if ($line[static::SH_NAME] == $name) {

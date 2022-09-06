@@ -62,10 +62,12 @@ trait TGroups
         ksort($newGroup);
         $groupLines[] = $newGroup;
 
-        // now save it
-        $this->saveGroups($groupLines);
-
-        $this->getLock()->delete();
+        try {
+            // now save it
+            $this->saveGroups($groupLines);
+        } finally {
+            $this->getLock()->delete();
+        }
     }
 
     /**
@@ -140,9 +142,8 @@ trait TGroups
         $this->getLock()->create();
         try {
             $groupLines = $this->openGroups();
-        } catch (AuthException $ex) {
+        } finally {
             $this->getLock()->delete();
-            throw $ex;
         }
         foreach ($groupLines as &$line) {
             if ($line[IAccessGroups::GRP_ID] == $group->getGroupId()) {
@@ -152,8 +153,11 @@ trait TGroups
             }
         }
 
-        $this->saveGroups($groupLines);
-        $this->getLock()->delete();
+        try {
+            $this->saveGroups($groupLines);
+        } finally {
+            $this->getLock()->delete();
+        }
     }
 
     /**
@@ -184,11 +188,14 @@ trait TGroups
             }
         }
 
-        // now save it
-        if ($changed) {
-            $this->saveGroups($openGroups);
+        try {
+            // now save it
+            if ($changed) {
+                $this->saveGroups($openGroups);
+            }
+        } finally {
+            $this->getLock()->delete();
         }
-        $this->getLock()->delete();
     }
 
     /**

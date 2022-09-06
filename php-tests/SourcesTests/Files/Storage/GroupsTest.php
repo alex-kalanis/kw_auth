@@ -11,6 +11,7 @@ use kalanis\kw_locks\LockException;
 use kalanis\kw_storage\Storage\Key\DefaultKey;
 use kalanis\kw_storage\Storage\Storage;
 use kalanis\kw_storage\Storage\Target\Memory;
+use kalanis\kw_storage\StorageException;
 
 
 class GroupsTest extends CommonTestClass
@@ -26,7 +27,6 @@ class GroupsTest extends CommonTestClass
         $lib = $this->emptyGroupSources();
         $this->assertNull($lib->getGroupDataOnly(15));
     }
-
 
     /**
      * @throws AuthException
@@ -63,6 +63,7 @@ class GroupsTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testGroupManipulation(): void
     {
@@ -100,6 +101,7 @@ class GroupsTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testCreateFail(): void
     {
@@ -112,6 +114,7 @@ class GroupsTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAllGroups(): void
     {
@@ -120,7 +123,6 @@ class GroupsTest extends CommonTestClass
         $this->assertEquals('Maintainers', $data[0]->getGroupDesc());
         $this->assertEquals(1000, $data[1]->getGroupAuthorId());
     }
-
 
     /**
      * @throws AuthException
@@ -136,9 +138,87 @@ class GroupsTest extends CommonTestClass
     }
 
     /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testCreateStorageFail(): void
+    {
+        $lib = $this->failedGroupSources();
+        $group = $this->wantedGroup('');
+        $this->expectException(AuthException::class);
+        $lib->createGroup($group);
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testCreateStorageFailSave(): void
+    {
+        $lib = $this->failedGroupSources(true);
+        $group = $this->wantedGroup('');
+        $this->expectException(AuthException::class);
+        $lib->createGroup($group);
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testReadGroupsStorageFail(): void
+    {
+        $lib = $this->failedGroupSources();
+        $this->expectException(AuthException::class);
+        $lib->readGroup();
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testUpdateGroupStorageFail(): void
+    {
+        $lib = $this->failedGroupSources();
+        $this->expectException(AuthException::class);
+        $lib->updateGroup($this->wantedGroup());
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testUpdateGroupStorageFailSave(): void
+    {
+        $lib = $this->failedGroupSources(true);
+        $this->expectException(AuthException::class);
+        $lib->updateGroup($this->wantedGroup());
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testRemoveGroupStorageFail(): void
+    {
+        $lib = $this->failedGroupSources();
+        $this->assertNull($lib->deleteGroup(41));
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testRemoveGroupStorageFailSave(): void
+    {
+        $lib = $this->failedGroupSources(true, '0:all:1000:Main:' . "\r\n" . '2:folks:1000:Dirt:' . "\r\n");
+        $this->expectException(AuthException::class);
+        $lib->deleteGroup(2);
+    }
+
+    /**
      * Contains a full comedy/tragedy of work with locks
      * @throws LockException
-     * @throws AuthException
+     * @throws StorageException
      * @return Groups
      */
     protected function groupSources(): Groups
@@ -160,7 +240,6 @@ class GroupsTest extends CommonTestClass
     }
 
     /**
-     * Contains a full comedy/tragedy of work with locks
      * @throws LockException
      * @return Groups
      */
@@ -173,6 +252,20 @@ class GroupsTest extends CommonTestClass
         );
     }
 
+    /**
+     * @param bool $canOpen
+     * @param string $content
+     * @throws LockException
+     * @return Groups
+     */
+    protected function failedGroupSources(bool $canOpen = false, string $content = ''): Groups
+    {
+        return new Groups(
+            new \XFailedStorage($canOpen, $content),
+            $this->getLockPath(),
+            $this->sourcePath
+        );
+    }
 
     protected function wantedGroup($name = 'another'): FileGroup
     {

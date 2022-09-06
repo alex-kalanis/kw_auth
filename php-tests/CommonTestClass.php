@@ -9,6 +9,8 @@ use kalanis\kw_auth\Interfaces\IUserCert;
 use kalanis\kw_locks\LockException;
 use kalanis\kw_locks\Methods as LockMethod;
 use kalanis\kw_locks\Interfaces as LockInt;
+use kalanis\kw_storage\Interfaces\IStorage;
+use kalanis\kw_storage\StorageException;
 use PHPUnit\Framework\TestCase;
 
 
@@ -167,5 +169,66 @@ class MockModes implements IMode
     {
         $this->knownPass = $pass;
         return 'validPass-' . $pass;
+    }
+}
+
+
+class XFailedStorage implements IStorage
+{
+    protected $canOpen = false;
+    protected $content = '';
+
+    public function __construct(bool $canOpen = false, string $content = '')
+    {
+        $this->canOpen = $canOpen;
+        $this->content = $content;
+    }
+
+    public function canUse(): bool
+    {
+        return false;
+    }
+
+    public function write(string $sharedKey, $data, ?int $timeout = null): bool
+    {
+        throw new StorageException('Mock');
+    }
+
+    public function read(string $sharedKey)
+    {
+        if ($this->canOpen) {
+            return $this->content;
+        }
+        throw new \kalanis\kw_storage\StorageException('Mock');
+    }
+
+    public function remove(string $sharedKey): bool
+    {
+        throw new \kalanis\kw_storage\StorageException('Mock');
+    }
+
+    public function exists(string $sharedKey): bool
+    {
+        throw new \kalanis\kw_storage\StorageException('Mock');
+    }
+
+    public function lookup(string $mask): Traversable
+    {
+        throw new \kalanis\kw_storage\StorageException('Mock');
+    }
+
+    public function increment(string $key): bool
+    {
+        throw new \kalanis\kw_storage\StorageException('Mock');
+    }
+
+    public function decrement(string $key): bool
+    {
+        throw new \kalanis\kw_storage\StorageException('Mock');
+    }
+
+    public function removeMulti(array $keys): array
+    {
+        throw new \kalanis\kw_storage\StorageException('Mock');
     }
 }

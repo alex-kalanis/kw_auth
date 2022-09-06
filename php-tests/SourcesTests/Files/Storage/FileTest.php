@@ -10,6 +10,7 @@ use kalanis\kw_locks\LockException;
 use kalanis\kw_storage\Storage\Key\DefaultKey;
 use kalanis\kw_storage\Storage\Storage;
 use kalanis\kw_storage\Storage\Target\Memory;
+use kalanis\kw_storage\StorageException;
 
 
 class FileTest extends AStorageTests
@@ -30,6 +31,7 @@ class FileTest extends AStorageTests
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testDataOnly(): void
     {
@@ -56,6 +58,7 @@ class FileTest extends AStorageTests
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAuthenticateNoPass(): void
     {
@@ -104,8 +107,6 @@ class FileTest extends AStorageTests
     public function testUpdatePasswordOnEmptyInstance(): void
     {
         $lib = $this->emptyFileSources();
-        $user = $this->wantedUser();
-
         // update
         $this->expectException(AuthException::class);
         $lib->updatePassword('Some user', 'not important');
@@ -128,6 +129,7 @@ class FileTest extends AStorageTests
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAccountManipulation(): void
     {
@@ -176,6 +178,7 @@ class FileTest extends AStorageTests
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testCreateFail(): void
     {
@@ -188,6 +191,7 @@ class FileTest extends AStorageTests
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAllUsers(): void
     {
@@ -198,9 +202,87 @@ class FileTest extends AStorageTests
     }
 
     /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testCreateAccountStorageFail(): void
+    {
+        $lib = $this->failedFileSources();
+        $group = $this->wantedUser();
+        $this->expectException(AuthException::class);
+        $lib->createAccount($group, 'somewhere');
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testCreateAccountStorageFailSave(): void
+    {
+        $lib = $this->failedFileSources(true);
+        $group = $this->wantedUser();
+        $this->expectException(AuthException::class);
+        $lib->createAccount($group, 'somewhere');
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testReadAccountsStorageFail(): void
+    {
+        $lib = $this->failedFileSources();
+        $this->expectException(AuthException::class);
+        $lib->readAccounts();
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testUpdateAccountStorageFail(): void
+    {
+        $lib = $this->failedFileSources();
+        $this->expectException(AuthException::class);
+        $lib->updateAccount($this->wantedUser());
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testUpdateAccountStorageFailSave(): void
+    {
+        $lib = $this->failedFileSources(true);
+        $this->expectException(AuthException::class);
+        $lib->updateAccount($this->wantedUser());
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testRemoveUserStorageFail(): void
+    {
+        $lib = $this->failedFileSources();
+        $this->assertNull($lib->deleteAccount('no-one'));
+    }
+
+    /**
+     * @throws AuthException
+     * @throws LockException
+     */
+    public function testRemoveUserStorageFailSave(): void
+    {
+        $lib = $this->failedFileSources(true, '1000:owner:some-wanted:0:1:Owner:/data/:' . "\r\n" . '1002:worker:some-else:1:3:Worker:/data/:' . "\r\n");
+        $this->expectException(AuthException::class);
+        $lib->deleteAccount('worker');
+    }
+
+    /**
      * Contains a full comedy/tragedy of work with locks
      * @throws LockException
-     * @throws AuthException
+     * @throws StorageException
      * @return File
      */
     protected function fileSources(): File
@@ -223,7 +305,6 @@ class FileTest extends AStorageTests
     }
 
     /**
-     * Contains a full comedy/tragedy of work with locks
      * @throws LockException
      * @return File
      */
@@ -231,6 +312,22 @@ class FileTest extends AStorageTests
     {
         return new File(
             new Storage(new DefaultKey(), new Memory()),
+            new \MockModes(),
+            $this->getLockPath(),
+            $this->sourcePath
+        );
+    }
+
+    /**
+     * @param bool $canOpen
+     * @param string $content
+     * @throws LockException
+     * @return File
+     */
+    protected function failedFileSources(bool $canOpen = false, string $content = ''): File
+    {
+        return new File(
+            new \XFailedStorage($canOpen, $content),
             new \MockModes(),
             $this->getLockPath(),
             $this->sourcePath

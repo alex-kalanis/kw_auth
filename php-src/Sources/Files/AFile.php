@@ -190,9 +190,8 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         $this->getLock()->create();
         try {
             $passwordLines = $this->openFile($this->path);
-        } catch (AuthException $ex) {
+        } finally {
             $this->getLock()->delete();
-            throw $ex;
         }
         foreach ($passwordLines as &$line) {
             if ($line[static::PW_NAME] == $userName) {
@@ -222,9 +221,8 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
 
         try {
             $lines = $this->openFile($this->path);
-        } catch (AuthException $ex) {
+        } finally {
             $this->getLock()->delete();
-            throw $ex;
         }
         foreach ($lines as &$line) {
             if ($line[static::PW_NAME] == $name) {
