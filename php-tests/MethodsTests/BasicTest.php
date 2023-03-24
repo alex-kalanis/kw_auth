@@ -62,6 +62,7 @@ class MockMethod extends Methods\AMethods
             'Testing',
             0,
             9999,
+            null,
             'Testing',
             'not_available\\:///'
         );

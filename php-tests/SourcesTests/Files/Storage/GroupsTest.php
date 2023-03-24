@@ -83,7 +83,8 @@ class GroupsTest extends CommonTestClass
             $group->getGroupId(),
             $group->getGroupName(),
             1002,
-            'WheĐn yoĐu dđo nođt knđow'
+            'WheĐn yoĐu dđo nođt knđow',
+            999
         );
         $lib->updateGroup($group);
 
@@ -201,7 +202,7 @@ class GroupsTest extends CommonTestClass
     public function testRemoveGroupStorageFail(): void
     {
         $lib = $this->failedGroupSources();
-        $this->assertNull($lib->deleteGroup(41));
+        $this->assertFalse($lib->deleteGroup(41));
     }
 
     /**
@@ -210,7 +211,7 @@ class GroupsTest extends CommonTestClass
      */
     public function testRemoveGroupStorageFailSave(): void
     {
-        $lib = $this->failedGroupSources(true, '0:all:1000:Main:' . "\r\n" . '2:folks:1000:Dirt:' . "\r\n");
+        $lib = $this->failedGroupSources(true, '0:all:1000:Main:1:' . "\r\n" . '2:folks:1000:Dirt:1:' . "\r\n");
         $this->expectException(AuthException::class);
         $lib->deleteGroup(2);
     }
@@ -230,10 +231,10 @@ class GroupsTest extends CommonTestClass
             $this->sourcePath
         );
         $storage->write($this->sourcePath,
-            '0:root:1000:Maintainers:' . "\r\n"
-            . '1:admin:1000:Administrators:' . "\r\n"
+            '0:root:1000:Maintainers:1:' . "\r\n"
+            . '1:admin:1000:Administrators:1:' . "\r\n"
             . '# commented out' . "\r\n"
-            . '2:user:1000:All users:' . "\r\n"
+            . '2:user:1000:All users:1:' . "\r\n"
             // last line is intentionally empty one
         );
         return $file;
@@ -270,7 +271,7 @@ class GroupsTest extends CommonTestClass
     protected function wantedGroup($name = 'another'): FileGroup
     {
         $user = new FileGroup();
-        $user->setData(3, $name, 1001, 'Testing group');
+        $user->setData(3, $name, 1001, 'Testing group', 888);
         return $user;
     }
 }

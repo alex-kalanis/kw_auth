@@ -17,4 +17,6 @@ interface IGroup
     public function getGroupDesc(): string;
 
     public function getGroupAuthorId(): int;
+
+    public function getGroupStatus(): int;
 }

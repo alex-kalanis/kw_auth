@@ -22,6 +22,7 @@ class Everytime extends AMethods
             'Debug',
             0,
             IAccessClasses::CLASS_USER,
+            null,
             'Debug',
             '/'
         );

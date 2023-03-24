@@ -22,10 +22,10 @@ class LdapRecord extends ASimpleRecord implements IUser
     {
         $this->addEntry('id', IEntryType::TYPE_INTEGER, 2048);
         $this->addEntry('name', IEntryType::TYPE_STRING, 128);
-        $this->setMapper('\kalanis\kw_auth\Sources\Mapper\Ldap\LdapMapper');
+        $this->setMapper(LdapMapper::class);
     }
 
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir): void
+    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void
     {
         // load data only from ldap!
     }
@@ -48,6 +48,11 @@ class LdapRecord extends ASimpleRecord implements IUser
     public function getClass(): int
     {
         return IAccessClasses::CLASS_USER;
+    }
+
+    public function getStatus(): ?int
+    {
+        return static::USER_STATUS_UNKNOWN;
     }
 
     public function getDisplayName(): string

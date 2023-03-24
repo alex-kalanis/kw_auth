@@ -90,7 +90,7 @@ class Database implements Interfaces\IAuth, Interfaces\IAuthCert, Interfaces\IAc
         return $search->getResults();
     }
 
-    public function updateAccount(Interfaces\IUser $user): void
+    public function updateAccount(Interfaces\IUser $user): bool
     {
         $this->checkLogin($user->getAuthName(), $user->getAuthId());
         $record = clone $this->usersRecord;
@@ -99,23 +99,23 @@ class Database implements Interfaces\IAuth, Interfaces\IAuthCert, Interfaces\IAc
         $record->login = $user->getAuthName();
         $record->groupId = $user->getGroup();
         $record->display = $user->getDisplayName();
-        $record->save();
+        return $record->save();
     }
 
-    public function updatePassword(string $userName, string $passWord): void
+    public function updatePassword(string $userName, string $passWord): bool
     {
         $record = clone $this->usersRecord;
         $record->login = $userName;
         $record->load();
         $record->pass = $this->passMode->hash($passWord);
-        $record->save();
+        return $record->save();
     }
 
-    public function deleteAccount(string $userName): void
+    public function deleteAccount(string $userName): bool
     {
         $record = clone $this->usersRecord;
         $record->login = $userName;
-        $record->delete();
+        return $record->delete();
     }
 
     public function createGroup(Interfaces\IGroup $group): void
@@ -144,27 +144,27 @@ class Database implements Interfaces\IAuth, Interfaces\IAuthCert, Interfaces\IAc
         return $search->getResults();
     }
 
-    public function updateGroup(Interfaces\IGroup $group): void
+    public function updateGroup(Interfaces\IGroup $group): bool
     {
         $record = clone $this->groupsRecord;
         $record->id = $group->getGroupId();
         $record->load();
         $record->name = $group->getGroupName();
         $record->desc = $group->getGroupDesc();
-        $record->save();
+        return $record->save();
     }
 
-    public function deleteGroup(int $groupId): void
+    public function deleteGroup(int $groupId): bool
     {
         $users = clone $this->usersRecord;
         $users->groupId = $groupId;
         if (0 >= $users->count()) {
             // not empty group
-            return;
+            return false;
         }
         $record = clone $this->groupsRecord;
         $record->id = $groupId;
-        $record->delete();
+        return $record->delete();
     }
 
     protected function checkLogin(string $login, int $id = 0): void

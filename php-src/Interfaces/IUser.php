@@ -11,8 +11,15 @@ namespace kalanis\kw_auth\Interfaces;
 interface IUser
 {
     const LOWEST_USER_ID = 1000;
+    const STATUS_NONE = 'none';
 
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir): void;
+    const USER_STATUS_UNKNOWN = null;
+    const USER_STATUS_DISABLED = 0;
+    const USER_STATUS_ENABLED = 1;
+    const USER_STATUS_ONLY_LOGIN = 2;
+    const USER_STATUS_ONLY_CERT = 3;
+
+    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void;
 
     public function getAuthId(): int;
 
@@ -21,6 +28,8 @@ interface IUser
     public function getGroup(): int;
 
     public function getClass(): int;
+
+    public function getStatus(): ?int;
 
     public function getDisplayName(): string;
 

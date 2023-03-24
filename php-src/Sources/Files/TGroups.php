@@ -58,6 +58,7 @@ trait TGroups
             IAccessGroups::GRP_AUTHOR => $userId,
             IAccessGroups::GRP_DESC => !empty($groupDesc) ? $groupDesc : $groupName,
             IAccessGroups::GRP_FEED => '',
+            IAccessGroups::GRP_STATUS => $group->getGroupStatus(),
         ];
         ksort($newGroup);
         $groupLines[] = $newGroup;
@@ -122,7 +123,8 @@ trait TGroups
             intval($line[IAccessGroups::GRP_ID]),
             strval($line[IAccessGroups::GRP_NAME]),
             intval($line[IAccessGroups::GRP_AUTHOR]),
-            strval($line[IAccessGroups::GRP_DESC])
+            strval($line[IAccessGroups::GRP_DESC]),
+            intval($line[IAccessGroups::GRP_STATUS])
         );
         return $group;
     }
@@ -131,8 +133,9 @@ trait TGroups
      * @param IGroup $group
      * @throws AuthException
      * @throws LockException
+     * @return bool
      */
-    public function updateGroup(IGroup $group): void
+    public function updateGroup(IGroup $group): bool
     {
         $groupName = $this->stripChars($group->getGroupName());
         $groupDesc = $this->stripChars($group->getGroupDesc());
@@ -150,6 +153,7 @@ trait TGroups
                 // REFILL
                 $line[IAccessGroups::GRP_NAME] = !empty($groupName) ? $groupName : $line[IAccessGroups::GRP_NAME] ;
                 $line[IAccessGroups::GRP_DESC] = !empty($groupDesc) ? $groupDesc : $line[IAccessGroups::GRP_DESC] ;
+                $line[IAccessGroups::GRP_STATUS] = $group->getGroupStatus();
             }
         }
 
@@ -158,14 +162,16 @@ trait TGroups
         } finally {
             $this->getLock()->delete();
         }
+        return true;
     }
 
     /**
      * @param int $groupId
      * @throws AuthException
      * @throws LockException
+     * @return bool
      */
-    public function deleteGroup(int $groupId): void
+    public function deleteGroup(int $groupId): bool
     {
         $this->checkLock();
         $this->checkRest($groupId);
@@ -179,7 +185,7 @@ trait TGroups
         } catch (AuthException $ex) {
             // silence the problems on storage
             $this->getLock()->delete();
-            return;
+            return false;
         }
         foreach ($openGroups as $index => &$line) {
             if ($line[IAccessGroups::GRP_ID] == $groupId) {
@@ -196,6 +202,7 @@ trait TGroups
         } finally {
             $this->getLock()->delete();
         }
+        return true;
     }
 
     /**

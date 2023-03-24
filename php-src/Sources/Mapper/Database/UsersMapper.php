@@ -25,6 +25,6 @@ class UsersMapper extends ADatabase
         $this->setRelation('cert', 'u_cert');
         $this->setRelation('salt', 'u_salt');
         $this->addPrimaryKey('id');
-        $this->addForeignKey('groups', '\kalanis\kw_auth\Sources\Mapper\Database\GroupsRecord', 'groupId', 'id');
+        $this->addForeignKey('groups', GroupsRecord::class, 'groupId', 'id');
     }
 }

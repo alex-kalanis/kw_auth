@@ -80,16 +80,19 @@ class MockAuthCert extends MockAuth implements IAuthCert
         return [];
     }
 
-    public function updateAccount(IUser $user): void
+    public function updateAccount(IUser $user): bool
     {
+        return true;
     }
 
-    public function updatePassword(string $userName, string $passWord): void
+    public function updatePassword(string $userName, string $passWord): bool
     {
+        return true;
     }
 
-    public function deleteAccount(string $userName): void
+    public function deleteAccount(string $userName): bool
     {
+        return true;
     }
 
     public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): void
@@ -111,7 +114,7 @@ class MockCredentials extends ArrayObject
 
 class MockUser implements IUser
 {
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir): void
+    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void
     {
     }
 
@@ -135,6 +138,11 @@ class MockUser implements IUser
         return 999;
     }
 
+    public function getStatus(): ?int
+    {
+        return static::USER_STATUS_ENABLED;
+    }
+
     public function getDisplayName(): string
     {
         return 'FooL';
@@ -149,9 +157,9 @@ class MockUser implements IUser
 
 class MockUserToFill extends FileUser
 {
-    public function __construct(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir)
+    public function __construct(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir)
     {
-        $this->setData($authId, $authName, $authGroup, $authClass, $displayName, $dir);
+        $this->setData($authId, $authName, $authGroup, $authClass, $authStatus, $displayName, $dir);
     }
 }
 

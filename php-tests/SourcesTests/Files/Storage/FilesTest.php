@@ -13,6 +13,7 @@ use kalanis\kw_locks\LockException;
 use kalanis\kw_storage\Storage\Key\DefaultKey;
 use kalanis\kw_storage\Storage\Storage;
 use kalanis\kw_storage\Storage\Target\Memory;
+use kalanis\kw_storage\StorageException;
 
 
 class FilesTest extends CommonTestClass
@@ -34,6 +35,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testDataOnly(): void
     {
@@ -47,6 +49,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAuthenticate(): void
     {
@@ -60,6 +63,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAuthenticateNoPass(): void
     {
@@ -140,6 +144,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testDeleteAccountOnPartialInstance(): void
     {
@@ -153,6 +158,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAccountManipulation(): void
     {
@@ -176,6 +182,7 @@ class FilesTest extends CommonTestClass
             $user->getAuthName(),
             $user->getGroup(),
             2,
+            3,
             'WheĐn yoĐu dđo nođt knđow',
             $user->getDir()
         );
@@ -189,6 +196,7 @@ class FilesTest extends CommonTestClass
             'changed name',
             $user->getGroup(),
             $user->getClass(),
+            $user->getStatus(),
             $user->getDisplayName(),
             $user->getDir()
         );
@@ -217,13 +225,14 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      * AuthId is not correct but auth name is
      */
     public function testAccountUpdateFail(): void
     {
         $lib = $this->fileSources();
         $user = new FileCertUser();
-        $user->setData(600, 'worker', 0, 0, 'Die on set', 'so_here');
+        $user->setData(600, 'worker', 0, 0, 2, 'Die on set', 'so_here');
 
         $this->expectException(AuthException::class);
         $lib->updateAccount($user);
@@ -232,6 +241,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testCreateFail(): void
     {
@@ -244,6 +254,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAllUsers(): void
     {
@@ -256,16 +267,17 @@ class FilesTest extends CommonTestClass
     /**
      * Contains a full comedy/tragedy of work with locks
      * @throws LockException
+     * @throws StorageException
      * @return Files
      */
     protected function fileSources(): Files
     {
         $storage = new Storage(new DefaultKey(), new Memory());
         $storage->write($this->sourcePath . DIRECTORY_SEPARATOR . IFile::PASS_FILE,
-            'owner:1000:0:1:Owner:/data/:' . "\r\n"
-            . 'manager:1001:1:2:Manage:/data/:' . "\r\n"
+            'owner:1000:0:1:1:Owner:/data/:' . "\r\n"
+            . 'manager:1001:1:2:1:Manage:/data/:' . "\r\n"
             . '# commented out' . "\r\n"
-            . 'worker:1002:1:3:Worker:/data/:' . "\r\n"
+            . 'worker:1002:1:3:1:Worker:/data/:' . "\r\n"
             // last line is intentionally empty one
         );
         $storage->write($this->sourcePath . DIRECTORY_SEPARATOR . IFile::SHADE_FILE,
@@ -276,10 +288,10 @@ class FilesTest extends CommonTestClass
             // last line is intentionally empty one
         );
         $storage->write($this->sourcePath . DIRECTORY_SEPARATOR . IFile::GROUP_FILE,
-            '0:root:1000:Maintainers:' . "\r\n"
-            . '1:admin:1000:Administrators:' . "\r\n"
+            '0:root:1000:Maintainers:1:' . "\r\n"
+            . '1:admin:1000:Administrators:1:' . "\r\n"
             . '# commented out' . "\r\n"
-            . '2:user:1000:All users:' . "\r\n"
+            . '2:user:1000:All users:1:' . "\r\n"
             // last line is intentionally empty one
         );
         return new Files(
@@ -293,16 +305,17 @@ class FilesTest extends CommonTestClass
     /**
      * Contains a partial files - no groups or shadow files
      * @throws LockException
+     * @throws StorageException
      * @return Files
      */
     protected function partialFileSources(): Files
     {
         $storage = new Storage(new DefaultKey(), new Memory());
         $storage->write($this->sourcePath . DIRECTORY_SEPARATOR . IFile::PASS_FILE,
-            'owner:1000:0:1:Owner:/data/:' . "\r\n"
-            . 'manager:1001:1:2:Manage:/data/:' . "\r\n"
+            'owner:1000:0:1:1:Owner:/data/:' . "\r\n"
+            . 'manager:1001:1:2:1:Manage:/data/:' . "\r\n"
             . '# commented out' . "\r\n"
-            . 'worker:1002:1:3:Worker:/data/:' . "\r\n"
+            . 'worker:1002:1:3:1:Worker:/data/:' . "\r\n"
             // last line is intentionally empty one
         );
         return new Files(
@@ -332,13 +345,14 @@ class FilesTest extends CommonTestClass
     protected function wantedUser(): FileCertUser
     {
         $user = new FileCertUser();
-        $user->setData(1003, 'another', 0, 0, 'Testing another', 'why_here');
+        $user->setData(1003, 'another', 0, 0, 1, 'Testing another', 'why_here');
         return $user;
     }
 
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testGroupManipulation(): void
     {
@@ -358,7 +372,8 @@ class FilesTest extends CommonTestClass
             $group->getGroupId(),
             $group->getGroupName(),
             1002,
-            'WheĐn yoĐu dđo nođt knđow'
+            'WheĐn yoĐu dđo nođt knđow',
+            888
         );
         $lib->updateGroup($group);
 
@@ -376,6 +391,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testCreateGroupFail(): void
     {
@@ -388,6 +404,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testDeleteGroupFail(): void
     {
@@ -399,6 +416,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testAllGroups(): void
     {
@@ -411,7 +429,7 @@ class FilesTest extends CommonTestClass
     protected function wantedGroup($name = 'another'): FileGroup
     {
         $user = new FileGroup();
-        $user->setData(3, $name, 1001, 'Testing group');
+        $user->setData(3, $name, 1001, 'Testing group', 999);
         return $user;
     }
 }

@@ -14,6 +14,7 @@ use kalanis\kw_mapper\Records\ASimpleRecord;
  * @property int $id
  * @property string $name
  * @property string $desc
+ * @property int $status
  * @property int $authorId
  * @property UsersRecord[] $authors
  * @property UsersRecord[] $members
@@ -27,9 +28,10 @@ class GroupsRecord extends ASimpleRecord implements IGroup
         $this->addEntry('name', IEntryType::TYPE_STRING, 512);
         $this->addEntry('desc', IEntryType::TYPE_STRING, 512);
         $this->addEntry('authorId', IEntryType::TYPE_INTEGER, 128);
+        $this->addEntry('status', IEntryType::TYPE_INTEGER, 4);
         $this->addEntry('authors', IEntryType::TYPE_ARRAY, []);
         $this->addEntry('members', IEntryType::TYPE_ARRAY, []);
-        $this->setMapper('\kalanis\kw_auth\Sources\Mapper\Database\UsersMapper');
+        $this->setMapper(GroupsMapper::class);
     }
 
     public function getGroupId(): int
@@ -50,5 +52,10 @@ class GroupsRecord extends ASimpleRecord implements IGroup
     public function getGroupAuthorId(): int
     {
         return intval($this->authorId);
+    }
+
+    public function getGroupStatus(): int
+    {
+        return intval($this->status);
     }
 }

@@ -33,21 +33,24 @@ interface IAccessAccounts
      * @param IUser $user
      * @throws AuthException
      * @throws LockException
+     * @return bool
      */
-    public function updateAccount(IUser $user): void;
+    public function updateAccount(IUser $user): bool;
 
     /**
      * @param string $userName
      * @param string $passWord
      * @throws AuthException
      * @throws LockException
+     * @return bool
      */
-    public function updatePassword(string $userName, string $passWord): void;
+    public function updatePassword(string $userName, string $passWord): bool;
 
     /**
      * @param string $userName
      * @throws AuthException
      * @throws LockException
+     * @return bool
      */
-    public function deleteAccount(string $userName): void;
+    public function deleteAccount(string $userName): bool;
 }

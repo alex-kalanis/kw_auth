@@ -20,17 +20,20 @@ class FileUser implements IUser
     protected $authGroup = 0;
     /** @var int */
     protected $authClass = 0;
+    /** @var int|null */
+    protected $authStatus = null;
     /** @var string */
     protected $displayName = '';
     /** @var string */
     protected $dir = '';
 
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir): void
+    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void
     {
         $this->authId = $authId;
         $this->authName = $authName;
         $this->authGroup = $authGroup;
         $this->authClass = $authClass;
+        $this->authStatus = $authStatus;
         $this->displayName = $displayName;
         $this->dir = $dir;
     }
@@ -53,6 +56,11 @@ class FileUser implements IUser
     public function getClass(): int
     {
         return $this->authClass;
+    }
+
+    public function getStatus(): ?int
+    {
+        return $this->authStatus;
     }
 
     public function getDisplayName(): string

@@ -8,6 +8,7 @@ use kalanis\kw_auth\Data\FileCertUser;
 use kalanis\kw_auth\Interfaces;
 use kalanis\kw_auth\Sources\TClasses;
 use kalanis\kw_auth\Sources\TExpiration;
+use kalanis\kw_auth\Sources\TStatusTransform;
 use kalanis\kw_locks\Interfaces\ILock;
 use kalanis\kw_locks\LockException;
 
@@ -24,15 +25,17 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
     use TExpiration;
     use TGroups;
     use TLines;
+    use TStatusTransform;
     use TStore;
 
     const PW_NAME = 0;
     const PW_ID = 1;
     const PW_GROUP = 2;
     const PW_CLASS = 3;
-    const PW_DISPLAY = 4;
-    const PW_DIR = 5;
-    const PW_FEED = 6;
+    const PW_STATUS = 4;
+    const PW_DISPLAY = 5;
+    const PW_DIR = 6;
+    const PW_FEED = 7;
 
     const SH_NAME = 0;
     const SH_PASS = 1;
@@ -109,6 +112,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
                     strval($line[static::PW_NAME]),
                     intval($line[static::PW_GROUP]),
                     intval($line[static::PW_CLASS]),
+                    $this->transformFromStringToInt(strval($line[static::PW_STATUS])),
                     strval($line[static::PW_DISPLAY]),
                     strval($line[static::PW_DIR])
                 );
@@ -151,7 +155,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         return null;
     }
 
-    public function updatePassword(string $userName, string $passWord): void
+    public function updatePassword(string $userName, string $passWord): bool
     {
         $name = $this->stripChars($userName);
         // load from shadow
@@ -178,6 +182,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         } finally {
             $this->getLock()->delete();
         }
+        return $changed;
     }
 
     public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): void
@@ -248,6 +253,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
             static::PW_ID => $uid,
             static::PW_GROUP => empty($user->getGroup()) ? $uid : $user->getGroup() ,
             static::PW_CLASS => empty($user->getClass()) ? Interfaces\IAccessClasses::CLASS_USER : $user->getClass() ,
+            static::PW_STATUS => $this->transformFromIntToString($user->getStatus()),
             static::PW_DISPLAY => empty($displayName) ? $userName : $displayName,
             static::PW_DIR => $directory,
             static::PW_FEED => '',
@@ -301,6 +307,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
                 strval($line[static::PW_NAME]),
                 intval($line[static::PW_GROUP]),
                 intval($line[static::PW_CLASS]),
+                $this->transformFromStringToInt(strval($line[static::PW_STATUS])),
                 strval($line[static::PW_DISPLAY]),
                 strval($line[static::PW_DIR])
             );
@@ -310,7 +317,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         return $result;
     }
 
-    public function updateAccount(Interfaces\IUser $user): void
+    public function updateAccount(Interfaces\IUser $user): bool
     {
         $userName = $this->stripChars($user->getAuthName());
         $directory = $this->stripChars($user->getDir());
@@ -338,6 +345,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
                 }
                 $line[static::PW_GROUP] = !empty($user->getGroup()) ? $user->getGroup() : $line[static::PW_GROUP] ;
                 $line[static::PW_CLASS] = !empty($user->getClass()) ? $user->getClass() : $line[static::PW_CLASS] ;
+                $line[static::PW_STATUS] = $this->transformFromIntToString($user->getStatus());
                 $line[static::PW_DISPLAY] = !empty($displayName) ? $displayName : $line[static::PW_DISPLAY] ;
                 $line[static::PW_DIR] = !empty($directory) ? $directory : $line[static::PW_DIR] ;
             }
@@ -358,9 +366,10 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         } finally {
             $this->getLock()->delete();
         }
+        return true;
     }
 
-    public function deleteAccount(string $userName): void
+    public function deleteAccount(string $userName): bool
     {
         $name = $this->stripChars($userName);
         $this->checkLock();
@@ -403,6 +412,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         } finally {
             $this->getLock()->delete();
         }
+        return $changed;
     }
 
     protected function checkRest(int $groupId): void

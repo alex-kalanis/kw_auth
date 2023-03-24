@@ -83,6 +83,7 @@ class FilesTest extends CommonTestClass
             $user->getAuthName(),
             $user->getGroup(),
             2,
+            7,
             'WheĐn yoĐu dđo nođt knđow',
             $user->getDir()
         );
@@ -96,6 +97,7 @@ class FilesTest extends CommonTestClass
             'changed name',
             $user->getGroup(),
             $user->getClass(),
+            $user->getStatus(),
             $user->getDisplayName(),
             $user->getDir()
         );
@@ -130,7 +132,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $user = new FileCertUser();
-        $user->setData(600, 'worker', 0, 0, 'Die on set', 'so_here');
+        $user->setData(600, 'worker', 0, 0, null, 'Die on set', 'so_here');
 
         $this->expectException(AuthException::class);
         $lib->updateAccount($user);
@@ -177,7 +179,7 @@ class FilesTest extends CommonTestClass
     protected function wantedUser(): FileCertUser
     {
         $user = new FileCertUser();
-        $user->setData(1003, 'another', 0, 0, 'Testing another', 'why_here');
+        $user->setData(1003, 'another', 0, 0, 12, 'Testing another', 'why_here');
         return $user;
     }
 
@@ -203,7 +205,8 @@ class FilesTest extends CommonTestClass
             $group->getGroupId(),
             $group->getGroupName(),
             1002,
-            'WheĐn yoĐu dđo nođt knđow'
+            'WheĐn yoĐu dđo nođt knđow',
+            777
         );
         $lib->updateGroup($group);
 
@@ -256,7 +259,7 @@ class FilesTest extends CommonTestClass
     protected function wantedGroup($name = 'another'): FileGroup
     {
         $user = new FileGroup();
-        $user->setData(3, $name, 1001, 'Testing group');
+        $user->setData(3, $name, 1001, 'Testing group', 666);
         return $user;
     }
 }

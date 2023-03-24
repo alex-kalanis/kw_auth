@@ -41,7 +41,8 @@ class GroupsTest extends CommonTestClass
             $group->getGroupId(),
             $group->getGroupName(),
             1002,
-            'WheĐn yoĐu dđo nođt knđow'
+            'WheĐn yoĐu dđo nođt knđow',
+            999
         );
         $lib->updateGroup($group);
 
@@ -96,7 +97,7 @@ class GroupsTest extends CommonTestClass
     protected function wantedGroup($name = 'another'): FileGroup
     {
         $user = new FileGroup();
-        $user->setData(3, $name, 1001, 'Testing group');
+        $user->setData(3, $name, 1001, 'Testing group', 888);
         return $user;
     }
 }

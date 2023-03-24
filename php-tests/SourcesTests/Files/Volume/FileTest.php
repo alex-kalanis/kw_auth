@@ -82,6 +82,7 @@ class FileTest extends CommonTestClass
             $user->getAuthName(),
             $user->getGroup(),
             2,
+            444,
             'WheĐn yoĐu dđo nođt knđow',
             $user->getDir()
         );
@@ -145,7 +146,7 @@ class FileTest extends CommonTestClass
     protected function wantedUser(): FileUser
     {
         $user = new FileUser();
-        $user->setData(600, 'another', 0, 0, 'Testing another', 'why_here');
+        $user->setData(600, 'another', 0, 0, 555, 'Testing another', 'why_here');
         return $user;
     }
 }

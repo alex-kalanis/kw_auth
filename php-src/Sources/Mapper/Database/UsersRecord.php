@@ -34,10 +34,10 @@ class UsersRecord extends ASimpleRecord implements IUserCert
         $this->addEntry('cert', IEntryType::TYPE_STRING, 8192);
         $this->addEntry('salt', IEntryType::TYPE_STRING, 1024);
         $this->addEntry('groups', IEntryType::TYPE_ARRAY, []);
-        $this->setMapper('\kalanis\kw_auth\Sources\Mapper\Database\UsersMapper');
+        $this->setMapper(UsersMapper::class);
     }
 
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, string $displayName, string $dir): void
+    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void
     {
         $this->id = $authId;
         $this->load();
@@ -73,6 +73,11 @@ class UsersRecord extends ASimpleRecord implements IUserCert
     public function getClass(): int
     {
         return IAccessClasses::CLASS_USER;
+    }
+
+    public function getStatus(): ?int
+    {
+        return static::USER_STATUS_ENABLED;
     }
 
     public function getDisplayName(): string
