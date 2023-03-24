@@ -87,7 +87,7 @@ abstract class AAuthenticate
     /** @var \kalanis\kw_auth\AuthException|null */
     protected $error = null;
 
-    public function process(\kalanis\kw_input\Interfaces\IVariables $inputs): void
+    public function process(\kalanis\kw_input\Interfaces\IFiltered $inputs): void
     {
         try {
             $sources = [\kalanis\kw_input\Interfaces\IEntry::SOURCE_EXTERNAL, \kalanis\kw_input\Interfaces\IEntry::SOURCE_CLI, \kalanis\kw_input\Interfaces\IEntry::SOURCE_POST, \kalanis\kw_input\Interfaces\IEntry::SOURCE_GET];
