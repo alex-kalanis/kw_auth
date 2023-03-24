@@ -6,6 +6,7 @@ namespace SourcesTests\Files\Storage;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\FileUser;
 use kalanis\kw_auth\Sources\Files\Storage\File;
+use kalanis\kw_auth\Statuses\Always;
 use kalanis\kw_locks\LockException;
 use kalanis\kw_storage\Storage\Key\DefaultKey;
 use kalanis\kw_storage\Storage\Storage;
@@ -293,6 +294,7 @@ class FileTest extends AStorageTests
         $file = new File(
             $storage,
             new \MockModes(),
+            new Always(),
             $this->getLockPath(),
             $this->sourcePath
         );
@@ -315,6 +317,7 @@ class FileTest extends AStorageTests
         return new File(
             new Storage(new DefaultKey(), new Memory()),
             new \MockModes(),
+            new Always(),
             $this->getLockPath(),
             $this->sourcePath
         );
@@ -331,6 +334,7 @@ class FileTest extends AStorageTests
         return new File(
             new \XFailedStorage($canOpen, $content),
             new \MockModes(),
+            new Always(),
             $this->getLockPath(),
             $this->sourcePath
         );

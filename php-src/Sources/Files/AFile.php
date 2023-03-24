@@ -36,19 +36,23 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
 
     /** @var Interfaces\IMode */
     protected $mode = null;
+    /** @var Interfaces\IStatus */
+    protected $status = null;
     /** @var string */
     protected $path = '';
 
     /**
      * @param Interfaces\IMode $mode hashing mode
+     * @param Interfaces\IStatus $status which status is necessary to use that feature
      * @param ILock $lock file lock
      * @param string $path use full path with file name
      * @param Interfaces\IKATranslations|null $lang
      */
-    public function __construct(Interfaces\IMode $mode, ILock $lock, string $path, ?Interfaces\IKATranslations $lang = null)
+    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, string $path, ?Interfaces\IKATranslations $lang = null)
     {
         $this->setLang($lang);
         $this->mode = $mode;
+        $this->status = $status;
         $this->path = $path;
         $this->initAuthLock($lock);
     }
@@ -70,7 +74,10 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         }
         foreach ($passLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
-                if ($this->mode->check($pass, strval($line[static::PW_PASS]))) {
+                if (
+                    $this->mode->check($pass, strval($line[static::PW_PASS]))
+                    && $this->status->allowLogin($this->transformFromStringToInt(strval($line[static::PW_STATUS])))
+                ) {
                     return $this->getUserClass($line);
                 }
             }

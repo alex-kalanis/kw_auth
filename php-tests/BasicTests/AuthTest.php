@@ -13,6 +13,7 @@ use kalanis\kw_auth\Interfaces;
 use kalanis\kw_auth\Methods;
 use kalanis\kw_auth\Mode\KwOrig;
 use kalanis\kw_auth\Sources;
+use kalanis\kw_auth\Statuses\Always;
 use kalanis\kw_locks\LockException;
 
 
@@ -91,6 +92,7 @@ class AuthTest extends CommonTestClass
     {
         return new Sources\Files\Volume\Files(
             new KwOrig('yxcvbnmasdfghjklqwertzuiop0123456789'),
+            new Always(),
             $this->getLockPath(),
             __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data'
         );

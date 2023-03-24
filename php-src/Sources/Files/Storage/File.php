@@ -5,6 +5,7 @@ namespace kalanis\kw_auth\Sources\Files\Storage;
 
 use kalanis\kw_auth\Interfaces\IKATranslations;
 use kalanis\kw_auth\Interfaces\IMode;
+use kalanis\kw_auth\Interfaces\IStatus;
 use kalanis\kw_auth\Sources\Files\AFile;
 use kalanis\kw_locks\Interfaces\ILock;
 use kalanis\kw_storage\Interfaces\IStorage;
@@ -22,13 +23,14 @@ class File extends AFile
     /**
      * @param IStorage $storage where to save
      * @param IMode $mode hashing mode
+     * @param IStatus $status which status is necessary to use that feature
      * @param ILock $lock file lock
      * @param string $path use full path with file name
      * @param IKATranslations|null $lang
      */
-    public function __construct(IStorage $storage, IMode $mode, ILock $lock, string $path, ?IKATranslations $lang = null)
+    public function __construct(IStorage $storage, IMode $mode, IStatus $status, ILock $lock, string $path, ?IKATranslations $lang = null)
     {
         $this->storage = $storage;
-        parent::__construct($mode, $lock, $path, $lang);
+        parent::__construct($mode, $status, $lock, $path, $lang);
     }
 }

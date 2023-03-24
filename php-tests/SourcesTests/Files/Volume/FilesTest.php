@@ -8,6 +8,7 @@ use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\FileCertUser;
 use kalanis\kw_auth\Data\FileGroup;
 use kalanis\kw_auth\Sources\Files\Volume\Files;
+use kalanis\kw_auth\Statuses\Always;
 use kalanis\kw_locks\LockException;
 
 
@@ -171,6 +172,7 @@ class FilesTest extends CommonTestClass
     {
         return new Files(
             new \MockModes(),
+            new Always(),
             $this->getLockPath(),
             $this->sourcePath
         );

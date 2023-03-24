@@ -47,15 +47,18 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
 
     /** @var Interfaces\IMode */
     protected $mode = null;
+    /** @var Interfaces\IStatus */
+    protected $status = null;
     /** @var string */
     protected $path = '';
 
-    public function __construct(Interfaces\IMode $mode, ILock $lock, string $dir, ?Interfaces\IKATranslations $lang = null)
+    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, string $dir, ?Interfaces\IKATranslations $lang = null)
     {
         $this->setLang($lang);
         $this->initAuthLock($lock);
         $this->path = $dir;
         $this->mode = $mode;
+        $this->status = $status;
     }
 
     public function authenticate(string $userName, array $params = []): ?Interfaces\IUser
@@ -82,7 +85,10 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
                 && ($time < $line[static::SH_CHANGE_NEXT])
             ) {
                 $class = $this->getDataOnly($userName);
-                if ($class) {
+                if (
+                    $class
+                    && $this->status->allowLogin($class->getStatus())
+                ) {
                     $this->setExpirationNotice($class, intval($line[static::SH_CHANGE_NEXT]));
                     return $class;
                 }
@@ -143,7 +149,11 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         foreach ($shadowLines as &$line) {
             if ($line[static::SH_NAME] == $name) {
                 $class = $this->getDataOnly($userName);
-                if ($class && ($class instanceof Interfaces\IUserCert)) {
+                if (
+                    $class
+                    && ($class instanceof Interfaces\IUserCert)
+                    && $this->status->allowCert($class->getStatus())
+                ) {
                     $class->addCertInfo(
                         strval(base64_decode(strval($line[static::SH_CERT_KEY]))),
                         strval($line[static::SH_CERT_SALT])
