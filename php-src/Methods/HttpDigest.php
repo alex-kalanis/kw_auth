@@ -97,6 +97,7 @@ class HttpDigest extends AMethods
             unset($needed_parts[$m[1]]);
         }
 
-        return $needed_parts ? [] : $data;
+        // can be and shall be due that unset a few lines above
+        return empty($needed_parts) ? $data : [];
     }
 }

@@ -211,6 +211,13 @@ trait TGroups
     }
 
     /**
+     * Strip unwelcome characters from strings
+     * @param string $input
+     * @return string
+     */
+    abstract public function stripChars(string $input): string;
+
+    /**
      * Check the rest of source for existence of group
      * @param int $groupId
      * @throws AuthException
