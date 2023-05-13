@@ -43,3 +43,5 @@ parameters:
 			message: '#Method kalanis\\kw_auth\\Sources\\Mapper\\Database\:\:readGroup\(\) should return#'
 			path: 'php-src/Sources/Mapper/Database.php'
 			# that record also contains necessary interface
+		- '#Parameter \#1 \$va[rl]u?e? of function strval expects bool\|float\|int\|resource\|string\|null, mixed given#'
+			# usual strval shit

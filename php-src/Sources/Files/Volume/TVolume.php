@@ -5,17 +5,17 @@ namespace kalanis\kw_auth\Sources\Files\Volume;
 
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces\IFile;
-use kalanis\kw_auth\TTranslate;
+use kalanis\kw_auth\Traits\TLang;
 
 
 /**
- * Trait TFiles
+ * Trait TVolume
  * @package kalanis\kw_auth\Sources\Files\Volume
  * Processing files with accounts
  */
 trait TVolume
 {
-    use TTranslate;
+    use TLang;
 
     /**
      * @param string $path
@@ -26,7 +26,7 @@ trait TVolume
     {
         $content = @file($path);
         if (false === $content) {
-            throw new AuthException($this->getLang()->kauPassFileNotFound($path));
+            throw new AuthException($this->getAuLang()->kauPassFileNotFound($path));
         }
         return array_map([$this, 'explosion'], array_filter(array_map('trim', $content), [$this, 'filterEmptyLines']));
     }
@@ -45,7 +45,7 @@ trait TVolume
         $content = implode(IFile::CRLF, array_map([$this, 'implosion'], $lines)) . IFile::CRLF;
         $result = @file_put_contents($path, $content);
         if (false === $result) {
-            throw new AuthException($this->getLang()->kauPassFileNotSave($path));
+            throw new AuthException($this->getAuLang()->kauPassFileNotSave($path));
         }
     }
 

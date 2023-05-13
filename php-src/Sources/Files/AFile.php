@@ -46,11 +46,11 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
      * @param Interfaces\IStatus $status which status is necessary to use that feature
      * @param ILock $lock file lock
      * @param string $path use full path with file name
-     * @param Interfaces\IKATranslations|null $lang
+     * @param Interfaces\IKauTranslations|null $lang
      */
-    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, string $path, ?Interfaces\IKATranslations $lang = null)
+    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, string $path, ?Interfaces\IKauTranslations $lang = null)
     {
-        $this->setLang($lang);
+        $this->setAuLang($lang);
         $this->mode = $mode;
         $this->status = $status;
         $this->path = $path;
@@ -60,7 +60,7 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
     public function authenticate(string $userName, array $params = []): ?Interfaces\IUser
     {
         if (empty($params['password'])) {
-            throw new AuthException($this->getLang()->kauPassMustBeSet());
+            throw new AuthException($this->getAuLang()->kauPassMustBeSet());
         }
         $name = $this->stripChars($userName);
         $pass = strval($params['password']);
@@ -132,7 +132,7 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
 
         // not everything necessary is set
         if (empty($userName) || empty($directory) || empty($password)) {
-            throw new AuthException($this->getLang()->kauPassMissParam());
+            throw new AuthException($this->getAuLang()->kauPassMissParam());
         }
         $this->checkLock();
 

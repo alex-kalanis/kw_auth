@@ -8,6 +8,7 @@ use kalanis\kw_auth\Data\FileGroup;
 use kalanis\kw_auth\Interfaces\IAccessGroups;
 use kalanis\kw_auth\Interfaces\IGroup;
 use kalanis\kw_auth\Sources\TAuthLock;
+use kalanis\kw_auth\Traits\TSeparated;
 use kalanis\kw_locks\LockException;
 
 
@@ -19,6 +20,7 @@ use kalanis\kw_locks\LockException;
 trait TGroups
 {
     use TAuthLock;
+    use TSeparated;
 
     /**
      * @param IGroup $group
@@ -33,7 +35,7 @@ trait TGroups
 
         // not everything necessary is set
         if (empty($userId) || empty($groupName)) {
-            throw new AuthException($this->getLang()->kauGroupMissParam());
+            throw new AuthException($this->getAuLang()->kauGroupMissParam());
         }
         $this->checkLock();
 
@@ -57,8 +59,9 @@ trait TGroups
             IAccessGroups::GRP_NAME => $groupName,
             IAccessGroups::GRP_AUTHOR => $userId,
             IAccessGroups::GRP_DESC => !empty($groupDesc) ? $groupDesc : $groupName,
-            IAccessGroups::GRP_FEED => '',
             IAccessGroups::GRP_STATUS => $group->getGroupStatus(),
+            IAccessGroups::GRP_PARENTS => $this->compactInt($group->getGroupParents()),
+            IAccessGroups::GRP_FEED => '',
         ];
         ksort($newGroup);
         $groupLines[] = $newGroup;
@@ -124,7 +127,8 @@ trait TGroups
             strval($line[IAccessGroups::GRP_NAME]),
             intval($line[IAccessGroups::GRP_AUTHOR]),
             strval($line[IAccessGroups::GRP_DESC]),
-            intval($line[IAccessGroups::GRP_STATUS])
+            intval($line[IAccessGroups::GRP_STATUS]),
+            $this->separateInt($line[IAccessGroups::GRP_PARENTS])
         );
         return $group;
     }
@@ -154,6 +158,7 @@ trait TGroups
                 $line[IAccessGroups::GRP_NAME] = !empty($groupName) ? $groupName : $line[IAccessGroups::GRP_NAME] ;
                 $line[IAccessGroups::GRP_DESC] = !empty($groupDesc) ? $groupDesc : $line[IAccessGroups::GRP_DESC] ;
                 $line[IAccessGroups::GRP_STATUS] = $group->getGroupStatus();
+                $line[IAccessGroups::GRP_PARENTS] = $this->compactInt($group->getGroupParents());
             }
         }
 

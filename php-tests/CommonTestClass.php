@@ -197,6 +197,11 @@ class XFailedStorage implements IStorage
         return false;
     }
 
+    public function isFlat(): bool
+    {
+        return false;
+    }
+
     public function write(string $sharedKey, $data, ?int $timeout = null): bool
     {
         throw new StorageException('Mock');

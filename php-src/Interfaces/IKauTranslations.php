@@ -4,11 +4,11 @@ namespace kalanis\kw_auth\Interfaces;
 
 
 /**
- * Interface IKATranslations
+ * Interface IKauTranslations
  * @package kalanis\kw_auth\Interfaces
  * Translations
  */
-interface IKATranslations
+interface IKauTranslations
 {
     public function kauPassFileNotFound(string $path): string;
 

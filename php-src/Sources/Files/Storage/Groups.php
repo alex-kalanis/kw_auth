@@ -3,7 +3,7 @@
 namespace kalanis\kw_auth\Sources\Files\Storage;
 
 
-use kalanis\kw_auth\Interfaces\IKATranslations;
+use kalanis\kw_auth\Interfaces\IKauTranslations;
 use kalanis\kw_auth\Sources\Files\AGroups;
 use kalanis\kw_locks\Interfaces\ILock;
 use kalanis\kw_storage\Interfaces\IStorage;
@@ -18,7 +18,7 @@ class Groups extends AGroups
 {
     use TStorage;
 
-    public function __construct(IStorage $storage, ILock $lock, string $path, ?IKATranslations $lang = null)
+    public function __construct(IStorage $storage, ILock $lock, string $path, ?IKauTranslations $lang = null)
     {
         $this->storage = $storage;
         parent::__construct($lock, $path, $lang);
