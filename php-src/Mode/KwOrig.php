@@ -4,9 +4,9 @@ namespace kalanis\kw_auth\Mode;
 
 
 use kalanis\kw_auth\AuthException;
-use kalanis\kw_auth\Interfaces\IKATranslations;
+use kalanis\kw_auth\Interfaces\IKauTranslations;
 use kalanis\kw_auth\Interfaces\IMode;
-use kalanis\kw_auth\TTranslate;
+use kalanis\kw_auth\Traits\TLang;
 
 
 /**
@@ -16,14 +16,14 @@ use kalanis\kw_auth\TTranslate;
  */
 class KwOrig implements IMode
 {
-    use TTranslate;
+    use TLang;
 
     /** @var string */
     protected $salt = '';
 
-    public function __construct(string $salt, ?IKATranslations $lang = null)
+    public function __construct(string $salt, ?IKauTranslations $lang = null)
     {
-        $this->setLang($lang);
+        $this->setAuLang($lang);
         $this->salt = $salt;
     }
 
@@ -75,7 +75,7 @@ class KwOrig implements IMode
         if (function_exists('hash')) {
             return (string) hash('sha256', $word);
         }
-        throw new AuthException($this->getLang()->kauHashFunctionNotFound());
+        throw new AuthException($this->getAuLang()->kauHashFunctionNotFound());
         // @codeCoverageIgnoreEnd
     }
 }

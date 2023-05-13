@@ -3,7 +3,7 @@
 namespace kalanis\kw_auth\Sources\Files\Storage;
 
 
-use kalanis\kw_auth\Interfaces\IKATranslations;
+use kalanis\kw_auth\Interfaces\IKauTranslations;
 use kalanis\kw_auth\Interfaces\IMode;
 use kalanis\kw_auth\Interfaces\IStatus;
 use kalanis\kw_auth\Sources\Files\AFiles;
@@ -20,7 +20,7 @@ class Files extends AFiles
 {
     use TStorage;
 
-    public function __construct(IStorage $storage, IMode $mode, IStatus $status, ILock $lock, string $dir, ?IKATranslations $lang = null)
+    public function __construct(IStorage $storage, IMode $mode, IStatus $status, ILock $lock, string $dir, ?IKauTranslations $lang = null)
     {
         $this->storage = $storage;
         parent::__construct($mode, $status, $lock, $dir, $lang);

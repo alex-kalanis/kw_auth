@@ -6,8 +6,8 @@ namespace kalanis\kw_auth\Methods;
 use ArrayAccess;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces\IAuth;
-use kalanis\kw_auth\Interfaces\IKATranslations;
-use kalanis\kw_auth\TTranslate;
+use kalanis\kw_auth\Interfaces\IKauTranslations;
+use kalanis\kw_auth\Traits\TLang;
 use SessionHandlerInterface;
 
 
@@ -19,7 +19,7 @@ use SessionHandlerInterface;
  */
 class CountedSessions extends AMethods
 {
-    use TTranslate;
+    use TLang;
 
     const INPUT_NAME = 'name';
     const INPUT_COUNTER = 'log_count';
@@ -36,13 +36,13 @@ class CountedSessions extends AMethods
      * @param AMethods|null $nextOne
      * @param ArrayAccess<string, string|int> $session
      * @param int $maxTries
-     * @param IKATranslations|null $lang
+     * @param IKauTranslations|null $lang
      * @param SessionHandlerInterface|null $externalHandler
      */
-    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $session, int $maxTries = 100, ?IKATranslations $lang = null, ?SessionHandlerInterface $externalHandler = null)
+    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, ArrayAccess $session, int $maxTries = 100, ?IKauTranslations $lang = null, ?SessionHandlerInterface $externalHandler = null)
     {
         parent::__construct($authenticator, $nextOne);
-        $this->setLang($lang);
+        $this->setAuLang($lang);
         $this->session = $session;
         $this->maxTries = $maxTries;
         $this->externalHandler = $externalHandler;
@@ -67,7 +67,7 @@ class CountedSessions extends AMethods
             if (intval(strval($this->session->offsetGet(static::INPUT_COUNTER))) < $this->maxTries) {
                 $this->session->offsetSet(static::INPUT_COUNTER, strval(intval(strval($this->session->offsetGet(static::INPUT_COUNTER))) + 1));
             } else {
-                throw new AuthException($this->getLang()->kauTooManyTries(), 429);
+                throw new AuthException($this->getAuLang()->kauTooManyTries(), 429);
             }
         }
     }

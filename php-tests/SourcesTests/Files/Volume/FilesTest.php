@@ -208,7 +208,8 @@ class FilesTest extends CommonTestClass
             $group->getGroupName(),
             1002,
             'WheĐn yoĐu dđo nođt knđow',
-            777
+            777,
+            [32, 15, 21, 0]
         );
         $lib->updateGroup($group);
 
@@ -216,6 +217,7 @@ class FilesTest extends CommonTestClass
         $saved = $lib->getGroupDataOnly($group->getGroupId());
         $this->assertEquals('When you do not know', $saved->getGroupDesc()); // overwrite this
         $this->assertEquals(1001, $saved->getGroupAuthorId()); // cannot overwrite this
+        $this->assertEquals([32, 15, 21], $saved->getGroupParents()); // will be filtered
 
         // remove
         $lib->deleteGroup($group->getGroupId());

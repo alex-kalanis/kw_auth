@@ -22,14 +22,25 @@ class FileGroup implements IGroup
     protected $displayName = '';
     /** @var int */
     protected $status = 0;
+    /** @var int[] */
+    protected $parents = [];
 
-    public function setData(int $id, string $name, int $author, string $display, int $status): void
+    /**
+     * @param int $id
+     * @param string $name
+     * @param int $author
+     * @param string $display
+     * @param int $status
+     * @param int[] $parents
+     */
+    public function setData(int $id, string $name, int $author, string $display, int $status, array $parents = []): void
     {
         $this->id = $id;
         $this->name = $name;
         $this->author = $author;
         $this->displayName = $display;
         $this->status = $status;
+        $this->parents = $parents;
     }
 
     public function getGroupId(): int
@@ -55,5 +66,13 @@ class FileGroup implements IGroup
     public function getGroupStatus(): int
     {
         return $this->status;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getGroupParents(): array
+    {
+        return $this->parents;
     }
 }

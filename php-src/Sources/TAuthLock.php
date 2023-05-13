@@ -4,7 +4,7 @@ namespace kalanis\kw_auth\Sources;
 
 
 use kalanis\kw_auth\AuthException;
-use kalanis\kw_auth\TTranslate;
+use kalanis\kw_auth\Traits\TLang;
 use kalanis\kw_locks\Interfaces\ILock;
 use kalanis\kw_locks\LockException;
 
@@ -15,7 +15,7 @@ use kalanis\kw_locks\LockException;
  */
 trait TAuthLock
 {
-    use TTranslate;
+    use TLang;
 
     /** @var ILock|null */
     protected $lock = null;
@@ -32,7 +32,7 @@ trait TAuthLock
     protected function getLock(): ILock
     {
         if (!$this->lock) {
-            throw new AuthException($this->getLang()->kauLockSystemNotSet());
+            throw new AuthException($this->getAuLang()->kauLockSystemNotSet());
         }
         return $this->lock;
     }
@@ -45,7 +45,7 @@ trait TAuthLock
     protected function checkLock(string $note = ''): void
     {
         if ($this->getLock()->has()) {
-            throw new AuthException(empty($note) ? $this->getLang()->kauAuthAlreadyOpen() : $note);
+            throw new AuthException(empty($note) ? $this->getAuLang()->kauAuthAlreadyOpen() : $note);
         }
     }
 }

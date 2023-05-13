@@ -15,4 +15,5 @@ interface IFile
     const SHADE_FILE = '.shadow'; # shadow file
     const GROUP_FILE = '.groups'; # group file
     const CRLF = "\r\n"; # line ending
+    const PARENT_SEPARATOR = ','; # separate multiple values in one entry (like groups)
 }

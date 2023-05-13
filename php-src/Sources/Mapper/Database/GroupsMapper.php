@@ -20,10 +20,12 @@ class GroupsMapper extends ADatabase
         $this->setRelation('id', 'gr_id');
         $this->setRelation('name', 'gr_name');
         $this->setRelation('authorId', 'u_id');
+        $this->setRelation('parentId', 'gr_parent_id');
         $this->setRelation('desc', 'gr_desc');
         $this->setRelation('status', 'gr_status');
         $this->addPrimaryKey('id');
         $this->addForeignKey('authors', UsersRecord::class, 'authorId', 'id');
         $this->addForeignKey('members', UsersRecord::class, 'id', 'groupId');
+        $this->addForeignKey('parents', GroupsRecord::class, 'parentId', 'id');
     }
 }

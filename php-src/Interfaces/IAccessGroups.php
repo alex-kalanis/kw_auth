@@ -21,7 +21,8 @@ interface IAccessGroups
     const GRP_AUTHOR = 2;
     const GRP_DESC = 3;
     const GRP_STATUS = 4;
-    const GRP_FEED = 5;
+    const GRP_PARENTS = 5;
+    const GRP_FEED = 6;
 
     /**
      * @param IGroup $group

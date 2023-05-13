@@ -52,9 +52,9 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
     /** @var string */
     protected $path = '';
 
-    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, string $dir, ?Interfaces\IKATranslations $lang = null)
+    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, string $dir, ?Interfaces\IKauTranslations $lang = null)
     {
-        $this->setLang($lang);
+        $this->setAuLang($lang);
         $this->initAuthLock($lock);
         $this->path = $dir;
         $this->mode = $mode;
@@ -64,7 +64,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
     public function authenticate(string $userName, array $params = []): ?Interfaces\IUser
     {
         if (empty($params['password'])) {
-            throw new AuthException($this->getLang()->kauPassMustBeSet());
+            throw new AuthException($this->getAuLang()->kauPassMustBeSet());
         }
         $time = time();
         $name = $this->stripChars($userName);
@@ -240,7 +240,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
 
         // not everything necessary is set
         if (empty($userName) || empty($directory) || empty($password)) {
-            throw new AuthException($this->getLang()->kauPassMissParam());
+            throw new AuthException($this->getAuLang()->kauPassMissParam());
         }
         $this->checkLock();
 
@@ -345,7 +345,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         foreach ($passwordLines as &$line) {
             if (($line[static::PW_NAME] == $userName) && ($line[static::PW_ID] != $user->getAuthId())) {
                 $this->getLock()->delete();
-                throw new AuthException($this->getLang()->kauPassLoginExists());
+                throw new AuthException($this->getAuLang()->kauPassLoginExists());
             }
             if ($line[static::PW_ID] == $user->getAuthId()) {
                 // REFILL
@@ -430,7 +430,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         $passLines = $this->openPassword();
         foreach ($passLines as &$line) {
             if ($line[static::PW_GROUP] == $groupId) {
-                throw new AuthException($this->getLang()->kauGroupHasMembers());
+                throw new AuthException($this->getAuLang()->kauGroupHasMembers());
             }
         }
     }

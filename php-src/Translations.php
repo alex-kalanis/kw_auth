@@ -3,14 +3,14 @@
 namespace kalanis\kw_auth;
 
 
-use kalanis\kw_auth\Interfaces\IKATranslations;
+use kalanis\kw_auth\Interfaces\IKauTranslations;
 
 
 /**
  * Class Translations
  * @package kalanis\kw_auth
  */
-class Translations implements IKATranslations
+class Translations implements IKauTranslations
 {
     public function kauPassFileNotFound(string $path): string
     {

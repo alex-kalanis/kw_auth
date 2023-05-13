@@ -6,7 +6,6 @@ namespace SourcesTests\Files\Volume;
 use CommonTestClass;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Sources;
-use kalanis\kw_auth\Translations;
 
 
 class BasicTest extends CommonTestClass
@@ -33,7 +32,6 @@ class BasicTest extends CommonTestClass
     public function testFiles(): void
     {
         $lib = new MockFiles();
-        $lib->setLang(new Translations());
         $content = $lib->open($this->sourcePath);
         $this->assertNotEmpty($content);
         $lib->save($this->testingPath, $content);
@@ -48,7 +46,6 @@ class BasicTest extends CommonTestClass
     public function testFilesOpenCrash(): void
     {
         $lib = new MockFiles();
-        $lib->setLang(new Translations());
         $this->expectException(AuthException::class);
         $lib->open($this->testingPath);
     }
