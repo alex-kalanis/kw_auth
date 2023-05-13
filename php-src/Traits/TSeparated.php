@@ -20,7 +20,18 @@ trait TSeparated
      */
     public function separateInt(string $parent, string $separator = IFile::PARENT_SEPARATOR): array
     {
-        return array_values(array_filter(array_map('intval', array_filter(explode($separator, $parent)))));
+        return array_values(
+            array_filter(
+                array_map(
+                    'intval',
+                    array_filter(
+                        (array) explode(
+                            $separator ?: IFile::PARENT_SEPARATOR, $parent
+                        )
+                    )
+                )
+            )
+        );
     }
 
     /**
