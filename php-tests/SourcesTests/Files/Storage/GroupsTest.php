@@ -16,7 +16,7 @@ use kalanis\kw_storage\StorageException;
 
 class GroupsTest extends CommonTestClass
 {
-    protected $sourcePath = '.groups';
+    protected $sourcePath = ['.groups'];
 
     /**
      * @throws AuthException
@@ -230,7 +230,7 @@ class GroupsTest extends CommonTestClass
             $this->getLockPath(),
             $this->sourcePath
         );
-        $storage->write($this->sourcePath,
+        $storage->write('.groups',
             '0:root:1000:Maintainers:1:' . "\r\n"
             . '1:admin:1000:Administrators:1:' . "\r\n"
             . '# commented out' . "\r\n"

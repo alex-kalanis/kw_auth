@@ -13,11 +13,11 @@ use kalanis\kw_locks\LockException;
 
 class FileTest extends CommonTestClass
 {
-    protected $sourcePath = '';
+    protected $sourcePath = [];
 
     protected function setUp(): void
     {
-        $this->sourcePath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . '.passcomb';
+        $this->sourcePath = array_merge(explode(DIRECTORY_SEPARATOR, __DIR__), ['..', '..', '..', 'data', '.passcomb']);
     }
 
     /**

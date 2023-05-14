@@ -16,7 +16,7 @@ use kalanis\kw_storage\StorageException;
 
 class FileTest extends AStorageTests
 {
-    protected $sourcePath = '.passcomb';
+    protected $sourcePath = ['.passcomb'];
 
     /**
      * @throws AuthException
@@ -298,7 +298,7 @@ class FileTest extends AStorageTests
             $this->getLockPath(),
             $this->sourcePath
         );
-        $storage->write($this->sourcePath,
+        $storage->write(implode(DIRECTORY_SEPARATOR, $this->sourcePath),
             '1000:owner:$2y$10$6-bucFamnK5BTGbojaWw3!HzzHOlUNnN6PF3Y9qHQIdE8FmQKv/eq:0:1:1:Owner:/data/:' . "\r\n"
             . '1001:manager:$2y$10$G1Fo0udxqekABHkzUQubfuD8AjgD/5O9F9v3E0qYG2TI0BfZAkyz2:1:2:1:Manage:/data/:' . "\r\n"
             . '# commented out' . "\r\n"

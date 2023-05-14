@@ -20,7 +20,15 @@ class Files extends AFiles
 {
     use TStorage;
 
-    public function __construct(IStorage $storage, IMode $mode, IStatus $status, ILock $lock, string $dir, ?IKauTranslations $lang = null)
+    /**
+     * @param IStorage $storage
+     * @param IMode $mode
+     * @param IStatus $status
+     * @param ILock $lock
+     * @param string[] $dir
+     * @param IKauTranslations|null $lang
+     */
+    public function __construct(IStorage $storage, IMode $mode, IStatus $status, ILock $lock, array $dir, ?IKauTranslations $lang = null)
     {
         $this->storage = $storage;
         parent::__construct($mode, $status, $lock, $dir, $lang);

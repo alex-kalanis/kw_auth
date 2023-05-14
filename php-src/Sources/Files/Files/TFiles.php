@@ -25,15 +25,14 @@ trait TFiles
     protected $files = null;
 
     /**
-     * @param string $path
+     * @param string[] $path
      * @throws AuthException
      * @return array<int, array<int, string>>
      */
-    protected function openFile(string $path): array
+    protected function openFile(array $path): array
     {
         try {
-            $pt = Stuff::pathToArray($path);
-            $content = $this->files->readFile($pt);
+            $content = $this->files->readFile($path);
             $lines = explode(IFile::CRLF, strval($content));
             return array_map([$this, 'explosion'], array_filter(array_map('trim', $lines), [$this, 'filterEmptyLines']));
         } catch (FilesException | PathsException $ex) {
@@ -46,17 +45,16 @@ trait TFiles
     abstract public function filterEmptyLines(string $input): bool;
 
     /**
-     * @param string $path
+     * @param string[] $path
      * @param array<int, array<int, string|int>> $lines
      * @throws AuthException
      */
-    protected function saveFile(string $path, array $lines): void
+    protected function saveFile(array $path, array $lines): void
     {
         $content = implode(IFile::CRLF, array_map([$this, 'implosion'], $lines)) . IFile::CRLF;
         try {
-            $pt = Stuff::pathToArray($path);
-            if (false === $this->files->saveFile($pt, $content)) {
-                throw new AuthException($this->getAuLang()->kauPassFileNotSave($path));
+            if (false === $this->files->saveFile($path, $content)) {
+                throw new AuthException($this->getAuLang()->kauPassFileNotSave(Stuff::arrayToPath($path)));
             }
         } catch (FilesException | PathsException $ex) {
             throw new AuthException($ex->getMessage(), $ex->getCode(), $ex);

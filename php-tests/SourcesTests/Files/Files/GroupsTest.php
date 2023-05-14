@@ -20,7 +20,7 @@ use kalanis\kw_storage\StorageException;
 
 class GroupsTest extends CommonTestClass
 {
-    protected $sourcePath = '.groups';
+    protected $sourcePath = ['.groups'];
 
     /**
      * @throws AuthException
@@ -273,7 +273,7 @@ class GroupsTest extends CommonTestClass
     protected function filledMemorySingleFile(): storages_interfaces\ITarget
     {
         $lib = new Target\Memory();
-        $lib->save(DIRECTORY_SEPARATOR . $this->sourcePath, '0:root:1000:Maintainers:1:' . "\r\n"
+        $lib->save(DIRECTORY_SEPARATOR . '.groups', '0:root:1000:Maintainers:1:' . "\r\n"
             . '1:admin:1000:Administrators:1:' . "\r\n"
             . '# commented out' . "\r\n"
             . '2:user:1000:All users:1:' . "\r\n"

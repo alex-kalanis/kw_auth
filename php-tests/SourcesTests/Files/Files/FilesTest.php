@@ -24,7 +24,7 @@ use kalanis\kw_storage\StorageException;
 
 class FilesTest extends CommonTestClass
 {
-    protected $sourcePath = 'data';
+    protected $sourcePath = ['data'];
 
     /**
      * @throws AuthException
@@ -52,6 +52,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $this->assertEmpty($lib->getDataOnly('does not exist'));
+        $this->assertEmpty($lib->getCertData('does not exist'));
         $user = $lib->getDataOnly('manager');
         $this->assertNotEmpty($user);
         $this->assertEquals('Manage', $user->getDisplayName());

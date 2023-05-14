@@ -49,14 +49,21 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
     protected $mode = null;
     /** @var Interfaces\IStatus */
     protected $status = null;
-    /** @var string */
-    protected $path = '';
+    /** @var string[] */
+    protected $path = [];
 
-    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, string $dir, ?Interfaces\IKauTranslations $lang = null)
+    /**
+     * @param Interfaces\IMode $mode
+     * @param Interfaces\IStatus $status
+     * @param ILock $lock
+     * @param string[] $path
+     * @param Interfaces\IKauTranslations|null $lang
+     */
+    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, array $path, ?Interfaces\IKauTranslations $lang = null)
     {
         $this->setAuLang($lang);
         $this->initAuthLock($lock);
-        $this->path = $dir;
+        $this->path = $path;
         $this->mode = $mode;
         $this->status = $status;
     }
@@ -441,7 +448,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
      */
     protected function openPassword(): array
     {
-        return $this->openFile($this->path . DIRECTORY_SEPARATOR . Interfaces\IFile::PASS_FILE);
+        return $this->openFile(array_merge($this->path, [Interfaces\IFile::PASS_FILE]));
     }
 
     /**
@@ -450,7 +457,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
      */
     protected function savePassword(array $lines): void
     {
-        $this->saveFile($this->path . DIRECTORY_SEPARATOR . Interfaces\IFile::PASS_FILE, $lines);
+        $this->saveFile(array_merge($this->path, [Interfaces\IFile::PASS_FILE]), $lines);
     }
 
     /**
@@ -459,7 +466,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
      */
     protected function openShadow(): array
     {
-        return $this->openFile($this->path . DIRECTORY_SEPARATOR . Interfaces\IFile::SHADE_FILE);
+        return $this->openFile(array_merge($this->path, [Interfaces\IFile::SHADE_FILE]));
     }
 
     /**
@@ -468,7 +475,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
      */
     protected function saveShadow(array $lines): void
     {
-        $this->saveFile($this->path . DIRECTORY_SEPARATOR . Interfaces\IFile::SHADE_FILE, $lines);
+        $this->saveFile(array_merge($this->path, [Interfaces\IFile::SHADE_FILE]), $lines);
     }
 
     /**
@@ -477,7 +484,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
      */
     protected function openGroups(): array
     {
-        return $this->openFile($this->path . DIRECTORY_SEPARATOR . Interfaces\IFile::GROUP_FILE);
+        return $this->openFile(array_merge($this->path, [Interfaces\IFile::GROUP_FILE]));
     }
 
     /**
@@ -486,6 +493,6 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
      */
     protected function saveGroups(array $lines): void
     {
-        $this->saveFile($this->path . DIRECTORY_SEPARATOR . Interfaces\IFile::GROUP_FILE, $lines);
+        $this->saveFile(array_merge($this->path, [Interfaces\IFile::GROUP_FILE]), $lines);
     }
 }

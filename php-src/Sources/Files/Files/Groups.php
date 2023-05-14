@@ -18,7 +18,13 @@ class Groups extends AGroups
 {
     use TFiles;
 
-    public function __construct(CompositeAdapter $files, ILock $lock, string $path, ?IKauTranslations $lang = null)
+    /**
+     * @param CompositeAdapter $files
+     * @param ILock $lock
+     * @param string[] $path
+     * @param IKauTranslations|null $lang
+     */
+    public function __construct(CompositeAdapter $files, ILock $lock, array $path, ?IKauTranslations $lang = null)
     {
         $this->files = $files;
         parent::__construct($lock, $path, $lang);

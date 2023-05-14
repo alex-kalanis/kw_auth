@@ -14,11 +14,11 @@ use kalanis\kw_locks\LockException;
 
 class FilesTest extends CommonTestClass
 {
-    protected $sourcePath = '';
+    protected $sourcePath = [];
 
     protected function setUp(): void
     {
-        $this->sourcePath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data';
+        $this->sourcePath = array_merge(explode(DIRECTORY_SEPARATOR, __DIR__), ['..', '..', '..', 'data']);
     }
 
     /**
@@ -29,6 +29,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $this->assertEmpty($lib->getDataOnly('does not exist'));
+        $this->assertEmpty($lib->getCertData('does not exist'));
         $user = $lib->getDataOnly('manager');
         $this->assertNotEmpty($user);
         $this->assertEquals('Manage', $user->getDisplayName());

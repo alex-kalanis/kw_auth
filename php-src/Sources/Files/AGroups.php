@@ -20,15 +20,15 @@ abstract class AGroups implements IAccessGroups
     use TLines;
     use TStore;
 
-    /** @var string */
-    protected $path = '';
+    /** @var string[] */
+    protected $path = [];
 
     /**
      * @param ILock $lock
-     * @param string $path full path to group file
+     * @param string[] $path full path to group file
      * @param IKauTranslations|null $lang
      */
-    public function __construct(ILock $lock, string $path, ?IKauTranslations $lang = null)
+    public function __construct(ILock $lock, array $path, ?IKauTranslations $lang = null)
     {
         $this->setAuLang($lang);
         $this->initAuthLock($lock);

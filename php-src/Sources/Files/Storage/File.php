@@ -25,10 +25,10 @@ class File extends AFile
      * @param IMode $mode hashing mode
      * @param IStatus $status which status is necessary to use that feature
      * @param ILock $lock file lock
-     * @param string $path use full path with file name
+     * @param string[] $path use full path with file name
      * @param IKauTranslations|null $lang
      */
-    public function __construct(IStorage $storage, IMode $mode, IStatus $status, ILock $lock, string $path, ?IKauTranslations $lang = null)
+    public function __construct(IStorage $storage, IMode $mode, IStatus $status, ILock $lock, array $path, ?IKauTranslations $lang = null)
     {
         $this->storage = $storage;
         parent::__construct($mode, $status, $lock, $path, $lang);

@@ -10,19 +10,20 @@ use kalanis\kw_auth\Sources;
 
 class BasicTest extends CommonTestClass
 {
-    protected $sourcePath = '';
-    protected $testingPath = '';
+    protected $sourcePath = [];
+    protected $testingPath = [];
 
     protected function setUp(): void
     {
-        $this->sourcePath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . '.groups';
-        $this->testingPath = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . '.groups-duplicate';
+        $this->sourcePath = array_merge(explode(DIRECTORY_SEPARATOR, __DIR__), ['..', '..', '..', 'data', '.groups']);
+        $this->testingPath = array_merge(explode(DIRECTORY_SEPARATOR, __DIR__), ['..', '..', '..', 'data', '.groups-duplicate']);
     }
 
     protected function tearDown(): void
     {
-        if (is_file($this->testingPath)) {
-            unlink($this->testingPath);
+        $pt = implode(DIRECTORY_SEPARATOR, $this->testingPath);
+        if (is_file($pt)) {
+            unlink($pt);
         }
     }
 
@@ -35,7 +36,8 @@ class BasicTest extends CommonTestClass
         $content = $lib->open($this->sourcePath);
         $this->assertNotEmpty($content);
         $lib->save($this->testingPath, $content);
-        chmod($this->testingPath, 0444);
+        $pt = implode(DIRECTORY_SEPARATOR, $this->testingPath);
+        chmod($pt, 0444);
         $this->expectException(AuthException::class);
         $lib->save($this->testingPath, $content);
     }
@@ -58,21 +60,21 @@ class MockFiles
     use Sources\Files\TLines;
 
     /**
-     * @param string $path
+     * @param string[] $path
      * @throws AuthException
      * @return string[][]
      */
-    public function open(string $path): array
+    public function open(array $path): array
     {
         return $this->openFile($path);
     }
 
     /**
-     * @param string $path
+     * @param string[] $path
      * @param string[][] $content
      * @throws AuthException
      */
-    public function save(string $path, array $content): void
+    public function save(array $path, array $content): void
     {
         $this->saveFile($path, $content);
     }

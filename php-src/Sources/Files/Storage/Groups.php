@@ -18,7 +18,13 @@ class Groups extends AGroups
 {
     use TStorage;
 
-    public function __construct(IStorage $storage, ILock $lock, string $path, ?IKauTranslations $lang = null)
+    /**
+     * @param IStorage $storage
+     * @param ILock $lock
+     * @param string[] $path
+     * @param IKauTranslations|null $lang
+     */
+    public function __construct(IStorage $storage, ILock $lock, array $path, ?IKauTranslations $lang = null)
     {
         $this->storage = $storage;
         parent::__construct($lock, $path, $lang);

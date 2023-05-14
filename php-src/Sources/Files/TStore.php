@@ -15,16 +15,16 @@ use kalanis\kw_auth\AuthException;
 trait TStore
 {
     /**
-     * @param string $path
+     * @param string[] $path
      * @throws AuthException
      * @return array<int, array<int, string>>
      */
-    abstract protected function openFile(string $path): array;
+    abstract protected function openFile(array $path): array;
 
     /**
-     * @param string $path
+     * @param string[] $path
      * @param array<int, array<int, string|int>> $lines
      * @throws AuthException
      */
-    abstract protected function saveFile(string $path, array $lines): void;
+    abstract protected function saveFile(array $path, array $lines): void;
 }

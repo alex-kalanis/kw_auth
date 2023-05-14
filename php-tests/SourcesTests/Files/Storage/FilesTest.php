@@ -10,20 +10,22 @@ use kalanis\kw_auth\Data\FileGroup;
 use kalanis\kw_auth\Interfaces\IFile;
 use kalanis\kw_auth\Sources\Files\Storage\Files;
 use kalanis\kw_auth\Statuses\Always;
+use kalanis\kw_files\Interfaces\IProcessNodes;
 use kalanis\kw_locks\LockException;
-use kalanis\kw_storage\Storage\Key\DefaultKey;
+use kalanis\kw_storage\Storage\Key;
 use kalanis\kw_storage\Storage\Storage;
-use kalanis\kw_storage\Storage\Target\Memory;
+use kalanis\kw_storage\Storage\Target;
 use kalanis\kw_storage\StorageException;
 
 
 class FilesTest extends CommonTestClass
 {
-    protected $sourcePath = 'data';
+    protected $sourcePath = ['data'];
 
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testNotExistsData(): void
     {
@@ -42,6 +44,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $this->assertEmpty($lib->getDataOnly('does not exist'));
+        $this->assertEmpty($lib->getCertData('does not exist'));
         $user = $lib->getDataOnly('manager');
         $this->assertNotEmpty($user);
         $this->assertEquals('Manage', $user->getDisplayName());
@@ -76,6 +79,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testCreateAccountOnEmptyInstance(): void
     {
@@ -95,6 +99,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testUpdateAccountOnEmptyInstance(): void
     {
@@ -108,6 +113,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testUpdatePasswordOnEmptyInstance(): void
     {
@@ -120,6 +126,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testUpdateCertsOnEmptyInstance(): void
     {
@@ -132,6 +139,7 @@ class FilesTest extends CommonTestClass
     /**
      * @throws AuthException
      * @throws LockException
+     * @throws StorageException
      */
     public function testDeleteAccountOnEmptyInstance(): void
     {
@@ -273,22 +281,23 @@ class FilesTest extends CommonTestClass
      */
     protected function fileSources(): Files
     {
-        $storage = new Storage(new DefaultKey(), new Memory());
-        $storage->write($this->sourcePath . DIRECTORY_SEPARATOR . IFile::PASS_FILE,
+        $storage = new Storage(new Key\DefaultKey(), new Target\Memory());
+        $storage->write('data', IProcessNodes::STORAGE_NODE_KEY);
+        $storage->write('data' . DIRECTORY_SEPARATOR . IFile::PASS_FILE,
             'owner:1000:0:1:1:Owner:/data/:' . "\r\n"
             . 'manager:1001:1:2:1:Manage:/data/:' . "\r\n"
             . '# commented out' . "\r\n"
             . 'worker:1002:1:3:1:Worker:/data/:' . "\r\n"
             // last line is intentionally empty one
         );
-        $storage->write($this->sourcePath . DIRECTORY_SEPARATOR . IFile::SHADE_FILE,
+        $storage->write('data' . DIRECTORY_SEPARATOR . IFile::SHADE_FILE,
             'owner:M2FjMjZhMjc3MGY4MzUxYjYyN2YzMzI1NjRkNTVlYmM4N2U5N2Y3ODI2NDAwMjY0MTZmMTI0NTliOTFlMTUxZQ==:0:9999999999:7:x:' . "\r\n"
             . 'manager:ZWZmNzQwODIxZDhjNzRkMjZlZTIzYjQ2ODBiNDA1YTA5MWY0ZjdkNWVhNzk2NDAxZTZkODY3NDhmMjg0MzE4Yw==:0:9999999999:salt_hash:x:' . "\r\n"
             . '# commented out' . "\r\n"
             . 'worker:M2FjMjZhMjc3MGY4MzUxYjYyN2YzMzI1NjRkNTVlYmM4N2U5N2Y3ODI2NDAwMjY0MTZmMTI0NTliOTFlMTUxZQ==:0:9999999999:salt_key:x:' . "\r\n"
             // last line is intentionally empty one
         );
-        $storage->write($this->sourcePath . DIRECTORY_SEPARATOR . IFile::GROUP_FILE,
+        $storage->write('data' . DIRECTORY_SEPARATOR . IFile::GROUP_FILE,
             '0:root:1000:Maintainers:1:' . "\r\n"
             . '1:admin:1000:Administrators:1:' . "\r\n"
             . '# commented out' . "\r\n"
@@ -312,8 +321,9 @@ class FilesTest extends CommonTestClass
      */
     protected function partialFileSources(): Files
     {
-        $storage = new Storage(new DefaultKey(), new Memory());
-        $storage->write($this->sourcePath . DIRECTORY_SEPARATOR . IFile::PASS_FILE,
+        $storage = new Storage(new Key\DefaultKey(), new Target\Memory());
+        $storage->write('data', IProcessNodes::STORAGE_NODE_KEY);
+        $storage->write('data' . DIRECTORY_SEPARATOR . IFile::PASS_FILE,
             'owner:1000:0:1:1:Owner:/data/:' . "\r\n"
             . 'manager:1001:1:2:1:Manage:/data/:' . "\r\n"
             . '# commented out' . "\r\n"
@@ -332,11 +342,13 @@ class FilesTest extends CommonTestClass
     /**
      * Contains a full comedy/tragedy of work with locks
      * @throws LockException
+     * @throws StorageException
      * @return Files
      */
     protected function emptyFileSources(): Files
     {
-        $storage = new Storage(new DefaultKey(), new Memory());
+        $storage = new Storage(new Key\DefaultKey(), new Target\Memory());
+        $storage->write('data', IProcessNodes::STORAGE_NODE_KEY);
         return new Files(
             $storage,
             new \MockModes(),

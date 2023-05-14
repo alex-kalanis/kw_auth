@@ -94,7 +94,7 @@ class AuthTest extends CommonTestClass
             new KwOrig('yxcvbnmasdfghjklqwertzuiop0123456789'),
             new Always(),
             $this->getLockPath(),
-            __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data'
+            [__DIR__, '..', 'data']
         );
     }
 }

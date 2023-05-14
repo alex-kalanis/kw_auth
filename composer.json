@@ -13,6 +13,7 @@
     "type": "library",
     "require": {
         "alex-kalanis/kw_locks": ">=2.0",
+        "alex-kalanis/kw_paths": ">=3.0",
         "php": ">=7.2.0"
     },
     "require-dev": {
@@ -22,7 +23,6 @@
         "alex-kalanis/kw_confs": ">=1.1",
         "alex-kalanis/kw_mapper": ">=2.0",
         "alex-kalanis/kw_storage": ">=3.3",
-        "alex-kalanis/kw_paths": ">=3.0",
         "alex-kalanis/kw_files": ">=3.2",
         "friendsofphp/php-cs-fixer": "^3.0",
         "phpstan/phpstan": "^1.0",

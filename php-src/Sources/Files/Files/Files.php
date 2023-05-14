@@ -20,9 +20,17 @@ class Files extends AFiles
 {
     use TFiles;
 
-    public function __construct(CompositeAdapter $files, IMode $mode, IStatus $status, ILock $lock, string $dir, ?IKauTranslations $lang = null)
+    /**
+     * @param CompositeAdapter $files
+     * @param IMode $mode
+     * @param IStatus $status
+     * @param ILock $lock
+     * @param string[] $path
+     * @param IKauTranslations|null $lang
+     */
+    public function __construct(CompositeAdapter $files, IMode $mode, IStatus $status, ILock $lock, array $path, ?IKauTranslations $lang = null)
     {
         $this->files = $files;
-        parent::__construct($mode, $status, $lock, $dir, $lang);
+        parent::__construct($mode, $status, $lock, $path, $lang);
     }
 }

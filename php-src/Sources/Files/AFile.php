@@ -38,17 +38,17 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
     protected $mode = null;
     /** @var Interfaces\IStatus */
     protected $status = null;
-    /** @var string */
-    protected $path = '';
+    /** @var string[] */
+    protected $path = [];
 
     /**
      * @param Interfaces\IMode $mode hashing mode
      * @param Interfaces\IStatus $status which status is necessary to use that feature
      * @param ILock $lock file lock
-     * @param string $path use full path with file name
+     * @param string[] $path use full path with file name
      * @param Interfaces\IKauTranslations|null $lang
      */
-    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, string $path, ?Interfaces\IKauTranslations $lang = null)
+    public function __construct(Interfaces\IMode $mode, Interfaces\IStatus $status, ILock $lock, array $path, ?Interfaces\IKauTranslations $lang = null)
     {
         $this->setAuLang($lang);
         $this->mode = $mode;

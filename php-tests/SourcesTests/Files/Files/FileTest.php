@@ -20,7 +20,7 @@ use kalanis\kw_storage\StorageException;
 
 class FileTest extends AFilesTests
 {
-    protected $sourcePath = '.passcomb';
+    protected $sourcePath = ['', '.passcomb'];
 
     /**
      * @throws AuthException
@@ -317,18 +317,21 @@ class FileTest extends AFilesTests
      */
     public function testRemoveUserStorageFailSave(): void
     {
-        $lib = $this->failedFileSources(true, '1000:owner:some-wanted:0:1:1:Owner:/data/:' . "\r\n" . '1002:worker:some-else:1:3:1:Worker:/data/:' . "\r\n");
+        $lib = $this->failedFileSources(true,
+            '1000:owner:some-wanted:0:1:1:Owner:/data/:' . "\r\n" .
+            '1002:worker:some-else:1:3:1:Worker:/data/:' . "\r\n"
+        );
         $this->expectException(AuthException::class);
         $lib->deleteAccount('worker');
     }
 
     /**
      * Contains a full comedy/tragedy of work with locks
-     * @return File
      * @throws FilesException
      * @throws LockException
      * @throws PathsException
      * @throws StorageException
+     * @return File
      */
     protected function fileSources(): File
     {
@@ -348,7 +351,9 @@ class FileTest extends AFilesTests
     protected function filledMemorySingleFile(): storages_interfaces\ITarget
     {
         $lib = new Target\Memory();
-        $lib->save(DIRECTORY_SEPARATOR . $this->sourcePath, '1000:owner:$2y$10$6-bucFamnK5BTGbojaWw3!HzzHOlUNnN6PF3Y9qHQIdE8FmQKv/eq:0:1:1:Owner:/data/:' . "\r\n"
+        $lib->save(
+            DIRECTORY_SEPARATOR . '.passcomb',
+            '1000:owner:$2y$10$6-bucFamnK5BTGbojaWw3!HzzHOlUNnN6PF3Y9qHQIdE8FmQKv/eq:0:1:1:Owner:/data/:' . "\r\n"
             . '1001:manager:$2y$10$G1Fo0udxqekABHkzUQubfuD8AjgD/5O9F9v3E0qYG2TI0BfZAkyz2:1:2:1:Manage:/data/:' . "\r\n"
             . '# commented out' . "\r\n"
             . '1002:worker:$2y$10$6.bucFamnK5BTGbojaWw3.HpzHOlQUnN6PF3Y9qHQIdE8FmQKv/eq:1:3:1:Worker:/data/:' . "\r\n"
