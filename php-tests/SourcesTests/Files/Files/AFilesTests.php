@@ -7,10 +7,12 @@ use CommonTestClass;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Sources;
 use kalanis\kw_files\Access;
+use kalanis\kw_files\FilesException;
+use kalanis\kw_paths\PathsException;
 use kalanis\kw_storage\Interfaces\ITarget;
-use kalanis\kw_storage\Storage\Key\DirKey;
+use kalanis\kw_storage\Storage\Key;
 use kalanis\kw_storage\Storage\Storage;
-use kalanis\kw_storage\Storage\Target\Volume;
+use kalanis\kw_storage\Storage\Target;
 use kalanis\kw_storage\StorageException;
 use Traversable;
 
@@ -40,10 +42,15 @@ class MockFiles
     use Sources\Files\Files\TFiles;
     use Sources\Files\TLines;
 
+    /**
+     * @param ITarget|null $storage
+     * @throws FilesException
+     * @throws PathsException
+     */
     public function __construct(?ITarget $storage = null)
     {
-        DirKey::setDir(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR);
-        $this->files = (new Access\Factory())->getClass(new Storage(new DirKey(), $storage ?: new Volume()));
+        Key\DirKey::setDir(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR);
+        $this->files = (new Access\Factory())->getClass(new Storage(new Key\DirKey(), $storage ?: new Target\Volume()));
     }
 
     /**
@@ -77,7 +84,7 @@ class XCrashStorage implements ITarget
 
     public function exists(string $key): bool
     {
-        return false;
+        throw new StorageException('nope');
     }
 
     public function load(string $key)

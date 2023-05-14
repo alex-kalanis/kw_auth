@@ -8,10 +8,13 @@ use kalanis\kw_auth\Data\FileUser;
 use kalanis\kw_auth\Sources\Files\Files\File;
 use kalanis\kw_auth\Statuses\Always;
 use kalanis\kw_files\Access;
+use kalanis\kw_files\FilesException;
 use kalanis\kw_locks\LockException;
-use kalanis\kw_storage\Storage\Key\DefaultKey;
+use kalanis\kw_paths\PathsException;
+use kalanis\kw_storage\Interfaces as storages_interfaces;
+use kalanis\kw_storage\Storage\Key;
 use kalanis\kw_storage\Storage\Storage;
-use kalanis\kw_storage\Storage\Target\Memory;
+use kalanis\kw_storage\Storage\Target;
 use kalanis\kw_storage\StorageException;
 
 
@@ -21,7 +24,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testNotExistsData(): void
     {
@@ -32,7 +37,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testDataOnly(): void
@@ -46,7 +53,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testAuthenticate(): void
@@ -60,7 +69,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testAuthenticateNoPass(): void
@@ -72,7 +83,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testCreateAccountOnEmptyInstance(): void
     {
@@ -91,7 +104,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testUpdateAccountOnEmptyInstance(): void
     {
@@ -105,7 +120,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testUpdatePasswordOnEmptyInstance(): void
     {
@@ -117,7 +134,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testRemoveAccountOnEmptyInstance(): void
     {
@@ -131,7 +150,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testAccountManipulation(): void
@@ -181,7 +202,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testCreateFail(): void
@@ -194,7 +217,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testAllUsers(): void
@@ -207,7 +232,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testCreateAccountStorageFail(): void
     {
@@ -219,7 +246,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testCreateAccountStorageFailSave(): void
     {
@@ -231,7 +260,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testReadAccountsStorageFail(): void
     {
@@ -242,7 +273,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testUpdateAccountStorageFail(): void
     {
@@ -253,7 +286,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testUpdateAccountStorageFailSave(): void
     {
@@ -264,7 +299,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testRemoveUserStorageFail(): void
     {
@@ -274,7 +311,9 @@ class FileTest extends AFilesTests
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testRemoveUserStorageFailSave(): void
     {
@@ -285,38 +324,49 @@ class FileTest extends AFilesTests
 
     /**
      * Contains a full comedy/tragedy of work with locks
-     * @throws LockException
-     * @throws StorageException
      * @return File
+     * @throws FilesException
+     * @throws LockException
+     * @throws PathsException
+     * @throws StorageException
      */
     protected function fileSources(): File
     {
-        $storage = new Storage(new DefaultKey(), new Memory());
-        $file = new File(
-            (new Access\Factory())->getClass($storage),
+        return new File(
+            (new Access\Factory())->getClass(new Storage(new Key\DefaultKey(), $this->filledMemorySingleFile())),
             new \MockModes(),
             new Always(),
             $this->getLockPath(),
             $this->sourcePath
         );
-        $storage->write($this->sourcePath,
-            '1000:owner:$2y$10$6-bucFamnK5BTGbojaWw3!HzzHOlUNnN6PF3Y9qHQIdE8FmQKv/eq:0:1:1:Owner:/data/:' . "\r\n"
-            . '1001:manager:$2y$10$G1Fo0udxqekABHkzUQubfuD8AjgD/5O9F9v3E0qYG2TI0BfZAkyz2:1:2:1:Manage:/data/:' . "\r\n"
-            . '# commented out' . "\r\n"
-            . '1002:worker:$2y$10$6.bucFamnK5BTGbojaWw3.HpzHOlQUnN6PF3Y9qHQIdE8FmQKv/eq:1:3:1:Worker:/data/:' . "\r\n"
-            // last line is intentionally empty one
-        );
-        return $file;
     }
 
     /**
+     * @throws StorageException
+     * @return storages_interfaces\ITarget
+     */
+    protected function filledMemorySingleFile(): storages_interfaces\ITarget
+    {
+        $lib = new Target\Memory();
+        $lib->save(DIRECTORY_SEPARATOR . $this->sourcePath, '1000:owner:$2y$10$6-bucFamnK5BTGbojaWw3!HzzHOlUNnN6PF3Y9qHQIdE8FmQKv/eq:0:1:1:Owner:/data/:' . "\r\n"
+            . '1001:manager:$2y$10$G1Fo0udxqekABHkzUQubfuD8AjgD/5O9F9v3E0qYG2TI0BfZAkyz2:1:2:1:Manage:/data/:' . "\r\n"
+            . '# commented out' . "\r\n"
+            . '1002:worker:$2y$10$6.bucFamnK5BTGbojaWw3.HpzHOlQUnN6PF3Y9qHQIdE8FmQKv/eq:1:3:1:Worker:/data/:' . "\r\n"
+        // last line is intentionally empty one
+        );
+        return $lib;
+    }
+
+    /**
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @return File
      */
     protected function emptyFileSources(): File
     {
         return new File(
-            (new Access\Factory())->getClass(new Storage(new DefaultKey(), new Memory())),
+            (new Access\Factory())->getClass(new Storage(new Key\DefaultKey(), new Target\Memory())),
             new \MockModes(),
             new Always(),
             $this->getLockPath(),
@@ -327,7 +377,9 @@ class FileTest extends AFilesTests
     /**
      * @param bool $canOpen
      * @param string $content
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @return File
      */
     protected function failedFileSources(bool $canOpen = false, string $content = ''): File

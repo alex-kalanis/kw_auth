@@ -12,12 +12,13 @@ use kalanis\kw_auth\Sources\Files\Files\Files;
 use kalanis\kw_auth\Statuses\Always;
 use kalanis\kw_files\Access;
 use kalanis\kw_files\FilesException;
+use kalanis\kw_files\Interfaces\IProcessNodes;
 use kalanis\kw_locks\LockException;
 use kalanis\kw_paths\PathsException;
-use kalanis\kw_storage\Storage\Key\DefaultKey;
-use kalanis\kw_storage\Storage\Key\DirKey;
+use kalanis\kw_storage\Interfaces as storages_interfaces;
+use kalanis\kw_storage\Storage\Key;
 use kalanis\kw_storage\Storage\Storage;
-use kalanis\kw_storage\Storage\Target\Memory;
+use kalanis\kw_storage\Storage\Target;
 use kalanis\kw_storage\StorageException;
 
 
@@ -30,6 +31,7 @@ class FilesTest extends CommonTestClass
      * @throws FilesException
      * @throws LockException
      * @throws PathsException
+     * @throws StorageException
      */
     public function testNotExistsData(): void
     {
@@ -90,6 +92,7 @@ class FilesTest extends CommonTestClass
      * @throws FilesException
      * @throws LockException
      * @throws PathsException
+     * @throws StorageException
      */
     public function testCreateAccountOnEmptyInstance(): void
     {
@@ -111,6 +114,7 @@ class FilesTest extends CommonTestClass
      * @throws FilesException
      * @throws LockException
      * @throws PathsException
+     * @throws StorageException
      */
     public function testUpdateAccountOnEmptyInstance(): void
     {
@@ -126,6 +130,7 @@ class FilesTest extends CommonTestClass
      * @throws FilesException
      * @throws LockException
      * @throws PathsException
+     * @throws StorageException
      */
     public function testUpdatePasswordOnEmptyInstance(): void
     {
@@ -140,6 +145,7 @@ class FilesTest extends CommonTestClass
      * @throws FilesException
      * @throws LockException
      * @throws PathsException
+     * @throws StorageException
      */
     public function testUpdateCertsOnEmptyInstance(): void
     {
@@ -154,6 +160,7 @@ class FilesTest extends CommonTestClass
      * @throws FilesException
      * @throws LockException
      * @throws PathsException
+     * @throws StorageException
      */
     public function testDeleteAccountOnEmptyInstance(): void
     {
@@ -307,36 +314,43 @@ class FilesTest extends CommonTestClass
      */
     protected function fileSources(): Files
     {
-        DirKey::setDir($this->sourcePath . DIRECTORY_SEPARATOR);
-        $storage = new Storage(new DirKey(), new Memory());
-        $storage->write(IFile::PASS_FILE,
-            'owner:1000:0:1:1:Owner:/data/:' . "\r\n"
-            . 'manager:1001:1:2:1:Manage:/data/:' . "\r\n"
-            . '# commented out' . "\r\n"
-            . 'worker:1002:1:3:1:Worker:/data/:' . "\r\n"
-            // last line is intentionally empty one
-        );
-        $storage->write(IFile::SHADE_FILE,
-            'owner:M2FjMjZhMjc3MGY4MzUxYjYyN2YzMzI1NjRkNTVlYmM4N2U5N2Y3ODI2NDAwMjY0MTZmMTI0NTliOTFlMTUxZQ==:0:9999999999:7:x:' . "\r\n"
-            . 'manager:ZWZmNzQwODIxZDhjNzRkMjZlZTIzYjQ2ODBiNDA1YTA5MWY0ZjdkNWVhNzk2NDAxZTZkODY3NDhmMjg0MzE4Yw==:0:9999999999:salt_hash:x:' . "\r\n"
-            . '# commented out' . "\r\n"
-            . 'worker:M2FjMjZhMjc3MGY4MzUxYjYyN2YzMzI1NjRkNTVlYmM4N2U5N2Y3ODI2NDAwMjY0MTZmMTI0NTliOTFlMTUxZQ==:0:9999999999:salt_key:x:' . "\r\n"
-            // last line is intentionally empty one
-        );
-        $storage->write(IFile::GROUP_FILE,
-            '0:root:1000:Maintainers:1:' . "\r\n"
-            . '1:admin:1000:Administrators:1:' . "\r\n"
-            . '# commented out' . "\r\n"
-            . '2:user:1000:All users:1:' . "\r\n"
-            // last line is intentionally empty one
-        );
+        Key\DirKey::setDir('');
         return new Files(
-            (new Access\Factory())->getClass($storage),
+            (new Access\Factory())->getClass(new Storage(new Key\DirKey(), $this->filledMemoryAllFiles())),
             new \MockModes(),
             new Always(),
             $this->getLockPath(),
             $this->sourcePath
         );
+    }
+
+    /**
+     * @throws StorageException
+     * @return storages_interfaces\ITarget
+     */
+    protected function filledMemoryAllFiles(): storages_interfaces\ITarget
+    {
+        $lib = new Target\Memory();
+        $lib->save(DIRECTORY_SEPARATOR . 'data', IProcessNodes::STORAGE_NODE_KEY); // emulate root key
+        $lib->save(DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . IFile::PASS_FILE, 'owner:1000:0:1:1:Owner:/data/:' . "\r\n"
+            . 'manager:1001:1:2:1:Manage:/data/:' . "\r\n"
+            . '# commented out' . "\r\n"
+            . 'worker:1002:1:3:1:Worker:/data/:' . "\r\n"
+            // last line is intentionally empty one
+        );
+        $lib->save(DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . IFile::SHADE_FILE, 'owner:M2FjMjZhMjc3MGY4MzUxYjYyN2YzMzI1NjRkNTVlYmM4N2U5N2Y3ODI2NDAwMjY0MTZmMTI0NTliOTFlMTUxZQ==:0:9999999999:7:x:' . "\r\n"
+            . 'manager:ZWZmNzQwODIxZDhjNzRkMjZlZTIzYjQ2ODBiNDA1YTA5MWY0ZjdkNWVhNzk2NDAxZTZkODY3NDhmMjg0MzE4Yw==:0:9999999999:salt_hash:x:' . "\r\n"
+            . '# commented out' . "\r\n"
+            . 'worker:M2FjMjZhMjc3MGY4MzUxYjYyN2YzMzI1NjRkNTVlYmM4N2U5N2Y3ODI2NDAwMjY0MTZmMTI0NTliOTFlMTUxZQ==:0:9999999999:salt_key:x:' . "\r\n"
+        // last line is intentionally empty one
+        );
+        $lib->save(DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . IFile::GROUP_FILE, '0:root:1000:Maintainers:1:' . "\r\n"
+            . '1:admin:1000:Administrators:1:' . "\r\n"
+            . '# commented out' . "\r\n"
+            . '2:user:1000:All users:1:' . "\r\n"
+        // last line is intentionally empty one
+        );
+        return $lib;
     }
 
     /**
@@ -349,17 +363,9 @@ class FilesTest extends CommonTestClass
      */
     protected function partialFileSources(): Files
     {
-        DirKey::setDir($this->sourcePath . DIRECTORY_SEPARATOR);
-        $storage = new Storage(new DirKey(), new Memory());
-        $storage->write(IFile::PASS_FILE,
-            'owner:1000:0:1:1:Owner:/data/:' . "\r\n"
-            . 'manager:1001:1:2:1:Manage:/data/:' . "\r\n"
-            . '# commented out' . "\r\n"
-            . 'worker:1002:1:3:1:Worker:/data/:' . "\r\n"
-            // last line is intentionally empty one
-        );
+        Key\DirKey::setDir('');
         return new Files(
-            (new Access\Factory())->getClass($storage),
+            (new Access\Factory())->getClass(new Storage(new Key\DirKey(), $this->filledMemorySingleFile())),
             new \MockModes(),
             new Always(),
             $this->getLockPath(),
@@ -368,22 +374,50 @@ class FilesTest extends CommonTestClass
     }
 
     /**
+     * @throws StorageException
+     * @return storages_interfaces\ITarget
+     */
+    protected function filledMemorySingleFile(): storages_interfaces\ITarget
+    {
+        $lib = new Target\Memory();
+        $lib->save(DIRECTORY_SEPARATOR . 'data', IProcessNodes::STORAGE_NODE_KEY); // emulate root key
+        $lib->save(DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . IFile::PASS_FILE, 'owner:1000:0:1:1:Owner:/data/:' . "\r\n"
+            . 'manager:1001:1:2:1:Manage:/data/:' . "\r\n"
+            . '# commented out' . "\r\n"
+            . 'worker:1002:1:3:1:Worker:/data/:' . "\r\n"
+        // last line is intentionally empty one
+        );
+        return $lib;
+    }
+
+    /**
      * Contains a full comedy/tragedy of work with locks
      * @throws FilesException
      * @throws LockException
      * @throws PathsException
+     * @throws StorageException
      * @return Files
      */
     protected function emptyFileSources(): Files
     {
-        $storage = new Storage(new DefaultKey(), new Memory());
         return new Files(
-            (new Access\Factory())->getClass($storage),
+            (new Access\Factory())->getClass(new Storage(new Key\DefaultKey(), $this->filledMemoryEmulateDir())),
             new \MockModes(),
             new Always(),
             $this->getLockPath(),
             $this->sourcePath
         );
+    }
+
+    /**
+     * @throws StorageException
+     * @return storages_interfaces\ITarget
+     */
+    protected function filledMemoryEmulateDir(): storages_interfaces\ITarget
+    {
+        $lib = new Target\Memory();
+        $lib->save(DIRECTORY_SEPARATOR . 'data', IProcessNodes::STORAGE_NODE_KEY); // emulate root key
+        return $lib;
     }
 
     protected function wantedUser(): FileCertUser

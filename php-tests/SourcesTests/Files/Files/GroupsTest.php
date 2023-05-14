@@ -8,10 +8,13 @@ use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Data\FileGroup;
 use kalanis\kw_auth\Sources\Files\Files\Groups;
 use kalanis\kw_files\Access;
+use kalanis\kw_files\FilesException;
 use kalanis\kw_locks\LockException;
-use kalanis\kw_storage\Storage\Key\DefaultKey;
+use kalanis\kw_paths\PathsException;
+use kalanis\kw_storage\Interfaces as storages_interfaces;
+use kalanis\kw_storage\Storage\Key;
 use kalanis\kw_storage\Storage\Storage;
-use kalanis\kw_storage\Storage\Target\Memory;
+use kalanis\kw_storage\Storage\Target;
 use kalanis\kw_storage\StorageException;
 
 
@@ -21,7 +24,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testNotExistsData(): void
     {
@@ -31,7 +36,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testCreateGroupOnEmptyInstance(): void
     {
@@ -49,7 +56,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testUpdateGroupOnEmptyInstance(): void
     {
@@ -63,7 +72,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testGroupManipulation(): void
@@ -102,7 +113,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testCreateFail(): void
@@ -115,7 +128,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      */
     public function testAllGroups(): void
@@ -128,7 +143,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testRemoveGroupOnEmptyInstance(): void
     {
@@ -141,7 +158,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testCreateStorageFail(): void
     {
@@ -153,7 +172,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testCreateStorageFailSave(): void
     {
@@ -165,7 +186,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testReadGroupsStorageFail(): void
     {
@@ -176,7 +199,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testUpdateGroupStorageFail(): void
     {
@@ -187,7 +212,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testUpdateGroupStorageFailSave(): void
     {
@@ -198,7 +225,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testRemoveGroupStorageFail(): void
     {
@@ -208,7 +237,9 @@ class GroupsTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      */
     public function testRemoveGroupStorageFailSave(): void
     {
@@ -219,36 +250,48 @@ class GroupsTest extends CommonTestClass
 
     /**
      * Contains a full comedy/tragedy of work with locks
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @throws StorageException
      * @return Groups
      */
     protected function groupSources(): Groups
     {
-        $storage = new Storage(new DefaultKey(), new Memory());
         $file = new Groups(
-            (new Access\Factory())->getClass($storage),
+            (new Access\Factory())->getClass(new Storage(new Key\DefaultKey(), $this->filledMemorySingleFile())),
             $this->getLockPath(),
             $this->sourcePath
-        );
-        $storage->write($this->sourcePath,
-            '0:root:1000:Maintainers:1:' . "\r\n"
-            . '1:admin:1000:Administrators:1:' . "\r\n"
-            . '# commented out' . "\r\n"
-            . '2:user:1000:All users:1:' . "\r\n"
-            // last line is intentionally empty one
         );
         return $file;
     }
 
     /**
+     * @throws StorageException
+     * @return storages_interfaces\ITarget
+     */
+    protected function filledMemorySingleFile(): storages_interfaces\ITarget
+    {
+        $lib = new Target\Memory();
+        $lib->save(DIRECTORY_SEPARATOR . $this->sourcePath, '0:root:1000:Maintainers:1:' . "\r\n"
+            . '1:admin:1000:Administrators:1:' . "\r\n"
+            . '# commented out' . "\r\n"
+            . '2:user:1000:All users:1:' . "\r\n"
+        // last line is intentionally empty one
+        );
+        return $lib;
+    }
+
+    /**
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @return Groups
      */
     protected function emptyGroupSources(): Groups
     {
         return new Groups(
-            (new Access\Factory())->getClass(new Storage(new DefaultKey(), new Memory())),
+            (new Access\Factory())->getClass(new Storage(new Key\DefaultKey(), new Target\Memory())),
             $this->getLockPath(),
             $this->sourcePath
         );
@@ -257,7 +300,9 @@ class GroupsTest extends CommonTestClass
     /**
      * @param bool $canOpen
      * @param string $content
+     * @throws FilesException
      * @throws LockException
+     * @throws PathsException
      * @return Groups
      */
     protected function failedGroupSources(bool $canOpen = false, string $content = ''): Groups
