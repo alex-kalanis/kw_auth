@@ -103,13 +103,13 @@ class AuthTest extends CommonTestClass
 class XAUser implements Interfaces\IUser
 {
 
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void
+    public function setUserData(?string $authId, ?string $authName, ?string $authGroup, ?int $authClass, ?int $authStatus, ?string $displayName, ?string $dir): void
     {
     }
 
-    public function getAuthId(): int
+    public function getAuthId(): string
     {
-        return 0;
+        return '0';
     }
 
     public function getAuthName(): string
@@ -117,9 +117,9 @@ class XAUser implements Interfaces\IUser
         return '';
     }
 
-    public function getGroup(): int
+    public function getGroup(): string
     {
-        return 0;
+        return '0';
     }
 
     public function getClass(): int
@@ -193,7 +193,7 @@ class XAGroups implements Interfaces\IAccessGroups
     {
     }
 
-    public function getGroupDataOnly(int $groupId): ?Interfaces\IGroup
+    public function getGroupDataOnly(string $groupId): ?Interfaces\IGroup
     {
         return null;
     }
@@ -208,7 +208,7 @@ class XAGroups implements Interfaces\IAccessGroups
         return true;
     }
 
-    public function deleteGroup(int $groupId): bool
+    public function deleteGroup(string $groupId): bool
     {
         return true;
     }

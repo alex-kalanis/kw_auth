@@ -186,28 +186,28 @@ class FilesTest extends CommonTestClass
         $this->assertNotEmpty($lib->authenticate($user->getAuthName(), ['password' => 'here to set']));
 
         // update
-        $user->setData(
-            $user->getAuthId(),
-            $user->getAuthName(),
-            $user->getGroup(),
+        $user->setUserData(
+            null,
+            null,
+            null,
             2,
             3,
             'WheĐn yoĐu dđo nođt knđow',
-            $user->getDir()
+            null
         );
         $user->addCertInfo('==public key for accessing that content==', 'hidden salt');
         $lib->updateAccount($user);
         $lib->updateCertKeys($user->getAuthName(), $user->getPubKey(), $user->getPubSalt());
 
         // update name
-        $user->setData(
-            $user->getAuthId(),
+        $user->setUserData(
+            null,
             'changed name',
-            $user->getGroup(),
-            $user->getClass(),
-            $user->getStatus(),
-            $user->getDisplayName(),
-            $user->getDir()
+            null,
+            null,
+            null,
+            null,
+            null
         );
         $lib->updateAccount($user);
 
@@ -241,7 +241,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $user = new FileCertUser();
-        $user->setData(600, 'worker', 0, 0, 2, 'Die on set', 'so_here');
+        $user->setUserData('600', 'worker', '0', 0, 2, 'Die on set', 'so_here');
 
         $this->expectException(AuthException::class);
         $lib->updateAccount($user);
@@ -361,7 +361,7 @@ class FilesTest extends CommonTestClass
     protected function wantedUser(): FileCertUser
     {
         $user = new FileCertUser();
-        $user->setData(1003, 'another', 0, 0, 1, 'Testing another', 'why_here');
+        $user->setUserData('1003', 'another', '0', 0, 1, 'Testing another', 'why_here');
         return $user;
     }
 
@@ -381,14 +381,14 @@ class FilesTest extends CommonTestClass
         $saved = $lib->getGroupDataOnly($group->getGroupId());
         $this->assertEquals('another', $saved->getGroupName());
         $this->assertEquals('Testing group', $saved->getGroupDesc());
-        $this->assertEquals(1001, $saved->getGroupAuthorId());
+        $this->assertEquals('1001', $saved->getGroupAuthorId());
 
         // update
-        $group->setData(
-            $group->getGroupId(),
-            $group->getGroupName(),
-            1002,
+        $group->setGroupData(
+            null,
+            null,
             'WheĐn yoĐu dđo nođt knđow',
+            '1002',
             888
         );
         $lib->updateGroup($group);
@@ -396,7 +396,7 @@ class FilesTest extends CommonTestClass
         // check data - again with new values
         $saved = $lib->getGroupDataOnly($group->getGroupId());
         $this->assertEquals('When you do not know', $saved->getGroupDesc()); // overwrite this
-        $this->assertEquals(1001, $saved->getGroupAuthorId()); // cannot overwrite this
+        $this->assertEquals('1001', $saved->getGroupAuthorId()); // cannot overwrite this
 
         // remove
         $lib->deleteGroup($group->getGroupId());
@@ -426,7 +426,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $this->expectException(AuthException::class);
-        $lib->deleteGroup(1);
+        $lib->deleteGroup('1');
     }
 
     /**
@@ -439,13 +439,13 @@ class FilesTest extends CommonTestClass
         $lib = $this->fileSources();
         $data = $lib->readGroup();
         $this->assertEquals('Maintainers', $data[0]->getGroupDesc());
-        $this->assertEquals(1000, $data[1]->getGroupAuthorId());
+        $this->assertEquals('1000', $data[1]->getGroupAuthorId());
     }
 
     protected function wantedGroup($name = 'another'): FileGroup
     {
         $user = new FileGroup();
-        $user->setData(3, $name, 1001, 'Testing group', 999);
+        $user->setGroupData('3', $name, 'Testing group', '1001', 999);
         return $user;
     }
 }

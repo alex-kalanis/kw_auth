@@ -120,10 +120,10 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         foreach ($passwordLines as &$line) {
             if ($line[static::PW_NAME] == $name) {
                 $user = $this->getUserClass();
-                $user->setData(
-                    intval($line[static::PW_ID]),
+                $user->setUserData(
+                    strval($line[static::PW_ID]),
                     strval($line[static::PW_NAME]),
-                    intval($line[static::PW_GROUP]),
+                    strval($line[static::PW_GROUP]),
                     intval($line[static::PW_CLASS]),
                     $this->transformFromStringToInt(strval($line[static::PW_STATUS])),
                     strval($line[static::PW_DISPLAY]),
@@ -219,7 +219,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
             if ($line[static::SH_NAME] == $name) {
                 $changed = true;
                 $line[static::SH_CERT_KEY] = $certKey ? base64_encode($certKey) : $line[static::SH_CERT_KEY];
-                $line[static::SH_CERT_SALT] = $certSalt ?: $line[static::SH_CERT_SALT];
+                $line[static::SH_CERT_SALT] = $certSalt ?? $line[static::SH_CERT_SALT];
             }
         }
 
@@ -319,10 +319,10 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         $result = [];
         foreach ($passLines as &$line) {
             $record = $this->getUserClass();
-            $record->setData(
-                intval($line[static::PW_ID]),
+            $record->setUserData(
+                strval($line[static::PW_ID]),
                 strval($line[static::PW_NAME]),
-                intval($line[static::PW_GROUP]),
+                strval($line[static::PW_GROUP]),
                 intval($line[static::PW_CLASS]),
                 $this->transformFromStringToInt(strval($line[static::PW_STATUS])),
                 strval($line[static::PW_DISPLAY]),
@@ -432,7 +432,7 @@ abstract class AFiles implements Interfaces\IAuthCert, Interfaces\IAccessGroups,
         return $changed;
     }
 
-    protected function checkRest(int $groupId): void
+    protected function checkRest(string $groupId): void
     {
         $passLines = $this->openPassword();
         foreach ($passLines as &$line) {

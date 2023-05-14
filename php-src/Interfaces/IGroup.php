@@ -11,10 +11,21 @@ namespace kalanis\kw_auth\Interfaces;
 interface IGroup
 {
     /**
-     * ID of group
-     * @return int
+     * Fill group; null values will not change
+     * @param string|null $id
+     * @param string|null $name
+     * @param string|null $desc
+     * @param string|null $authorId
+     * @param int|null $status
+     * @param string[]|null $parents
      */
-    public function getGroupId(): int;
+    public function setGroupData(?string $id, ?string $name, ?string $desc, ?string $authorId, ?int $status, ?array $parents = []): void;
+
+    /**
+     * ID of group
+     * @return string
+     */
+    public function getGroupId(): string;
 
     /**
      * Human-understandable name
@@ -30,9 +41,9 @@ interface IGroup
 
     /**
      * Who adds it
-     * @return int
+     * @return string
      */
-    public function getGroupAuthorId(): int;
+    public function getGroupAuthorId(): string;
 
     /**
      * User statuses as defined in \kalanis\kw_auth\Interfaces\IUser
@@ -42,7 +53,7 @@ interface IGroup
 
     /**
      * IDs of parent groups
-     * @return int[]
+     * @return string[]
      */
     public function getGroupParents(): array;
 }

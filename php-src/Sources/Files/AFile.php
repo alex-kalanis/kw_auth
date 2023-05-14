@@ -112,10 +112,10 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
     protected function getUserClass(array &$line): Interfaces\IUser
     {
         $user = new FileUser();
-        $user->setData(
-            intval($line[static::PW_ID]),
+        $user->setUserData(
+            strval($line[static::PW_ID]),
             strval($line[static::PW_NAME]),
-            intval($line[static::PW_GROUP]),
+            strval($line[static::PW_GROUP]),
             intval($line[static::PW_CLASS]),
             $this->transformFromStringToInt(strval($line[static::PW_STATUS])),
             strval($line[static::PW_DISPLAY]),
@@ -152,11 +152,11 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
         $uid++;
 
         $newUserPass = [
-            static::PW_ID => $uid,
+            static::PW_ID => strval($uid),
             static::PW_NAME => $userName,
             static::PW_PASS => $this->mode->hash($password),
-            static::PW_GROUP => empty($user->getGroup()) ? $uid : $user->getClass() ,
-            static::PW_CLASS => empty($user->getClass()) ? Interfaces\IAccessClasses::CLASS_USER : $user->getClass() ,
+            static::PW_GROUP => empty($user->getGroup()) ? $uid : $user->getGroup() ,
+            static::PW_CLASS => empty($user->getClass()) ? Interfaces\IAccessClasses::CLASS_USER : strval($user->getClass()) ,
             static::PW_STATUS => $this->transformFromIntToString($user->getStatus()),
             static::PW_DISPLAY => empty($displayName) ? $userName : $displayName,
             static::PW_DIR => $directory,
@@ -209,7 +209,7 @@ abstract class AFile implements Interfaces\IAuth, Interfaces\IAccessAccounts
             if ($line[static::PW_NAME] == $userName) {
                 // REFILL
                 $line[static::PW_GROUP] = !empty($user->getGroup()) ? $user->getGroup() : $line[static::PW_GROUP] ;
-                $line[static::PW_CLASS] = !empty($user->getClass()) ? $user->getClass() : $line[static::PW_CLASS] ;
+                $line[static::PW_CLASS] = !empty($user->getClass()) ? strval($user->getClass()) : $line[static::PW_CLASS] ;
                 $line[static::PW_STATUS] = $this->transformFromIntToString($user->getStatus());
                 $line[static::PW_DISPLAY] = !empty($displayName) ? $displayName : $line[static::PW_DISPLAY] ;
                 $line[static::PW_DIR] = !empty($directory) ? $directory : $line[static::PW_DIR] ;

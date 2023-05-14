@@ -12,12 +12,12 @@ use kalanis\kw_auth\Interfaces\IUser;
  */
 class FileUser implements IUser
 {
-    /** @var int */
-    protected $authId = 0;
+    /** @var string */
+    protected $authId = '0';
     /** @var string */
     protected $authName = '';
-    /** @var int */
-    protected $authGroup = 0;
+    /** @var string */
+    protected $authGroup = '0';
     /** @var int */
     protected $authClass = 0;
     /** @var int|null */
@@ -27,18 +27,18 @@ class FileUser implements IUser
     /** @var string */
     protected $dir = '';
 
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void
+    public function setUserData(?string $authId, ?string $authName, ?string $authGroup, ?int $authClass, ?int $authStatus, ?string $displayName, ?string $dir): void
     {
-        $this->authId = $authId;
-        $this->authName = $authName;
-        $this->authGroup = $authGroup;
-        $this->authClass = $authClass;
+        $this->authId = $authId ?? $this->authId;
+        $this->authName = $authName ?? $this->authName;
+        $this->authGroup = $authGroup ?? $this->authGroup;
+        $this->authClass = $authClass ?? $this->authClass;
         $this->authStatus = $authStatus;
-        $this->displayName = $displayName;
-        $this->dir = $dir;
+        $this->displayName = $displayName ?? $this->displayName;
+        $this->dir = $dir ?? $this->dir;
     }
 
-    public function getAuthId(): int
+    public function getAuthId(): string
     {
         return $this->authId;
     }
@@ -48,7 +48,7 @@ class FileUser implements IUser
         return $this->authName;
     }
 
-    public function getGroup(): int
+    public function getGroup(): string
     {
         return $this->authGroup;
     }

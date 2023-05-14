@@ -58,9 +58,9 @@ class MockMethod extends Methods\AMethods
     public function process(\ArrayAccess $credentials): void
     {
         $this->loggedUser = new \MockUserToFill(
-            0,
+            '0',
             'Testing',
-            0,
+            '0',
             9999,
             null,
             'Testing',

@@ -36,7 +36,7 @@ class UserTest extends CommonTestClass
     public function httpUserProvider(): array
     {
         $mockUser = new FileUser();
-        $mockUser->setData(123, 'testing', 456, 789, 453, 'Testing', '/dunno/');
+        $mockUser->setUserData('123', 'testing', '456', 789, 453, 'Testing', '/dunno/');
         return [
             [
                 '//dummy/u:whoami/?pass=asdf123ghjk456&timestamp=123456&digest=poiuztrewq',

@@ -10,7 +10,12 @@ namespace kalanis\kw_auth\Interfaces;
  */
 interface IUserCert extends IUser
 {
-    public function addCertInfo(string $key, string $salt): void;
+    /**
+     * Fill certificates; null values will not change
+     * @param string $key
+     * @param string $salt
+     */
+    public function addCertInfo(?string $key, ?string $salt): void;
 
     public function getPubSalt(): string;
 

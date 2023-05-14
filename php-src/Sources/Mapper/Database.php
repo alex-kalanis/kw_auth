@@ -5,6 +5,7 @@ namespace kalanis\kw_auth\Sources\Mapper;
 
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Interfaces;
+use kalanis\kw_auth\Traits\TSeparated;
 use kalanis\kw_mapper\Search\Search;
 
 
@@ -17,6 +18,8 @@ use kalanis\kw_mapper\Search\Search;
  */
 class Database implements Interfaces\IAuth, Interfaces\IAuthCert, Interfaces\IAccessGroups
 {
+    use TSeparated;
+
     /** @var Interfaces\IMode */
     protected $passMode = null;
     /** @var Database\UsersRecord */
@@ -124,10 +127,12 @@ class Database implements Interfaces\IAuth, Interfaces\IAuthCert, Interfaces\IAc
         $record->name = $group->getGroupName();
         $record->desc = $group->getGroupDesc();
         $record->authorId = $group->getGroupAuthorId();
+        $record->parents = $this->compactStr($group->getGroupParents());
+        $record->status = $group->getGroupStatus();
         $record->save(true);
     }
 
-    public function getGroupDataOnly(int $groupId): ?Interfaces\IGroup
+    public function getGroupDataOnly(string $groupId): ?Interfaces\IGroup
     {
         $record = clone $this->groupsRecord;
         $record->id = $groupId;
@@ -151,10 +156,12 @@ class Database implements Interfaces\IAuth, Interfaces\IAuthCert, Interfaces\IAc
         $record->load();
         $record->name = $group->getGroupName();
         $record->desc = $group->getGroupDesc();
+        $record->parents = $this->compactStr($group->getGroupParents());
+        $record->status = $group->getGroupStatus();
         return $record->save();
     }
 
-    public function deleteGroup(int $groupId): bool
+    public function deleteGroup(string $groupId): bool
     {
         $users = clone $this->usersRecord;
         $users->groupId = $groupId;
@@ -167,7 +174,7 @@ class Database implements Interfaces\IAuth, Interfaces\IAuthCert, Interfaces\IAc
         return $record->delete();
     }
 
-    protected function checkLogin(string $login, int $id = 0): void
+    protected function checkLogin(string $login, string $id = '0'): void
     {
         $user = clone $this->usersRecord;
         $user->login = $login;

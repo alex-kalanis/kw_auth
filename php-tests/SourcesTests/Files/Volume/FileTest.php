@@ -78,14 +78,14 @@ class FileTest extends CommonTestClass
         $this->assertNotEmpty($lib->authenticate($user->getAuthName(), ['password' => 'here to set']));
 
         // update
-        $user->setData(
-            $user->getAuthId(),
-            $user->getAuthName(),
-            $user->getGroup(),
+        $user->setUserData(
+            null,
+            null,
+            null,
             2,
             444,
             'WheĐn yoĐu dđo nođt knđow',
-            $user->getDir()
+            null
         );
         $lib->updateAccount($user);
 
@@ -148,7 +148,7 @@ class FileTest extends CommonTestClass
     protected function wantedUser(): FileUser
     {
         $user = new FileUser();
-        $user->setData(600, 'another', 0, 0, 555, 'Testing another', 'why_here');
+        $user->setUserData('600', 'another', '0', 0, 555, 'Testing another', 'why_here');
         return $user;
     }
 }

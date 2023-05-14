@@ -60,7 +60,7 @@ trait TGroups
             IAccessGroups::GRP_AUTHOR => $userId,
             IAccessGroups::GRP_DESC => !empty($groupDesc) ? $groupDesc : $groupName,
             IAccessGroups::GRP_STATUS => $group->getGroupStatus(),
-            IAccessGroups::GRP_PARENTS => $this->compactInt($group->getGroupParents()),
+            IAccessGroups::GRP_PARENTS => $this->compactStr($group->getGroupParents()),
             IAccessGroups::GRP_FEED => '',
         ];
         ksort($newGroup);
@@ -75,12 +75,12 @@ trait TGroups
     }
 
     /**
-     * @param int $groupId
+     * @param string $groupId
      * @throws AuthException
      * @throws LockException
      * @return IGroup|null
      */
-    public function getGroupDataOnly(int $groupId): ?IGroup
+    public function getGroupDataOnly(string $groupId): ?IGroup
     {
         $this->checkLock();
         try {
@@ -122,13 +122,13 @@ trait TGroups
     protected function getGroupClass(array &$line): IGroup
     {
         $group = new FileGroup();
-        $group->setData(
-            intval($line[IAccessGroups::GRP_ID]),
+        $group->setGroupData(
+            strval($line[IAccessGroups::GRP_ID]),
             strval($line[IAccessGroups::GRP_NAME]),
-            intval($line[IAccessGroups::GRP_AUTHOR]),
             strval($line[IAccessGroups::GRP_DESC]),
+            strval($line[IAccessGroups::GRP_AUTHOR]),
             intval($line[IAccessGroups::GRP_STATUS]),
-            $this->separateInt($line[IAccessGroups::GRP_PARENTS])
+            $this->separateStr($line[IAccessGroups::GRP_PARENTS])
         );
         return $group;
     }
@@ -158,7 +158,7 @@ trait TGroups
                 $line[IAccessGroups::GRP_NAME] = !empty($groupName) ? $groupName : $line[IAccessGroups::GRP_NAME] ;
                 $line[IAccessGroups::GRP_DESC] = !empty($groupDesc) ? $groupDesc : $line[IAccessGroups::GRP_DESC] ;
                 $line[IAccessGroups::GRP_STATUS] = $group->getGroupStatus();
-                $line[IAccessGroups::GRP_PARENTS] = $this->compactInt($group->getGroupParents());
+                $line[IAccessGroups::GRP_PARENTS] = $this->compactStr($group->getGroupParents());
             }
         }
 
@@ -171,12 +171,12 @@ trait TGroups
     }
 
     /**
-     * @param int $groupId
+     * @param string $groupId
      * @throws AuthException
      * @throws LockException
      * @return bool
      */
-    public function deleteGroup(int $groupId): bool
+    public function deleteGroup(string $groupId): bool
     {
         $this->checkLock();
         $this->checkRest($groupId);
@@ -219,10 +219,10 @@ trait TGroups
 
     /**
      * Check the rest of source for existence of group
-     * @param int $groupId
+     * @param string $groupId
      * @throws AuthException
      */
-    abstract protected function checkRest(int $groupId): void;
+    abstract protected function checkRest(string $groupId): void;
 
     /**
      * @throws AuthException

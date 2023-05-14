@@ -39,7 +39,7 @@ class DigestTest extends CommonTestClass
     public function httpDigestProvider(): array
     {
         $mockUser = new FileCertUser();
-        $mockUser->setData(123, 'testing', 456, 789, 452, 'Testing', '/dunno/');
+        $mockUser->setUserData('123', 'testing', '456', 789, 452, 'Testing', '/dunno/');
         $mockUser->addCertInfo('qwertziop', 'qwertziop');
         return [
             [

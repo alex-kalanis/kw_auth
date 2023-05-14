@@ -32,12 +32,12 @@ interface IAccessGroups
     public function createGroup(IGroup $group): void;
 
     /**
-     * @param int $groupId
+     * @param string $groupId
      * @throws AuthException
      * @throws LockException
      * @return IGroup|null
      */
-    public function getGroupDataOnly(int $groupId): ?IGroup;
+    public function getGroupDataOnly(string $groupId): ?IGroup;
 
     /**
      * @throws AuthException
@@ -55,10 +55,10 @@ interface IAccessGroups
     public function updateGroup(IGroup $group): bool;
 
     /**
-     * @param int $groupId
+     * @param string $groupId
      * @throws AuthException
      * @throws LockException
      * @return bool
      */
-    public function deleteGroup(int $groupId): bool;
+    public function deleteGroup(string $groupId): bool;
 }

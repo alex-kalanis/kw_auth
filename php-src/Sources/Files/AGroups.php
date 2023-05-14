@@ -35,7 +35,7 @@ abstract class AGroups implements IAccessGroups
         $this->path = $path;
     }
 
-    protected function checkRest(/** @scrutinizer ignore-unused */ int $groupId): void
+    protected function checkRest(/** @scrutinizer ignore-unused */ string $groupId): void
     {
         // nothing here
     }

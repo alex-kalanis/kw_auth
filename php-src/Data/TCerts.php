@@ -15,10 +15,10 @@ trait TCerts
     /** @var string */
     protected $salt = '';
 
-    public function addCertInfo(string $key, string $salt): void
+    public function addCertInfo(?string $key, ?string $salt): void
     {
-        $this->key = $key;
-        $this->salt = $salt;
+        $this->key = $key ?? $this->key;
+        $this->salt = $salt ?? $this->salt;
     }
 
     public function getPubKey(): string

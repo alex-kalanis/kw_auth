@@ -25,7 +25,7 @@ class GroupsTest extends CommonTestClass
     public function testNotExistsData(): void
     {
         $lib = $this->emptyGroupSources();
-        $this->assertNull($lib->getGroupDataOnly(15));
+        $this->assertNull($lib->getGroupDataOnly('15'));
     }
 
     /**
@@ -40,10 +40,10 @@ class GroupsTest extends CommonTestClass
         // create
         $lib->createGroup($group);
         // check data
-        $saved = $lib->getGroupDataOnly(1);
+        $saved = $lib->getGroupDataOnly('1');
         $this->assertEquals('another', $saved->getGroupName());
         $this->assertEquals('Testing group', $saved->getGroupDesc());
-        $this->assertEquals(1001, $saved->getGroupAuthorId());
+        $this->assertEquals('1001', $saved->getGroupAuthorId());
     }
 
     /**
@@ -73,30 +73,30 @@ class GroupsTest extends CommonTestClass
         // create
         $lib->createGroup($group);
         // check data
-        $saved = $lib->getGroupDataOnly(3);
+        $saved = $lib->getGroupDataOnly('3');
         $this->assertEquals('another', $saved->getGroupName());
         $this->assertEquals('Testing group', $saved->getGroupDesc());
-        $this->assertEquals(1001, $saved->getGroupAuthorId());
+        $this->assertEquals('1001', $saved->getGroupAuthorId());
 
         // update
-        $group->setData(
+        $group->setGroupData(
             $group->getGroupId(),
             $group->getGroupName(),
-            1002,
             'WheĐn yoĐu dđo nođt knđow',
+            '1002',
             999
         );
         $lib->updateGroup($group);
 
         // check data - again with new values
-        $saved = $lib->getGroupDataOnly(3);
+        $saved = $lib->getGroupDataOnly('3');
         $this->assertEquals('When you do not know', $saved->getGroupDesc()); // overwrite this
-        $this->assertEquals(1001, $saved->getGroupAuthorId()); // cannot overwrite this
+        $this->assertEquals('1001', $saved->getGroupAuthorId()); // cannot overwrite this
 
         // remove
         $lib->deleteGroup($group->getGroupId());
         // check for existence
-        $this->assertEmpty($lib->getGroupDataOnly(3));
+        $this->assertEmpty($lib->getGroupDataOnly('3'));
     }
 
     /**
@@ -122,7 +122,7 @@ class GroupsTest extends CommonTestClass
         $lib = $this->groupSources();
         $data = $lib->readGroup();
         $this->assertEquals('Maintainers', $data[0]->getGroupDesc());
-        $this->assertEquals(1000, $data[1]->getGroupAuthorId());
+        $this->assertEquals('1000', $data[1]->getGroupAuthorId());
     }
 
     /**
@@ -134,8 +134,8 @@ class GroupsTest extends CommonTestClass
         $lib = $this->emptyGroupSources();
 
         // delete
-        $lib->deleteGroup(41);
-        $this->assertNull($lib->getGroupDataOnly(41));
+        $lib->deleteGroup('41');
+        $this->assertNull($lib->getGroupDataOnly('41'));
     }
 
     /**
@@ -202,7 +202,7 @@ class GroupsTest extends CommonTestClass
     public function testRemoveGroupStorageFail(): void
     {
         $lib = $this->failedGroupSources();
-        $this->assertFalse($lib->deleteGroup(41));
+        $this->assertFalse($lib->deleteGroup('41'));
     }
 
     /**
@@ -213,7 +213,7 @@ class GroupsTest extends CommonTestClass
     {
         $lib = $this->failedGroupSources(true, '0:all:1000:Main:1:' . "\r\n" . '2:folks:1000:Dirt:1:' . "\r\n");
         $this->expectException(AuthException::class);
-        $lib->deleteGroup(2);
+        $lib->deleteGroup('2');
     }
 
     /**
@@ -271,7 +271,7 @@ class GroupsTest extends CommonTestClass
     protected function wantedGroup($name = 'another'): FileGroup
     {
         $user = new FileGroup();
-        $user->setData(3, $name, 1001, 'Testing group', 888);
+        $user->setGroupData('3', $name, 'Testing group', '1001', 888);
         return $user;
     }
 }

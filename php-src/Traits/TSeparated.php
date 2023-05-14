@@ -16,14 +16,14 @@ trait TSeparated
     /**
      * @param string $parent
      * @param string $separator
-     * @return int[]
+     * @return string[]
      */
-    public function separateInt(string $parent, string $separator = IFile::PARENT_SEPARATOR): array
+    public function separateStr(string $parent, string $separator = IFile::PARENT_SEPARATOR): array
     {
         return array_values(
             array_filter(
                 array_map(
-                    'intval',
+                    'strval',
                     array_filter(
                         (array) explode(
                             $separator ?: IFile::PARENT_SEPARATOR, $parent
@@ -35,11 +35,11 @@ trait TSeparated
     }
 
     /**
-     * @param int[] $parent
+     * @param string[] $parent
      * @param string $separator
      * @return string
      */
-    public function compactInt(array $parent, string $separator = IFile::PARENT_SEPARATOR): string
+    public function compactStr(array $parent, string $separator = IFile::PARENT_SEPARATOR): string
     {
         return implode($separator, array_values(array_filter(array_map('strval', $parent))));
     }

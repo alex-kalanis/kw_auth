@@ -80,28 +80,28 @@ class FilesTest extends CommonTestClass
         $this->assertNotEmpty($lib->authenticate($user->getAuthName(), ['password' => 'here to set']));
 
         // update
-        $user->setData(
-            $user->getAuthId(),
-            $user->getAuthName(),
-            $user->getGroup(),
+        $user->setUserData(
+            null,
+            null,
+            null,
             2,
             7,
             'WheĐn yoĐu dđo nođt knđow',
-            $user->getDir()
+            null
         );
         $user->addCertInfo('==public key for accessing that content==', 'hidden salt');
         $lib->updateAccount($user);
         $lib->updateCertKeys($user->getAuthName(), $user->getPubKey(), $user->getPubSalt());
 
         // update name
-        $user->setData(
-            $user->getAuthId(),
+        $user->setUserData(
+            null,
             'changed name',
-            $user->getGroup(),
-            $user->getClass(),
-            $user->getStatus(),
-            $user->getDisplayName(),
-            $user->getDir()
+            null,
+            null,
+            null,
+            null,
+            null
         );
         $lib->updateAccount($user);
 
@@ -134,7 +134,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $user = new FileCertUser();
-        $user->setData(600, 'worker', 0, 0, null, 'Die on set', 'so_here');
+        $user->setUserData('600', 'worker', '0', 0, null, 'Die on set', 'so_here');
 
         $this->expectException(AuthException::class);
         $lib->updateAccount($user);
@@ -182,7 +182,7 @@ class FilesTest extends CommonTestClass
     protected function wantedUser(): FileCertUser
     {
         $user = new FileCertUser();
-        $user->setData(1003, 'another', 0, 0, 12, 'Testing another', 'why_here');
+        $user->setUserData('1003', 'another', '0', 0, 12, 'Testing another', 'why_here');
         return $user;
     }
 
@@ -201,24 +201,24 @@ class FilesTest extends CommonTestClass
         $saved = $lib->getGroupDataOnly($group->getGroupId());
         $this->assertEquals('another', $saved->getGroupName());
         $this->assertEquals('Testing group', $saved->getGroupDesc());
-        $this->assertEquals(1001, $saved->getGroupAuthorId());
+        $this->assertEquals('1001', $saved->getGroupAuthorId());
 
         // update
-        $group->setData(
+        $group->setGroupData(
             $group->getGroupId(),
             $group->getGroupName(),
-            1002,
             'WheĐn yoĐu dđo nođt knđow',
+            '1002',
             777,
-            [32, 15, 21, 0]
+            ['32', '15', '21', '0']
         );
         $lib->updateGroup($group);
 
         // check data - again with new values
         $saved = $lib->getGroupDataOnly($group->getGroupId());
         $this->assertEquals('When you do not know', $saved->getGroupDesc()); // overwrite this
-        $this->assertEquals(1001, $saved->getGroupAuthorId()); // cannot overwrite this
-        $this->assertEquals([32, 15, 21], $saved->getGroupParents()); // will be filtered
+        $this->assertEquals('1001', $saved->getGroupAuthorId()); // cannot overwrite this
+        $this->assertEquals(['32', '15', '21'], $saved->getGroupParents()); // will be filtered
 
         // remove
         $lib->deleteGroup($group->getGroupId());
@@ -246,7 +246,7 @@ class FilesTest extends CommonTestClass
     {
         $lib = $this->fileSources();
         $this->expectException(AuthException::class);
-        $lib->deleteGroup(1);
+        $lib->deleteGroup('1');
     }
 
     /**
@@ -258,13 +258,13 @@ class FilesTest extends CommonTestClass
         $lib = $this->fileSources();
         $data = $lib->readGroup();
         $this->assertEquals('Maintainers', $data[0]->getGroupDesc());
-        $this->assertEquals(1000, $data[1]->getGroupAuthorId());
+        $this->assertEquals('1000', $data[1]->getGroupAuthorId());
     }
 
     protected function wantedGroup($name = 'another'): FileGroup
     {
         $user = new FileGroup();
-        $user->setData(3, $name, 1001, 'Testing group', 666);
+        $user->setGroupData('3', $name,'Testing group', '1001',  666);
         return $user;
     }
 }

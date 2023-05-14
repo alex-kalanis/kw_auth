@@ -38,7 +38,7 @@ class HashTest extends CommonTestClass
     public function urlHashProvider(): array
     {
         $mockUser = new FileCertUser();
-        $mockUser->setData(123, 'testing', 456, 789, 452, 'Testing', '/dunno/');
+        $mockUser->setUserData('123', 'testing', '456', 789, 452, 'Testing', '/dunno/');
         $mockUser->addCertInfo('qwertziop', 'qwertziop');
         return [
             [

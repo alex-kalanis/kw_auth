@@ -25,14 +25,14 @@ class LdapRecord extends ASimpleRecord implements IUser
         $this->setMapper(LdapMapper::class);
     }
 
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void
+    public function setUserData(?string $authId, ?string $authName, ?string $authGroup, ?int $authClass, ?int $authStatus, ?string $displayName, ?string $dir): void
     {
         // load data only from ldap!
     }
 
-    public function getAuthId(): int
+    public function getAuthId(): string
     {
-        return (int) $this->id;
+        return (string) $this->id;
     }
 
     public function getAuthName(): string
@@ -40,7 +40,7 @@ class LdapRecord extends ASimpleRecord implements IUser
         return (string) $this->name;
     }
 
-    public function getGroup(): int
+    public function getGroup(): string
     {
         return IUser::LOWEST_USER_ID;
     }

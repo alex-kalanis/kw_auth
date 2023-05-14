@@ -59,7 +59,7 @@ class CertsTest extends CommonTestClass
         $publicData = openssl_pkey_get_details($publicKey);
 
         $mockUser = new FileCertUser();
-        $mockUser->setData(123, 'testing', 456, 789, 3, 'Testing', '/dunno/');
+        $mockUser->setUserData('123', 'testing', '456', 789, 3, 'Testing', '/dunno/');
         $mockUser->addCertInfo($publicData['key'], 'qwertziop');
 
         // now query itself
@@ -95,7 +95,7 @@ class CertsTest extends CommonTestClass
         $publicData = openssl_pkey_get_details($publicKey);
 
         $mockUser = new FileCertUser();
-        $mockUser->setData(123, 'testing', 456, 789, 3, 'Testing', '/dunno/');
+        $mockUser->setUserData('123', 'testing', '456', 789, 3, 'Testing', '/dunno/');
         $mockUser->addCertInfo($publicData['key'], 'qwertziop');
 
 

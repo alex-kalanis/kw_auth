@@ -97,7 +97,7 @@ class MockAuthCert extends MockAuth implements IAuthCert
 
     public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): void
     {
-        $this->expectedUser->/** @scrutinizer ignore-call */addCertInfo(strval($certKey), strval($certSalt));
+        $this->expectedUser->addCertInfo($certKey, $certSalt);
     }
 
     public function getCertData(string $userName): ?IUserCert
@@ -114,13 +114,13 @@ class MockCredentials extends ArrayObject
 
 class MockUser implements IUser
 {
-    public function setData(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir): void
+    public function setUserData(?string $authId, ?string $authName, ?string $authGroup, ?int $authClass, ?int $authStatus, ?string $displayName, ?string $dir): void
     {
     }
 
-    public function getAuthId(): int
+    public function getAuthId(): string
     {
-        return 654;
+        return '654';
     }
 
     public function getAuthName(): string
@@ -128,9 +128,9 @@ class MockUser implements IUser
         return 'fool';
     }
 
-    public function getGroup(): int
+    public function getGroup(): string
     {
-        return 456789;
+        return '456789';
     }
 
     public function getClass(): int
@@ -157,9 +157,9 @@ class MockUser implements IUser
 
 class MockUserToFill extends FileUser
 {
-    public function __construct(int $authId, string $authName, int $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir)
+    public function __construct(string $authId, string $authName, string $authGroup, int $authClass, ?int $authStatus, string $displayName, string $dir)
     {
-        $this->setData($authId, $authName, $authGroup, $authClass, $authStatus, $displayName, $dir);
+        $this->setUserData($authId, $authName, $authGroup, $authClass, $authStatus, $displayName, $dir);
     }
 }
 

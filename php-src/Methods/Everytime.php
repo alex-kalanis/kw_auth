@@ -17,10 +17,10 @@ class Everytime extends AMethods
     public function process(\ArrayAccess $credentials): void
     {
         $this->loggedUser = new FileUser();
-        $this->loggedUser->setData(
-            0,
+        $this->loggedUser->setUserData(
+            '0',
             'Debug',
-            0,
+            '0',
             IAccessClasses::CLASS_USER,
             null,
             'Debug',

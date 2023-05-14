@@ -34,14 +34,14 @@ class GroupsTest extends CommonTestClass
         $saved = $lib->getGroupDataOnly($group->getGroupId());
         $this->assertEquals('another', $saved->getGroupName());
         $this->assertEquals('Testing group', $saved->getGroupDesc());
-        $this->assertEquals(1001, $saved->getGroupAuthorId());
+        $this->assertEquals('1001', $saved->getGroupAuthorId());
 
         // update
-        $group->setData(
+        $group->setGroupData(
             $group->getGroupId(),
             $group->getGroupName(),
-            1002,
             'WheĐn yoĐu dđo nođt knđow',
+            '1002',
             999
         );
         $lib->updateGroup($group);
@@ -49,7 +49,7 @@ class GroupsTest extends CommonTestClass
         // check data - again with new values
         $saved = $lib->getGroupDataOnly($group->getGroupId());
         $this->assertEquals('When you do not know', $saved->getGroupDesc()); // overwrite this
-        $this->assertEquals(1001, $saved->getGroupAuthorId()); // cannot overwrite this
+        $this->assertEquals('1001', $saved->getGroupAuthorId()); // cannot overwrite this
 
         // remove
         $lib->deleteGroup($group->getGroupId());
@@ -78,7 +78,7 @@ class GroupsTest extends CommonTestClass
         $lib = $this->groupSources();
         $data = $lib->readGroup();
         $this->assertEquals('Maintainers', $data[0]->getGroupDesc());
-        $this->assertEquals(1000, $data[1]->getGroupAuthorId());
+        $this->assertEquals('1000', $data[1]->getGroupAuthorId());
     }
 
     /**
@@ -97,7 +97,7 @@ class GroupsTest extends CommonTestClass
     protected function wantedGroup($name = 'another'): FileGroup
     {
         $user = new FileGroup();
-        $user->setData(3, $name, 1001, 'Testing group', 888);
+        $user->setGroupData('3', $name, 'Testing group', '1001', 888);
         return $user;
     }
 }

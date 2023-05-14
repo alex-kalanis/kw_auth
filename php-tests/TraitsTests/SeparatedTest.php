@@ -16,17 +16,17 @@ class SeparatedTest extends \CommonTestClass
     public function testSeparate($in, array $result): void
     {
         $lib = new XSeparated();
-        $this->assertEquals($result, $lib->separateInt($in));
+        $this->assertEquals($result, $lib->separateStr($in));
     }
 
     public function filterDataProvider(): array
     {
         return [
-            ['Just for unable to split', []],
-            ['there is, separated string, yet still no data', []],
-            ['there is, separated string,123,which contains numbers,456.789', [123, 456]],
-            ['123,456', [123, 456]],
-            ['123.456', [123], ],
+            ['Just for unable to split', ['Just for unable to split']],
+            ['there is, separated string, contains data', ['there is', ' separated string', ' contains data']],
+            ['there is, separated string,123,which contains numbers,456.789', ['there is', ' separated string', '123', 'which contains numbers', '456.789']],
+            ['123,456', ['123', '456']],
+            ['123.456', ['123.456'], ],
         ];
     }
 
@@ -38,7 +38,7 @@ class SeparatedTest extends \CommonTestClass
     public function testCompact(array $in, string $out): void
     {
         $lib = new XSeparated();
-        $this->assertEquals($out, $lib->compactInt($in));
+        $this->assertEquals($out, $lib->compactStr($in));
     }
 
     public function compactProvider(): array

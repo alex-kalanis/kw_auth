@@ -129,7 +129,7 @@ class FileTest extends AFilesTests
         $lib = $this->emptyFileSources();
         // update
         $this->expectException(AuthException::class);
-        $lib->updatePassword('Some user', 'not important');
+        $lib->updatePassword('This user does not exists', 'not important');
     }
 
     /**
@@ -172,14 +172,14 @@ class FileTest extends AFilesTests
         $this->assertNotEmpty($lib->authenticate($user->getAuthName(), ['password' => 'here to set']));
 
         // update
-        $user->setData(
-            $user->getAuthId(),
-            $user->getAuthName(),
-            $user->getGroup(),
+        $user->setUserData(
+            null,
+            null,
+            null,
             2,
             3,
             'WheĐn yoĐu dđo nođt knđow',
-            $user->getDir()
+            null
         );
         $lib->updateAccount($user);
 
@@ -401,7 +401,7 @@ class FileTest extends AFilesTests
     protected function wantedUser(): FileUser
     {
         $user = new FileUser();
-        $user->setData(600, 'another', 0, 0, 2,'Testing another', 'why_here');
+        $user->setUserData('600', 'another', '0', 0, 2,'Testing another', 'why_here');
         return $user;
     }
 }
