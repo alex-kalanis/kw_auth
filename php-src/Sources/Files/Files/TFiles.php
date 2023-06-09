@@ -8,6 +8,7 @@ use kalanis\kw_auth\Interfaces\IFile;
 use kalanis\kw_auth\Traits\TLang;
 use kalanis\kw_files\Access\CompositeAdapter;
 use kalanis\kw_files\FilesException;
+use kalanis\kw_files\Traits\TToString;
 use kalanis\kw_paths\PathsException;
 use kalanis\kw_paths\Stuff;
 
@@ -20,6 +21,7 @@ use kalanis\kw_paths\Stuff;
 trait TFiles
 {
     use TLang;
+    use TToString;
 
     /** @var CompositeAdapter */
     protected $files = null;
@@ -32,7 +34,7 @@ trait TFiles
     protected function openFile(array $path): array
     {
         try {
-            $content = $this->files->readFile($path);
+            $content = $this->toString(Stuff::arrayToPath($path), $this->files->readFile($path));
             $lines = explode(IFile::CRLF, strval($content));
             return array_map([$this, 'explosion'], array_filter(array_map('trim', $lines), [$this, 'filterEmptyLines']));
         } catch (FilesException | PathsException $ex) {
