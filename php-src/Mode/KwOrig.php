@@ -55,9 +55,9 @@ class KwOrig implements IMode
             ? str_repeat($this->salt, 5)
             : $this->salt ;
         return substr($salt, $ln, $ln)
-            . substr($input,0, (int) ($ln/2))
+            . substr($input,0, intval($ln/2))
             . substr($salt,$ln*2, $ln)
-            . substr($input, (int) ($ln/2))
+            . substr($input, intval($ln/2))
             . substr($salt,$ln*3, $ln);
     }
 
@@ -68,13 +68,10 @@ class KwOrig implements IMode
      */
     private function makeHash(string $word): string
     {
-        if (function_exists('mhash')) {
-            return (string) mhash(MHASH_SHA256, $word);
+        if (function_exists('hash')) {
+            return strval(hash('sha256', $word));
         }
         // @codeCoverageIgnoreStart
-        if (function_exists('hash')) {
-            return (string) hash('sha256', $word);
-        }
         throw new AuthException($this->getAuLang()->kauHashFunctionNotFound());
         // @codeCoverageIgnoreEnd
     }
