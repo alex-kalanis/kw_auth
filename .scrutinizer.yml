@@ -1,7 +1,8 @@
 filter:
   excluded_paths:
-    - 'examples/*'
     - 'vendor/*'
+    - '.github/*'
+    - 'examples/*'
     - 'php-tests/*'
   paths: {  }
 

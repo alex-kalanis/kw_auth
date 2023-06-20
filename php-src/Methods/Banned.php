@@ -10,6 +10,7 @@ use kalanis\kw_auth\Interfaces\IKauTranslations;
 use kalanis\kw_auth\Traits\TLang;
 use kalanis\kw_bans\Bans;
 use kalanis\kw_bans\BanException;
+use kalanis\kw_bans\Interfaces\IKBTranslations;
 use kalanis\kw_bans\Sources\File;
 use kalanis\kw_paths\Path;
 
@@ -48,26 +49,35 @@ class Banned extends AMethods
      * @param AMethods|null $nextOne
      * @param Path $path
      * @param ArrayAccess<string, string|int|float> $server
-     * @param IKauTranslations|null $lang
+     * @param IKauTranslations|null $kauLang
+     * @param IKBTranslations|null $kbLang
      * @throws BanException
      */
-    public function __construct(?IAuth $authenticator, ?AMethods $nextOne, Path $path, ArrayAccess $server, ?IKauTranslations $lang = null)
-    {
+    public function __construct(
+        ?IAuth $authenticator,
+        ?AMethods $nextOne,
+        Path $path,
+        ArrayAccess $server,
+        ?IKauTranslations $kauLang = null,
+        ?IKBTranslations $kbLang = null
+    ) {
         parent::__construct($authenticator, $nextOne);
-        $this->setAuLang($lang);
+        $this->setAuLang($kauLang);
         $this->libPath = $path;
         $this->server = $server;
-        $this->libBan = $this->getBans();
+        $this->libBan = $this->getBans($kbLang);
     }
 
     /**
+     * @param IKBTranslations|null $kbLang
      * @throws BanException
      * @return Bans
      */
-    protected function getBans(): Bans
+    protected function getBans(?IKBTranslations $kbLang): Bans
     {
         $banPath = $this->getBanPath();
         return new Bans(
+            $kbLang,
             new File($banPath . DIRECTORY_SEPARATOR . self::BAN_IP4),
             new File($banPath . DIRECTORY_SEPARATOR . self::BAN_IP6),
             new File($banPath . DIRECTORY_SEPARATOR . self::BAN_NAME)
@@ -76,19 +86,23 @@ class Banned extends AMethods
 
     protected function getBanPath(): string
     {
-        return $this->libPath->getDocumentRoot() . DIRECTORY_SEPARATOR . 'conf';
+        return $this->libPath->getDocumentRoot() . $this->libPath->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'conf';
     }
 
     public function process(\ArrayAccess $credentials): void
     {
         $name = $credentials->offsetExists(static::INPUT_NAME) ? strval($credentials->offsetGet(static::INPUT_NAME)) : '' ;
         $ip = strval($this->server->offsetGet(static::SERVER_REMOTE));
-        if ($this->libBan->has(
-            strval(preg_replace(static::PREG_IP4, '', $ip)),
-            strval(preg_replace(static::PREG_IP6, '', $ip)),
-            strval(preg_replace(static::PREG_NAME, '', $name))
-        )) {
-            throw new AuthException($this->getAuLang()->kauBanWantedUser(), 401);
+        try {
+            if ($this->libBan->has(
+                strval(preg_replace(static::PREG_IP4, '', $ip)),
+                strval(preg_replace(static::PREG_IP6, '', $ip)),
+                strval(preg_replace(static::PREG_NAME, '', $name))
+            )) {
+                throw new AuthException($this->getAuLang()->kauBanWantedUser(), 401);
+            }
+        } catch (BanException $ex) {
+            throw new AuthException($ex->getMessage(), $ex->getCode(), $ex);
         }
     }
 
