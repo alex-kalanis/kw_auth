@@ -48,7 +48,6 @@
         <testsuite name="ALL">
             <directory>php-tests/BasicTests</directory>
             <directory>php-tests/TraitsTests</directory>
-            <directory>php-tests/SourcesTests</directory>
             <directory>php-tests/MethodsTests</directory>
         </testsuite>
     </testsuites>

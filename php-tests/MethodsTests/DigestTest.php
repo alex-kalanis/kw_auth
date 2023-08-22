@@ -6,9 +6,9 @@ namespace MethodsTests;
 use CommonTestClass;
 use kalanis\kw_address_handler\Sources;
 use kalanis\kw_auth\AuthException;
-use kalanis\kw_auth\Data\FileCertUser;
-use kalanis\kw_auth\Interfaces\IUserCert;
 use kalanis\kw_auth\Methods;
+use kalanis\kw_auth_sources\Data\FileCertUser;
+use kalanis\kw_auth_sources\Interfaces\IUserCert;
 use kalanis\kw_locks\LockException;
 
 

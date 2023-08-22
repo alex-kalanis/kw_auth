@@ -1,6 +1,6 @@
 <?php
 
-namespace kalanis\kw_auth\Methods;
+namespace kalanis\kw_auth\Traits;
 
 
 /**

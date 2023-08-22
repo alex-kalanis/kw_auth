@@ -1,11 +1,11 @@
 <?php
 
-use kalanis\kw_auth\Data\FileUser;
-use kalanis\kw_auth\Interfaces\IAuth;
-use kalanis\kw_auth\Interfaces\IAuthCert;
-use kalanis\kw_auth\Interfaces\IMode;
-use kalanis\kw_auth\Interfaces\IUser;
-use kalanis\kw_auth\Interfaces\IUserCert;
+use kalanis\kw_auth_sources\Data\FileUser;
+use kalanis\kw_auth_sources\Interfaces\IAuth;
+use kalanis\kw_auth_sources\Interfaces\IAuthCert;
+use kalanis\kw_auth_sources\Interfaces\IHashes;
+use kalanis\kw_auth_sources\Interfaces\IUser;
+use kalanis\kw_auth_sources\Interfaces\IUserCert;
 use kalanis\kw_locks\LockException;
 use kalanis\kw_locks\Methods as LockMethod;
 use kalanis\kw_locks\Interfaces as LockInt;
@@ -95,9 +95,10 @@ class MockAuthCert extends MockAuth implements IAuthCert
         return true;
     }
 
-    public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): void
+    public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): bool
     {
         $this->expectedUser->addCertInfo($certKey, $certSalt);
+        return true;
     }
 
     public function getCertData(string $userName): ?IUserCert
@@ -114,7 +115,7 @@ class MockCredentials extends ArrayObject
 
 class MockUser implements IUser
 {
-    public function setUserData(?string $authId, ?string $authName, ?string $authGroup, ?int $authClass, ?int $authStatus, ?string $displayName, ?string $dir): void
+    public function setUserData(?string $authId, ?string $authName, ?string $authGroup, ?int $authClass, ?int $authStatus, ?string $displayName, ?string $dir, ?array $extra = []): void
     {
     }
 
@@ -138,7 +139,7 @@ class MockUser implements IUser
         return 999;
     }
 
-    public function getStatus(): ?int
+    public function getStatus(): int
     {
         return static::USER_STATUS_ENABLED;
     }
@@ -152,6 +153,11 @@ class MockUser implements IUser
     {
         return 'not_available\\:///';
     }
+
+    public function getExtra(): array
+    {
+        return [];
+    }
 }
 
 
@@ -164,16 +170,16 @@ class MockUserToFill extends FileUser
 }
 
 
-class MockModes implements IMode
+class MockModes implements IHashes
 {
     protected $knownPass = '';
 
-    public function check(string $pass, string $hash): bool
+    public function checkHash(string $pass, string $hash): bool
     {
         return ($this->knownPass == $pass) || ('valid' == $pass);
     }
 
-    public function hash(string $pass, ?string $method = null): string
+    public function createHash(string $pass, ?string $method = null): string
     {
         $this->knownPass = $pass;
         return 'validPass-' . $pass;

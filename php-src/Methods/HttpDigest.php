@@ -4,7 +4,7 @@ namespace kalanis\kw_auth\Methods;
 
 
 use ArrayAccess;
-use kalanis\kw_auth\Interfaces\IAuthCert;
+use kalanis\kw_auth_sources\Interfaces\IAuthCert;
 
 
 /**

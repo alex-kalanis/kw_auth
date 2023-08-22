@@ -3,8 +3,8 @@
 namespace kalanis\kw_auth\Methods;
 
 
-use kalanis\kw_auth\Data\FileUser;
-use kalanis\kw_auth\Interfaces\IAccessClasses;
+use kalanis\kw_auth_sources\Data\FileUser;
+use kalanis\kw_auth_sources\Interfaces\IWorkClasses;
 
 
 /**
@@ -21,7 +21,7 @@ class Everytime extends AMethods
             '0',
             'Debug',
             '0',
-            IAccessClasses::CLASS_USER,
+            IWorkClasses::CLASS_USER,
             null,
             'Debug',
             '/'

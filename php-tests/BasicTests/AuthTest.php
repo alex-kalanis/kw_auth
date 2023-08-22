@@ -9,11 +9,12 @@ use kalanis\kw_address_handler\Sources as HandlerSources;
 use kalanis\kw_auth\Auth;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\AuthTree;
-use kalanis\kw_auth\Interfaces;
 use kalanis\kw_auth\Methods;
-use kalanis\kw_auth\Mode\KwOrig;
-use kalanis\kw_auth\Sources;
-use kalanis\kw_auth\Statuses\Always;
+use kalanis\kw_auth_sources\Access;
+use kalanis\kw_auth_sources\AuthSourcesException;
+use kalanis\kw_auth_sources\Hashes\KwOrig;
+use kalanis\kw_auth_sources\Interfaces;
+use kalanis\kw_auth_sources\Statuses\Always;
 use kalanis\kw_locks\LockException;
 
 
@@ -46,6 +47,7 @@ class AuthTest extends CommonTestClass
 
     /**
      * @throws AuthException
+     * @throws AuthSourcesException
      * @throws LockException
      */
     public function testTree(): void
@@ -85,17 +87,18 @@ class AuthTest extends CommonTestClass
 
     /**
      * Contains a full comedy/tragedy of work with locks
+     * @throws AuthSourcesException
      * @throws LockException
-     * @return Sources\Files\Volume\Files
+     * @return Interfaces\IAuthCert
      */
-    protected function fileSources(): Sources\Files\Volume\Files
+    protected function fileSources(): Interfaces\IAuthCert
     {
-        return new Sources\Files\Volume\Files(
-            new KwOrig('yxcvbnmasdfghjklqwertzuiop0123456789'),
-            new Always(),
-            $this->getLockPath(),
-            [__DIR__, '..', 'data']
-        );
+        return (new Access\Factory())->getSources([
+            'storage' => implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'data']), // todo: tohle je prefix cesty, takze na storage se cpe do prefixu; uprava v nizsich levelech
+            'hash' => new KwOrig('yxcvbnmasdfghjklqwertzuiop0123456789'),
+            'status' => new Always(),
+            'lock' => $this->getLockPath(),
+        ]);
     }
 }
 
@@ -103,7 +106,7 @@ class AuthTest extends CommonTestClass
 class XAUser implements Interfaces\IUser
 {
 
-    public function setUserData(?string $authId, ?string $authName, ?string $authGroup, ?int $authClass, ?int $authStatus, ?string $displayName, ?string $dir): void
+    public function setUserData(?string $authId, ?string $authName, ?string $authGroup, ?int $authClass, ?int $authStatus, ?string $displayName, ?string $dir, ?array $extra = []): void
     {
     }
 
@@ -127,7 +130,7 @@ class XAUser implements Interfaces\IUser
         return 0;
     }
 
-    public function getStatus(): ?int
+    public function getStatus(): int
     {
         return static::USER_STATUS_UNKNOWN;
     }
@@ -140,6 +143,11 @@ class XAUser implements Interfaces\IUser
     public function getDir(): string
     {
         return '';
+    }
+
+    public function getExtra(): array
+    {
+        return [];
     }
 }
 
@@ -158,10 +166,11 @@ class XAAuth implements Interfaces\IAuth
 }
 
 
-class XAAccounts implements Interfaces\IAccessAccounts
+class XAAccounts implements Interfaces\IWorkAccounts
 {
-    public function createAccount(Interfaces\IUser $user, string $password): void
+    public function createAccount(Interfaces\IUser $user, string $password): bool
     {
+        return true;
     }
 
     public function readAccounts(): array
@@ -186,11 +195,12 @@ class XAAccounts implements Interfaces\IAccessAccounts
 }
 
 
-class XAGroups implements Interfaces\IAccessGroups
+class XAGroups implements Interfaces\IWorkGroups
 {
 
-    public function createGroup(Interfaces\IGroup $group): void
+    public function createGroup(Interfaces\IGroup $group): bool
     {
+        return true;
     }
 
     public function getGroupDataOnly(string $groupId): ?Interfaces\IGroup
@@ -215,7 +225,7 @@ class XAGroups implements Interfaces\IAccessGroups
 }
 
 
-class XAClasses implements Interfaces\IAccessClasses
+class XAClasses implements Interfaces\IWorkClasses
 {
     public function readClasses(): array
     {

@@ -22,14 +22,14 @@ $paths->setData($params->getParams());
 /// ...
 
 // authorization tree
-$authenticator = new \kalanis\kw_auth\Sources\Files\Volume\Files(
-    new \kalanis\kw_auth\Mode\KwOrig(strval(\kalanis\kw_confs\Config::get('Admin', 'admin.salt'))),
-    new \kalanis\kw_auth\Statuses\Checked(),
-    new \kalanis\kw_locks\Methods\FileLock(
+$authenticator = (new \kalanis\kw_auth_sources\Access\Factory())->getSources([
+    'storage' => $paths->getDocumentRoot() . $paths->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'web',
+    'hash' => strval(\kalanis\kw_confs\Config::get('Admin', 'admin.salt')),
+    'status' => 'check',
+    'lock' => new \kalanis\kw_locks\Methods\FileLock(
         $paths->getDocumentRoot() . $paths->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . \kalanis\kw_locks\Interfaces\ILock::LOCK_FILE
     ),
-    $paths->getDocumentRoot() . $paths->getPathToSystemRoot() . DIRECTORY_SEPARATOR . 'web'
-);
+]);
 \kalanis\kw_auth\Auth::setAuth($authenticator);
 \kalanis\kw_auth\Auth::setGroups($authenticator);
 \kalanis\kw_auth\Auth::setClasses($authenticator);
@@ -83,7 +83,7 @@ class ExtBanned extends \kalanis\kw_auth\Methods\Banned
 
 abstract class AAuthenticate
 {
-    /** @var \kalanis\kw_auth\Interfaces\IUser|null */
+    /** @var \kalanis\kw_auth_sources\Interfaces\IUser|null */
     protected $user = null;
     /** @var \kalanis\kw_auth\AuthException|null */
     protected $error = null;

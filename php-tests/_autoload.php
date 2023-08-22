@@ -11,11 +11,12 @@ function autoload($className)
     if (!defined('PROJECT_DIR')) {
         define('PROJECT_DIR', 'src');
     }
-    $className = preg_replace('#^' . AUTHOR_NAME . '\\\\' . PROJECT_NAME . '#', '', $className);
-    $className = str_replace('\\', DIRECTORY_SEPARATOR, $className);
 
-    if (is_file(__DIR__ . DIRECTORY_SEPARATOR . $className . '.php')) {
-        require_once(__DIR__ . DIRECTORY_SEPARATOR . $className . '.php');
+    $className = str_replace('\\', DIRECTORY_SEPARATOR, $className);
+    $shortName = preg_replace('#^' . AUTHOR_NAME . DIRECTORY_SEPARATOR . PROJECT_NAME . '#', '', $className);
+
+    if (is_file(__DIR__ . DIRECTORY_SEPARATOR . $shortName . '.php')) {
+        require_once(__DIR__ . DIRECTORY_SEPARATOR . $shortName . '.php');
     }
 
     if (is_file(__DIR__ . DIRECTORY_SEPARATOR . 'external' . DIRECTORY_SEPARATOR . $className . '.php')) {
@@ -28,6 +29,10 @@ function autoload($className)
 
     if (is_file(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . PROJECT_DIR . DIRECTORY_SEPARATOR . $className . '.php')) {
         require_once(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . PROJECT_DIR . DIRECTORY_SEPARATOR . $className . '.php');
+    }
+
+    if (is_file(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . PROJECT_DIR . DIRECTORY_SEPARATOR . $shortName . '.php')) {
+        require_once(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . PROJECT_DIR . DIRECTORY_SEPARATOR . $shortName . '.php');
     }
 }
 

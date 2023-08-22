@@ -32,56 +32,6 @@ class XLang
 
 class XTrans implements IKauTranslations
 {
-    public function kauPassFileNotFound(string $path): string
-    {
-        return 'mock';
-    }
-
-    public function kauPassFileNotSave(string $path): string
-    {
-        return 'mock';
-    }
-
-    public function kauPassMustBeSet(): string
-    {
-        return 'mock';
-    }
-
-    public function kauPassMissParam(): string
-    {
-        return 'mock';
-    }
-
-    public function kauPassLoginExists(): string
-    {
-        return 'mock';
-    }
-
-    public function kauLockSystemNotSet(): string
-    {
-        return 'mock';
-    }
-
-    public function kauAuthAlreadyOpen(): string
-    {
-        return 'mock';
-    }
-
-    public function kauGroupMissParam(): string
-    {
-        return 'mock';
-    }
-
-    public function kauGroupHasMembers(): string
-    {
-        return 'mock';
-    }
-
-    public function kauHashFunctionNotFound(): string
-    {
-        return 'mock';
-    }
-
     public function kauBanWantedUser(): string
     {
         return 'mock';

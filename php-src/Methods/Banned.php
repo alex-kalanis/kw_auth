@@ -5,9 +5,9 @@ namespace kalanis\kw_auth\Methods;
 
 use ArrayAccess;
 use kalanis\kw_auth\AuthException;
-use kalanis\kw_auth\Interfaces\IAuth;
 use kalanis\kw_auth\Interfaces\IKauTranslations;
 use kalanis\kw_auth\Traits\TLang;
+use kalanis\kw_auth_sources\Interfaces\IAuth;
 use kalanis\kw_bans\Bans;
 use kalanis\kw_bans\BanException;
 use kalanis\kw_bans\Interfaces\IKBTranslations;
