@@ -12,15 +12,15 @@ parameters:
 		- 'php-tests/_bootstrap.php'
 	ignoreErrors:
 		-
-			message: '#Cannot call method authenticate\(\) on kalanis\\kw_auth_sources\\Interfaces\\IAuth\|null\.#'
+			message: '#Cannot call method authenticate\(\) on kalanis\\kw_accounts\\Interfaces\\IAuth\|null\.#'
 			path: 'php-src/Methods/HttpUser.php'
 			# quality WTF - this null is for empty setting
 		-
-			message: '#Cannot call method authenticate\(\) on kalanis\\kw_auth_sources\\Interfaces\\IAuth\|null\.#'
+			message: '#Cannot call method authenticate\(\) on kalanis\\kw_accounts\\Interfaces\\IAuth\|null\.#'
 			path: 'php-src/Methods/Sessions.php'
 			# quality WTF - this null is for empty setting
 		-
-			message: '#Cannot call method getDataOnly\(\) on kalanis\\kw_auth_sources\\Interfaces\\IAuth\|null\.#'
+			message: '#Cannot call method getDataOnly\(\) on kalanis\\kw_accounts\\Interfaces\\IAuth\|null\.#'
 			path: 'php-src/Methods/Sessions.php'
 			# quality WTF - this null is for empty setting
 		#- '#Parameter \#1 \$va[rl]u?e? of function strval expects bool\|float\|int\|resource\|string\|null, mixed given#'

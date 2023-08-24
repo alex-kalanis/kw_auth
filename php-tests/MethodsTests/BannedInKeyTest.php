@@ -4,6 +4,7 @@ namespace MethodsTests;
 
 
 use CommonTestClass;
+use kalanis\kw_accounts\AccountsException;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Methods;
 use kalanis\kw_bans\BanException;
@@ -11,14 +12,13 @@ use kalanis\kw_bans\Bans;
 use kalanis\kw_bans\Interfaces\IKBTranslations;
 use kalanis\kw_bans\Sources;
 use kalanis\kw_bans\Sources\ASources;
-use kalanis\kw_locks\LockException;
 
 
 class BannedInKeyTest extends CommonTestClass
 {
     /**
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      */
     public function testServerPass(): void
     {
@@ -29,8 +29,8 @@ class BannedInKeyTest extends CommonTestClass
     }
 
     /**
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      */
     public function testServerCatch(): void
     {
@@ -40,8 +40,8 @@ class BannedInKeyTest extends CommonTestClass
     }
 
     /**
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      */
     public function testServerDie(): void
     {
@@ -51,8 +51,8 @@ class BannedInKeyTest extends CommonTestClass
     }
 
     /**
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      */
     public function testCredentialPass(): void
     {
@@ -63,8 +63,8 @@ class BannedInKeyTest extends CommonTestClass
     }
 
     /**
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      */
     public function testCredentialCatch(): void
     {
@@ -74,8 +74,8 @@ class BannedInKeyTest extends CommonTestClass
     }
 
     /**
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      */
     public function testCredentialDie(): void
     {

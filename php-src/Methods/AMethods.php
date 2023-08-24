@@ -3,11 +3,10 @@
 namespace kalanis\kw_auth\Methods;
 
 
+use kalanis\kw_accounts\AccountsException;
+use kalanis\kw_accounts\Interfaces\IAuth;
+use kalanis\kw_accounts\Interfaces\IUser;
 use kalanis\kw_auth\AuthException;
-use kalanis\kw_auth_sources\AuthSourcesException;
-use kalanis\kw_auth_sources\Interfaces\IAuth;
-use kalanis\kw_auth_sources\Interfaces\IUser;
-use kalanis\kw_locks\LockException;
 
 
 /**.
@@ -32,9 +31,8 @@ abstract class AMethods
 
     /**
      * @param \ArrayAccess<string, string|int|float> $credentials
+     * @throws AccountsException
      * @throws AuthException
-     * @throws AuthSourcesException
-     * @throws LockException
      */
     abstract public function process(\ArrayAccess $credentials): void;
 

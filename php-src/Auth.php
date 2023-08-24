@@ -4,7 +4,7 @@ namespace kalanis\kw_auth;
 
 
 use kalanis\kw_auth\Interfaces;
-use kalanis\kw_auth_sources\Interfaces as sources_interfaces;
+use kalanis\kw_accounts\Interfaces as acc_interfaces;
 
 
 /**
@@ -14,15 +14,15 @@ use kalanis\kw_auth_sources\Interfaces as sources_interfaces;
  */
 class Auth
 {
-    /** @var sources_interfaces\IUser|sources_interfaces\IUserCert|null */
+    /** @var acc_interfaces\IUser|acc_interfaces\IUserCert|null */
     protected static $authenticator = null;
-    /** @var sources_interfaces\IAuth|null */
+    /** @var acc_interfaces\IAuth|null */
     protected static $auth = null;
-    /** @var sources_interfaces\IWorkGroups|null */
+    /** @var acc_interfaces\IProcessGroups|null */
     protected static $groups = null;
-    /** @var sources_interfaces\IWorkClasses|null */
+    /** @var acc_interfaces\IProcessClasses|null */
     protected static $classes = null;
-    /** @var sources_interfaces\IWorkAccounts|null */
+    /** @var acc_interfaces\IProcessAccounts|null */
     protected static $accounts = null;
 
     /** @var AuthTree|null */
@@ -40,7 +40,7 @@ class Auth
     }
 
     /**
-     * @param sources_interfaces\IUser|sources_interfaces\IUserCert|null $authenticator
+     * @param acc_interfaces\IUser|acc_interfaces\IUserCert|null $authenticator
      */
     static public function setAuthenticator($authenticator): void
     {
@@ -48,49 +48,49 @@ class Auth
     }
 
     /**
-     * @return sources_interfaces\IUser|sources_interfaces\IUserCert|null
+     * @return acc_interfaces\IUser|acc_interfaces\IUserCert|null
      */
     static public function getAuthenticator()
     {
         return static::$authenticator;
     }
 
-    static public function setAuth(?sources_interfaces\IAuth $auth): void
+    static public function setAuth(?acc_interfaces\IAuth $auth): void
     {
         static::$auth = $auth;
     }
 
-    static public function getAuth(): ?sources_interfaces\IAuth
+    static public function getAuth(): ?acc_interfaces\IAuth
     {
         return static::$auth;
     }
 
-    static public function setGroups(?sources_interfaces\IWorkGroups $groups): void
+    static public function setGroups(?acc_interfaces\IProcessGroups $groups): void
     {
         static::$groups = $groups;
     }
 
-    static public function getGroups(): ?sources_interfaces\IWorkGroups
+    static public function getGroups(): ?acc_interfaces\IProcessGroups
     {
         return static::$groups;
     }
 
-    static public function setClasses(?sources_interfaces\IWorkClasses $classes): void
+    static public function setClasses(?acc_interfaces\IProcessClasses $classes): void
     {
         static::$classes = $classes;
     }
 
-    static public function getClasses(): ?sources_interfaces\IWorkClasses
+    static public function getClasses(): ?acc_interfaces\IProcessClasses
     {
         return static::$classes;
     }
 
-    static public function setAccounts(?sources_interfaces\IWorkAccounts $accounts): void
+    static public function setAccounts(?acc_interfaces\IProcessAccounts $accounts): void
     {
         static::$accounts = $accounts;
     }
 
-    static public function getAccounts(): ?sources_interfaces\IWorkAccounts
+    static public function getAccounts(): ?acc_interfaces\IProcessAccounts
     {
         return static::$accounts;
     }

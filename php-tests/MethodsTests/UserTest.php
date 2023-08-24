@@ -4,12 +4,12 @@ namespace MethodsTests;
 
 
 use CommonTestClass;
+use kalanis\kw_accounts\AccountsException;
+use kalanis\kw_accounts\Data\FileUser;
+use kalanis\kw_accounts\Interfaces\IUser;
 use kalanis\kw_address_handler\Sources;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Methods;
-use kalanis\kw_auth_sources\Data\FileUser;
-use kalanis\kw_auth_sources\Interfaces\IUser;
-use kalanis\kw_locks\LockException;
 
 
 class UserTest extends CommonTestClass
@@ -20,8 +20,8 @@ class UserTest extends CommonTestClass
      * @param IUser|null $expectedUser
      * @param string $expectedPass
      * @param array $incomingCredentials
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      * @dataProvider httpUserProvider
      */
     public function testHttpUser(string $address, bool $isAuth, ?IUser $expectedUser, string $expectedPass, array $incomingCredentials): void

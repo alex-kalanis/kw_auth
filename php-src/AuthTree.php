@@ -3,6 +3,7 @@
 namespace kalanis\kw_auth;
 
 
+use kalanis\kw_accounts\AccountsException;
 use kalanis\kw_auth\Interfaces\IAuthTree;
 use kalanis\kw_locks\LockException;
 
@@ -27,6 +28,7 @@ class AuthTree implements IAuthTree
 
     /**
      * @param \ArrayAccess<string, string|int|float> $credentials
+     * @throws AccountsException
      * @throws AuthException
      * @throws LockException
      */

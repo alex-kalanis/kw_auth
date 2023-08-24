@@ -4,6 +4,8 @@ namespace BasicTests;
 
 
 use CommonTestClass;
+use kalanis\kw_accounts\AccountsException;
+use kalanis\kw_accounts\Interfaces;
 use kalanis\kw_address_handler\Handler;
 use kalanis\kw_address_handler\Sources as HandlerSources;
 use kalanis\kw_auth\Auth;
@@ -13,7 +15,6 @@ use kalanis\kw_auth\Methods;
 use kalanis\kw_auth_sources\Access;
 use kalanis\kw_auth_sources\AuthSourcesException;
 use kalanis\kw_auth_sources\Hashes\KwOrig;
-use kalanis\kw_auth_sources\Interfaces;
 use kalanis\kw_auth_sources\Statuses\Always;
 use kalanis\kw_locks\LockException;
 
@@ -46,6 +47,7 @@ class AuthTest extends CommonTestClass
     }
 
     /**
+     * @throws AccountsException
      * @throws AuthException
      * @throws AuthSourcesException
      * @throws LockException
@@ -166,7 +168,7 @@ class XAAuth implements Interfaces\IAuth
 }
 
 
-class XAAccounts implements Interfaces\IWorkAccounts
+class XAAccounts implements Interfaces\IProcessAccounts
 {
     public function createAccount(Interfaces\IUser $user, string $password): bool
     {
@@ -195,7 +197,7 @@ class XAAccounts implements Interfaces\IWorkAccounts
 }
 
 
-class XAGroups implements Interfaces\IWorkGroups
+class XAGroups implements Interfaces\IProcessGroups
 {
 
     public function createGroup(Interfaces\IGroup $group): bool
@@ -225,7 +227,7 @@ class XAGroups implements Interfaces\IWorkGroups
 }
 
 
-class XAClasses implements Interfaces\IWorkClasses
+class XAClasses implements Interfaces\IProcessClasses
 {
     public function readClasses(): array
     {

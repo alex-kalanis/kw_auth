@@ -4,13 +4,13 @@ namespace MethodsTests;
 
 
 use CommonTestClass;
+use kalanis\kw_accounts\AccountsException;
+use kalanis\kw_accounts\Data\FileCertUser;
+use kalanis\kw_accounts\Interfaces\IUserCert;
 use kalanis\kw_address_handler\Handler;
 use kalanis\kw_address_handler\Sources;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Methods;
-use kalanis\kw_auth_sources\Data\FileCertUser;
-use kalanis\kw_auth_sources\Interfaces\IUserCert;
-use kalanis\kw_locks\LockException;
 
 
 class HashTest extends CommonTestClass
@@ -21,8 +21,8 @@ class HashTest extends CommonTestClass
      * @param IUserCert|null $expectedUser
      * @param string $expectedPass
      * @param array $incomingCredentials
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      * @dataProvider urlHashProvider
      */
     public function testUrlHash(string $address, bool $isAuth, ?IUserCert $expectedUser, string $expectedPass, array $incomingCredentials): void

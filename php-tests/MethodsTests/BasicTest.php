@@ -4,16 +4,16 @@ namespace MethodsTests;
 
 
 use CommonTestClass;
+use kalanis\kw_accounts\AccountsException;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Methods;
-use kalanis\kw_locks\LockException;
 
 
 class BasicTest extends CommonTestClass
 {
     /**
+     * @throws AccountsException
      * @throws AuthException
-     * @throws LockException
      */
     public function testUser(): void
     {

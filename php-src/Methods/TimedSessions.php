@@ -4,7 +4,7 @@ namespace kalanis\kw_auth\Methods;
 
 
 use ArrayAccess;
-use kalanis\kw_auth_sources\Interfaces\IAuth;
+use kalanis\kw_accounts\Interfaces\IAuth;
 use SessionHandlerInterface;
 
 
