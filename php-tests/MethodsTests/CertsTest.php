@@ -60,7 +60,7 @@ class CertsTest extends CommonTestClass
 
         $mockUser = new FileCertUser();
         $mockUser->setUserData('123', 'testing', '456', 789, 3, 'Testing', '/dunno/');
-        $mockUser->addCertInfo($publicData['key'], 'qwertziop');
+        $mockUser->updateCertInfo($publicData['key'], 'qwertziop');
 
         // now query itself
         $urlSource = new Sources\Sources();
@@ -96,7 +96,7 @@ class CertsTest extends CommonTestClass
 
         $mockUser = new FileCertUser();
         $mockUser->setUserData('123', 'testing', '456', 789, 3, 'Testing', '/dunno/');
-        $mockUser->addCertInfo($publicData['key'], 'qwertziop');
+        $mockUser->updateCertInfo($publicData['key'], 'qwertziop');
 
 
         // address

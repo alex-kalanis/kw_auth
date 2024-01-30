@@ -40,7 +40,7 @@ class DigestTest extends CommonTestClass
     {
         $mockUser = new FileCertUser();
         $mockUser->setUserData('123', 'testing', '456', 789, 452, 'Testing', '/dunno/');
-        $mockUser->addCertInfo('qwertziop', 'qwertziop');
+        $mockUser->updateCertInfo('qwertziop', 'qwertziop');
         return [
             [
                 '//dummy/u:whoami/?pass=asdf123ghjk456&timestamp=123456&digest=poiuztrewq',

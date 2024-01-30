@@ -44,13 +44,14 @@ class HttpDigest extends AMethods
         }
         $data = $this->httpDigestParse(strval($this->server->offsetGet(static::INPUT_DIGEST)));
         if (!empty($data)) {
-            $wantedUser = $this->authenticator->getCertData(strval($data['username']));
-            if (!$wantedUser) {
+            $wantedUser = $this->authenticator->getDataOnly(strval($data['username']));
+            $wantedCert = $this->authenticator->getCertData(strval($data['username']));
+            if (!$wantedCert || !$wantedUser) {
                 return;
             }
 
             // verify
-            $A1 = md5($data['username'] . ':' . $this->realm . ':' . $wantedUser->getPubKey()); // @todo: srsly, pubkey?! have nothing better?
+            $A1 = md5($data['username'] . ':' . $this->realm . ':' . $wantedCert->getPubKey()); // @todo: srsly, pubkey?! have nothing better?
             $A2 = md5($this->server->offsetGet(static::INPUT_METHOD) . ':' . $data['uri']);
             $valid_response = md5($A1 . ':' . $data['nonce'] . ':' . $data['nc'] . ':' . $data['cnonce'] . ':' . $data['qop'] . ':' . $A2);
 

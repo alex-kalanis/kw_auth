@@ -3,9 +3,10 @@
 use kalanis\kw_accounts\Data\FileUser;
 use kalanis\kw_accounts\Interfaces\IAuth;
 use kalanis\kw_accounts\Interfaces\IAuthCert;
-use kalanis\kw_auth_sources\Interfaces\IHashes;
+use kalanis\kw_accounts\Interfaces\ICert;
 use kalanis\kw_accounts\Interfaces\IUser;
 use kalanis\kw_accounts\Interfaces\IUserCert;
+use kalanis\kw_auth_sources\Interfaces\IHashes;
 use kalanis\kw_locks\LockException;
 use kalanis\kw_locks\Methods as LockMethod;
 use kalanis\kw_locks\Interfaces as LockInt;
@@ -95,13 +96,13 @@ class MockAuthCert extends MockAuth implements IAuthCert
         return true;
     }
 
-    public function updateCertKeys(string $userName, ?string $certKey, ?string $certSalt): bool
+    public function updateCertData(string $userName, ?string $certKey, ?string $certSalt): bool
     {
-        $this->expectedUser->addCertInfo($certKey, $certSalt);
+        $this->expectedUser->updateCertInfo($certKey, $certSalt);
         return true;
     }
 
-    public function getCertData(string $userName): ?IUserCert
+    public function getCertData(string $userName): ?ICert
     {
         return empty($userName) ? null : $this->expectedUser;
     }

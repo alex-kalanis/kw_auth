@@ -48,18 +48,19 @@ class UrlCerts extends AMethods
         $name = $credentials->offsetExists(static::INPUT_NAME2) ? strval($credentials->offsetGet(static::INPUT_NAME2)) : $name ;
         $stamp = $credentials->offsetExists(static::INPUT_STAMP) ? intval(strval($credentials->offsetGet(static::INPUT_STAMP))) : 0 ;
 
-        $wantedUser = $this->authenticator->getCertData(strval($name));
-        if ($wantedUser && !empty($stamp) && $this->checkStamp($stamp)) {
+        $wantedUser = $this->authenticator->getDataOnly(strval($name));
+        $wantedCert = $this->authenticator->getCertData(strval($name));
+        if ($wantedUser && $wantedCert && !empty($stamp) && $this->checkStamp($stamp)) {
             // now we have public key and salt from our storage, so it's time to check it
 
             // digest out, salt in
             $digest = strval($this->uriHandler->getParams()->offsetGet(static::INPUT_DIGEST));
             $this->uriHandler->getParams()->offsetUnset(static::INPUT_DIGEST);
-            $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedUser->getPubSalt());
+            $this->uriHandler->getParams()->offsetSet(static::INPUT_SALT, $wantedCert->getSalt());
             $data = strval($this->uriHandler->getAddress());
 
             // verify
-            $result = openssl_verify($data, base64_decode(rawurldecode($digest)), $wantedUser->getPubKey(), OPENSSL_ALGO_SHA256);
+            $result = openssl_verify($data, base64_decode(rawurldecode($digest)), $wantedCert->getPubKey(), OPENSSL_ALGO_SHA256);
             if (1 === $result) {
                 // OK
                 $this->loggedUser = $wantedUser;
