@@ -16,16 +16,14 @@ use kalanis\kw_address_handler\Handler;
  */
 class HttpCerts extends AMethods
 {
-    const INPUT_NAME = 'PHP_AUTH_USER';
-    const INPUT_PASS = 'PHP_AUTH_DIGEST';
-    const INPUT_SALT = 'salt';
+    public const INPUT_NAME = 'PHP_AUTH_USER';
+    public const INPUT_PASS = 'PHP_AUTH_DIGEST';
+    public const INPUT_SALT = 'salt';
 
-    /** @var IAuthCert */
-    protected $authenticator;
-    /** @var Handler */
-    protected $uriHandler = null;
+    protected IAuthCert $certAuthenticator;
+    protected Handler $uriHandler;
     /** @var ArrayAccess<string, string|int> */
-    protected $server = null;
+    protected ArrayAccess $server;
 
     /**
      * @param IAuthCert $authenticator
@@ -36,6 +34,7 @@ class HttpCerts extends AMethods
     public function __construct(IAuthCert $authenticator, ?AMethods $nextOne, Handler $uriHandler, ArrayAccess $server)
     {
         parent::__construct($authenticator, $nextOne);
+        $this->certAuthenticator = $authenticator;
         $this->uriHandler = $uriHandler;
         $this->server = $server;
     }
@@ -44,8 +43,8 @@ class HttpCerts extends AMethods
     {
         $name = $this->server->offsetExists(static::INPUT_NAME) ? strval($this->server->offsetGet(static::INPUT_NAME)) : '' ;
         $digest = $this->server->offsetExists(static::INPUT_PASS) ? strval($this->server->offsetGet(static::INPUT_PASS)) : '' ;
-        $wantedUser = $this->authenticator->getDataOnly(strval($name));
-        $wantedCert = $this->authenticator->getCertData(strval($name));
+        $wantedUser = $this->certAuthenticator->getDataOnly(strval($name));
+        $wantedCert = $this->certAuthenticator->getCertData(strval($name));
         if ($wantedUser && $wantedCert && $digest) {
             // now we have public key and salt from our storage, so it's time to check it
 

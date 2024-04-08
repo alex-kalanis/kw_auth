@@ -16,12 +16,9 @@ use kalanis\kw_auth\AuthException;
  */
 abstract class AMethods
 {
-    /** @var IAuth|null */
-    protected $authenticator = null;
-    /** @var AMethods|null */
-    protected $nextOne = null;
-    /** @var IUser|null */
-    protected $loggedUser = null;
+    protected ?IAuth $authenticator = null;
+    protected ?AMethods $nextOne = null;
+    protected ?IUser $loggedUser = null;
 
     public function __construct(?IAuth $authenticator, ?AMethods $nextOne)
     {

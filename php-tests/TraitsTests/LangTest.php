@@ -41,4 +41,9 @@ class XTrans implements IKauTranslations
     {
         return 'mock';
     }
+
+    public function kauNoAuthTreeSet(): string
+    {
+        return 'mock';
+    }
 }

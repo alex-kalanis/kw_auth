@@ -16,10 +16,9 @@ use SessionHandlerInterface;
  */
 class TimedSessions extends Sessions
 {
-    const INPUT_TIME = 'acc_time';
+    protected const INPUT_TIME = 'acc_time';
 
-    /** @var int */
-    protected $loginTimeout = 0;
+    protected int $loginTimeout = 0;
 
     /**
      * @param IAuth|null $authenticator

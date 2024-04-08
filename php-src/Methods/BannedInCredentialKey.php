@@ -21,10 +21,8 @@ class BannedInCredentialKey extends AMethods
 {
     use TLang;
 
-    /** @var Bans\ABan */
-    protected $libBan = null;
-    /** @var string */
-    protected $credentialKey = '';
+    protected Bans\ABan $libBan;
+    protected string $credentialKey = '';
 
     /**
      * @param IAuth|null $authenticator

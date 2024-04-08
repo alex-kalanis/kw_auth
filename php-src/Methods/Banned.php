@@ -26,23 +26,21 @@ class Banned extends AMethods
 {
     use TLang;
 
-    const INPUT_NAME = 'name';
-    const SERVER_REMOTE = 'REMOTE_ADDR';
+    protected const INPUT_NAME = 'name';
+    protected const SERVER_REMOTE = 'REMOTE_ADDR';
 
-    const BAN_IP4 = 'ban_ip4.txt';
-    const BAN_IP6 = 'ban_ip6.txt';
-    const BAN_NAME = 'ban_name.txt';
+    protected const BAN_IP4 = 'ban_ip4.txt';
+    protected const BAN_IP6 = 'ban_ip6.txt';
+    protected const BAN_NAME = 'ban_name.txt';
 
-    const PREG_IP4 = '#^[0-9\./]$#i';
-    const PREG_IP6 = '#^[0-9a-f:/]$#i';
-    const PREG_NAME = '#^[\*\?\:;\\//]$#i';
+    protected const PREG_IP4 = '#^[0-9\./]$#i';
+    protected const PREG_IP6 = '#^[0-9a-f:/]$#i';
+    protected const PREG_NAME = '#^[\*\?\:;\\//]$#i';
 
-    /** @var Path */
-    protected $libPath = null;
-    /** @var Bans */
-    protected $libBan = null;
+    protected Path $libPath;
+    protected Bans $libBan;
     /** @var ArrayAccess<string, string|int|float> */
-    protected $server = null;
+    protected ArrayAccess $server;
 
     /**
      * @param IAuth|null $authenticator

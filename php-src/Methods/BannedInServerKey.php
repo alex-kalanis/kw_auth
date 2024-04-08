@@ -22,12 +22,10 @@ class BannedInServerKey extends AMethods
 {
     use TLang;
 
-    /** @var Bans\ABan */
-    protected $libBan = null;
+    protected Bans\ABan $libBan;
     /** @var ArrayAccess<string, string|int|float> */
-    protected $server = null;
-    /** @var string */
-    protected $credentialKey = '';
+    protected ArrayAccess $server;
+    protected string $credentialKey = '';
 
     /**
      * @param IAuth|null $authenticator

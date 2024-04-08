@@ -10,8 +10,7 @@ namespace kalanis\kw_auth\Traits;
  */
 trait TStamp
 {
-    /** @var int */
-    protected $timeDifference = 100;
+    protected int $timeDifference = 100;
 
     protected function initStamp(int $maxDiff): void
     {

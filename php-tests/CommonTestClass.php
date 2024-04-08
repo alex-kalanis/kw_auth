@@ -10,8 +10,6 @@ use kalanis\kw_auth_sources\Interfaces\IHashes;
 use kalanis\kw_locks\LockException;
 use kalanis\kw_locks\Methods as LockMethod;
 use kalanis\kw_locks\Interfaces as LockInt;
-use kalanis\kw_storage\Interfaces\IStorage;
-use kalanis\kw_storage\StorageException;
 use PHPUnit\Framework\TestCase;
 
 
@@ -36,8 +34,8 @@ class CommonTestClass extends TestCase
 
 class MockAuth implements IAuth
 {
-    protected $expectedUser = null;
-    protected $expectedPass = '';
+    protected ?IUser $expectedUser = null;
+    protected string $expectedPass = '';
 
     public function __construct(IUser $expectedUser = null, string $expectedPass = '')
     {
@@ -64,12 +62,12 @@ class MockAuth implements IAuth
 
 class MockAuthCert extends MockAuth implements IAuthCert
 {
-    /** @var IUserCert|null */
-    protected $expectedUser = null;
+    protected ?IUserCert $expectedUserCert = null;
 
     public function __construct(IUserCert $expectedUser = null, string $expectedPass = '')
     {
         parent::__construct($expectedUser, $expectedPass);
+        $this->expectedUserCert = $expectedUser;
     }
 
     public function createAccount(IUser $user, string $password): void
@@ -98,13 +96,13 @@ class MockAuthCert extends MockAuth implements IAuthCert
 
     public function updateCertData(string $userName, ?string $certKey, ?string $certSalt): bool
     {
-        $this->expectedUser->updateCertInfo($certKey, $certSalt);
+        $this->expectedUserCert->updateCertInfo($certKey, $certSalt);
         return true;
     }
 
     public function getCertData(string $userName): ?ICert
     {
-        return empty($userName) ? null : $this->expectedUser;
+        return empty($userName) ? null : $this->expectedUserCert;
     }
 }
 
@@ -173,7 +171,7 @@ class MockUserToFill extends FileUser
 
 class MockModes implements IHashes
 {
-    protected $knownPass = '';
+    protected string $knownPass = '';
 
     public function checkHash(string $pass, string $hash): bool
     {
@@ -184,71 +182,5 @@ class MockModes implements IHashes
     {
         $this->knownPass = $pass;
         return 'validPass-' . $pass;
-    }
-}
-
-
-class XFailedStorage implements IStorage
-{
-    protected $canOpen = false;
-    protected $content = '';
-
-    public function __construct(bool $canOpen = false, string $content = '')
-    {
-        $this->canOpen = $canOpen;
-        $this->content = $content;
-    }
-
-    public function canUse(): bool
-    {
-        return false;
-    }
-
-    public function isFlat(): bool
-    {
-        return false;
-    }
-
-    public function write(string $sharedKey, $data, ?int $timeout = null): bool
-    {
-        throw new StorageException('Mock');
-    }
-
-    public function read(string $sharedKey)
-    {
-        if ($this->canOpen) {
-            return $this->content;
-        }
-        throw new \kalanis\kw_storage\StorageException('Mock');
-    }
-
-    public function remove(string $sharedKey): bool
-    {
-        throw new \kalanis\kw_storage\StorageException('Mock');
-    }
-
-    public function exists(string $sharedKey): bool
-    {
-        throw new \kalanis\kw_storage\StorageException('Mock');
-    }
-
-    public function lookup(string $mask): Traversable
-    {
-        throw new \kalanis\kw_storage\StorageException('Mock');
-    }
-
-    public function increment(string $key): bool
-    {
-        throw new \kalanis\kw_storage\StorageException('Mock');
-    }
-
-    public function decrement(string $key): bool
-    {
-        throw new \kalanis\kw_storage\StorageException('Mock');
-    }
-
-    public function removeMulti(array $keys): array
-    {
-        throw new \kalanis\kw_storage\StorageException('Mock');
     }
 }

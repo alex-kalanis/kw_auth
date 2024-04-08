@@ -16,15 +16,13 @@ use kalanis\kw_accounts\Interfaces\IAuthCert;
  */
 class HttpDigest extends AMethods
 {
-    const INPUT_METHOD = 'REQUEST_METHOD';
-    const INPUT_DIGEST = 'PHP_AUTH_DIGEST';
+    public const INPUT_METHOD = 'REQUEST_METHOD';
+    public const INPUT_DIGEST = 'PHP_AUTH_DIGEST';
 
-    /** @var string */
-    protected $realm = 'KWCMS_Http_Digest';
-    /** @var IAuthCert */
-    protected $authenticator;
+    protected string $realm = 'KWCMS_Http_Digest';
+    protected IAuthCert $certAuthenticator;
     /** @var ArrayAccess<string, string|int> */
-    protected $server = null;
+    protected ArrayAccess $server;
 
     /**
      * @param IAuthCert $authenticator
@@ -34,6 +32,7 @@ class HttpDigest extends AMethods
     public function __construct(IAuthCert $authenticator, ?AMethods $nextOne, ArrayAccess $server)
     {
         parent::__construct($authenticator, $nextOne);
+        $this->certAuthenticator = $authenticator;
         $this->server = $server;
     }
 
@@ -44,8 +43,8 @@ class HttpDigest extends AMethods
         }
         $data = $this->httpDigestParse(strval($this->server->offsetGet(static::INPUT_DIGEST)));
         if (!empty($data)) {
-            $wantedUser = $this->authenticator->getDataOnly(strval($data['username']));
-            $wantedCert = $this->authenticator->getCertData(strval($data['username']));
+            $wantedUser = $this->certAuthenticator->getDataOnly(strval($data['username']));
+            $wantedCert = $this->certAuthenticator->getCertData(strval($data['username']));
             if (!$wantedCert || !$wantedUser) {
                 return;
             }

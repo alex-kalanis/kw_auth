@@ -16,20 +16,19 @@ use SessionHandlerInterface;
  */
 class Sessions extends AMethods
 {
-    const SESSION_IP = 'acc_ip';
-    const SESSION_NAME = 'acc_name';
-    const SERVER_REMOTE = 'REMOTE_ADDR';
-    const INPUT_NAME = 'name';
-    const INPUT_NAME2 = 'user';
-    const INPUT_PASS = 'pass';
-    const INPUT_PASS2 = 'password';
+    protected const SESSION_IP = 'acc_ip';
+    protected const SESSION_NAME = 'acc_name';
+    protected const SERVER_REMOTE = 'REMOTE_ADDR';
+    protected const INPUT_NAME = 'name';
+    protected const INPUT_NAME2 = 'user';
+    protected const INPUT_PASS = 'pass';
+    protected const INPUT_PASS2 = 'password';
 
     /** @var ArrayAccess<string, string|int> */
-    protected $session = null;
+    protected ArrayAccess $session;
     /** @var ArrayAccess<string, string|int> */
-    protected $server = null;
-    /** @var SessionHandlerInterface|null */
-    protected $externalHandler = null;
+    protected ArrayAccess $server;
+    protected ?SessionHandlerInterface $externalHandler = null;
 
     /**
      * @param IAuth|null $authenticator

@@ -21,15 +21,13 @@ class CountedSessions extends AMethods
 {
     use TLang;
 
-    const INPUT_NAME = 'name';
-    const INPUT_COUNTER = 'log_count';
+    protected const INPUT_NAME = 'name';
+    protected const INPUT_COUNTER = 'log_count';
 
-    /** @var int */
-    protected $maxTries = 100;
+    protected int $maxTries = 100;
     /** @var ArrayAccess<string, string|int> */
-    protected $session = null;
-    /** @var SessionHandlerInterface|null */
-    protected $externalHandler = null;
+    protected ArrayAccess $session;
+    protected ?SessionHandlerInterface $externalHandler = null;
 
     /**
      * @param IAuth|null $authenticator

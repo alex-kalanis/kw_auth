@@ -16,17 +16,12 @@ class Auth
 {
     /** @var acc_interfaces\IUser|acc_interfaces\IUserCert|null */
     protected static $authenticator = null;
-    /** @var acc_interfaces\IAuth|null */
-    protected static $auth = null;
-    /** @var acc_interfaces\IProcessGroups|null */
-    protected static $groups = null;
-    /** @var acc_interfaces\IProcessClasses|null */
-    protected static $classes = null;
-    /** @var acc_interfaces\IProcessAccounts|null */
-    protected static $accounts = null;
+    protected static ?acc_interfaces\IAuth $auth = null;
+    protected static ?acc_interfaces\IProcessGroups $groups = null;
+    protected static ?acc_interfaces\IProcessClasses $classes = null;
+    protected static ?acc_interfaces\IProcessAccounts $accounts = null;
 
-    /** @var AuthTree|null */
-    protected static $authTree = null;
+    protected static ?AuthTree $authTree = null;
 
     static public function fill(Methods\AMethods $authMethods): void
     {

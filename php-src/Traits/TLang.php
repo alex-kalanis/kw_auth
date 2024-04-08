@@ -13,8 +13,7 @@ use kalanis\kw_auth\Translations;
  */
 trait TLang
 {
-    /** @var IKauTranslations|null */
-    protected $auLang = null;
+    protected ?IKauTranslations $auLang;
 
     public function setAuLang(?IKauTranslations $auLang = null): void
     {

@@ -83,7 +83,7 @@ class ExtBanned extends \kalanis\kw_auth\Methods\Banned
 
 abstract class AAuthenticate
 {
-    /** @var \kalanis\kw_auth_sources\Interfaces\IUser|null */
+    /** @var \kalanis\kw_accounts\Interfaces\IUser|null */
     protected $user = null;
     /** @var \kalanis\kw_auth\AuthException|null */
     protected $error = null;

@@ -8,6 +8,7 @@ use kalanis\kw_accounts\AccountsException;
 use kalanis\kw_accounts\Data\FileCertUser;
 use kalanis\kw_accounts\Interfaces\IUserCert;
 use kalanis\kw_address_handler\Handler;
+use kalanis\kw_address_handler\HandlerException;
 use kalanis\kw_address_handler\Sources;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Methods;
@@ -23,6 +24,7 @@ class HashTest extends CommonTestClass
      * @param array $incomingCredentials
      * @throws AccountsException
      * @throws AuthException
+     * @throws HandlerException
      * @dataProvider urlHashProvider
      */
     public function testUrlHash(string $address, bool $isAuth, ?IUserCert $expectedUser, string $expectedPass, array $incomingCredentials): void

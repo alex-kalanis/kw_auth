@@ -7,6 +7,7 @@ use CommonTestClass;
 use kalanis\kw_accounts\AccountsException;
 use kalanis\kw_accounts\Interfaces;
 use kalanis\kw_address_handler\Handler;
+use kalanis\kw_address_handler\HandlerException;
 use kalanis\kw_address_handler\Sources as HandlerSources;
 use kalanis\kw_auth\Auth;
 use kalanis\kw_auth\AuthException;
@@ -51,6 +52,7 @@ class AuthTest extends CommonTestClass
      * @throws AuthException
      * @throws AuthSourcesException
      * @throws LockException
+     * @throws HandlerException
      */
     public function testTree(): void
     {
@@ -101,6 +103,17 @@ class AuthTest extends CommonTestClass
             'status' => new Always(),
             'lock' => $this->getLockPath(),
         ]);
+    }
+
+    /**
+     * @throws AccountsException
+     * @throws AuthException
+     */
+    public function testTreeNotSet(): void
+    {
+        $tree = new AuthTree();
+        $this->expectException(AuthException::class);
+        $tree->findMethod(new \MockCredentials());
     }
 }
 

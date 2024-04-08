@@ -29,4 +29,9 @@ class Translations implements IKauTranslations
     {
         return 'Too many tries!';
     }
+
+    public function kauNoAuthTreeSet(): string
+    {
+        return 'No auth tree set!';
+    }
 }

@@ -13,4 +13,6 @@ interface IKauTranslations
     public function kauBanWantedUser(): string;
 
     public function kauTooManyTries(): string;
+
+    public function kauNoAuthTreeSet(): string;
 }

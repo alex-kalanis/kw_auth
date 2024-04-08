@@ -6,7 +6,6 @@ namespace kalanis\kw_auth\Interfaces;
 use ArrayAccess;
 use kalanis\kw_auth\AuthException;
 use kalanis\kw_auth\Methods\AMethods;
-use kalanis\kw_locks\LockException;
 
 
 /**
@@ -20,7 +19,6 @@ interface IAuthTree
      * lookup for method which can authenticate send data
      * @param ArrayAccess<string, string|int|float> $credentials
      * @throws AuthException
-     * @throws LockException
      */
     public function findMethod(ArrayAccess $credentials): void;
 

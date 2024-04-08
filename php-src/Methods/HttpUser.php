@@ -15,13 +15,13 @@ use kalanis\kw_accounts\Interfaces\IAuth;
  */
 class HttpUser extends AMethods
 {
-    const INPUT_NAME = 'PHP_AUTH_USER';
-    const INPUT_PASS = 'PHP_AUTH_PW';
+    public const INPUT_NAME = 'PHP_AUTH_USER';
+    public const INPUT_PASS = 'PHP_AUTH_PW';
 
     /** @var string */
-    protected $realm = 'KWCMS_Http_User';
+    protected string $realm = 'KWCMS_Http_User';
     /** @var ArrayAccess<string, string|int> */
-    protected $server = null;
+    protected ArrayAccess $server;
 
     /**
      * @param IAuth|null $authenticator
