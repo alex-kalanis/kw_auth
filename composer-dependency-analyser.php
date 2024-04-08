@@ -16,4 +16,5 @@ return $config
     ->ignoreErrorsOnPackageAndPath('alex-kalanis/kw_bans', __DIR__ . '/php-src/Methods/Banned.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPackageAndPath('alex-kalanis/kw_bans', __DIR__ . '/php-src/Methods/BannedInCredentialKey.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
     ->ignoreErrorsOnPackageAndPath('alex-kalanis/kw_bans', __DIR__ . '/php-src/Methods/BannedInServerKey.php', [ErrorType::DEV_DEPENDENCY_IN_PROD])
+    ->ignoreErrorsOnPackageAndPath('alex-kalanis/kw_accounts', __DIR__ . '/php-src/Methods/Everytime.php', [ErrorType::SHADOW_DEPENDENCY])
 ;
